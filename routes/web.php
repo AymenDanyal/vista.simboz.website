@@ -15,6 +15,12 @@
     use App\Http\Controllers\PayPalController;
     use App\Http\Controllers\NotificationController;
     use App\Http\Controllers\HomeController;
+
+    use App\Http\Controllers\EditorController;
+
+    Route::get('/editor-vue/{productId}/{userId}', [EditorController::class, 'index'])->name('editor-vue')->middleware('auth');
+
+
     use \UniSharp\LaravelFilemanager\Lfm;
 
     /*
@@ -201,3 +207,6 @@
     Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth']], function () {
         Lfm::routes();
     });
+
+
+   
