@@ -14,13 +14,9 @@ class EditorController extends Controller
             // Handle unauthorized access, redirect, or show an error
             return abort(403, 'Unauthorized access.');
         }
-        
-
-        $data = [
-            'userId' => $userId,
-            'productId' => $productId,
-        ];
-
-        return view('editor.index',$data);
+        $data = ['message' => 'Hello from Laravel!',
+        'messag1' => 'Hello from Laravel!',
+        'message2' => 'Hello from Laravel!']; 
+        return view('editor.index', ['data' => json_encode($data)]);
     }
 }

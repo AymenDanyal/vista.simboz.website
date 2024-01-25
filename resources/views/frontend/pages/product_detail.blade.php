@@ -141,7 +141,11 @@
 													<div class="add-to-cart mt-4">
 														<button type="submit" class="btn">Add to cart</button>
 														<a href="{{route('add-to-wishlist',$product_detail->slug)}}" class="btn min"><i class="ti-heart"></i></a>
-														<a href="{{ route('editor-vue', ['productId' => $product_detail->id, 'userId' => Auth()->user()->id]) }}" class="btn min"><i class="ti-pencil"></i> Edit in editor</a></div>
+														
+														@if(Auth::user())
+															<a href="{{ route('editor-vue', ['productId' => urlencode($product_detail->id), 'userId' => Auth()->user()->id]) }}" class="btn min"><i class="ti-pencil"></i> Edit in editor</a></div>
+														@endif
+																										
 												</form>
 
 												<p class="cat">Category :<a href="{{route('product-cat',$product_detail->cat_info['slug'])}}">{{$product_detail->cat_info['title']}}</a></p>

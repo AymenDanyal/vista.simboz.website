@@ -18,7 +18,7 @@
 
     use App\Http\Controllers\EditorController;
 
-    Route::get('/editor-vue/{productId}/{userId}', [EditorController::class, 'index'])->name('editor-vue')->middleware('auth');
+    Route::get('/editor-vue/{productId}/{userId}', [EditorController::class, 'index'])->name('editor-vue')->middleware('user');
 
 
     use \UniSharp\LaravelFilemanager\Lfm;
