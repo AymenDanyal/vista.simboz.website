@@ -113,21 +113,61 @@
           <span class="text-danger">{{$message}}</span>
           @enderror
         </div>
+        
         <div class="form-group">
           <label for="inputPhoto" class="col-form-label">Photo <span class="text-danger">*</span></label>
           <div class="input-group">
               <span class="input-group-btn">
                   <a id="lfm" data-input="thumbnail" data-preview="holder" class="btn btn-primary">
-                  <i class="fa fa-picture-o"></i> Choose
+                      <i class="fa fa-picture-o"></i> Choose
                   </a>
               </span>
-          <input id="thumbnail" class="form-control" type="text" name="photo" value="{{old('photo')}}">
-        </div>
-        <div id="holder" style="margin-top:15px;max-height:100px;"></div>
+              <input id="thumbnail" class="form-control" type="text" name="photo" value="{{ old('photo') }}">
+          </div>
+          <div id="holder" style="margin-top:15px;max-height:100px;"></div>
           @error('photo')
-          <span class="text-danger">{{$message}}</span>
+          <span class="text-danger">{{ $message }}</span>
           @enderror
-        </div>
+      </div>
+      
+
+
+      <div class="form-group">
+          <label for="inputTemplate" class="col-form-label">Template <span class="text-danger">*</span></label>
+          <div class="input-group">
+              <span class="input-group-btn">
+                  <a id="tempButton" data-input="template" data-preview="temp" class="btn btn-primary">
+                      <i class="fa fa-picture-o"></i> Choose
+                  </a>
+              </span>
+              <input id="template" class="form-control" type="text" name="template" value="{{ old('template') }}">
+          </div>
+          <div id="temp" style="margin-top:15px;max-height:100px;"></div>
+          @error('template')
+          <span class="text-danger">{{ $message }}</span>
+          @enderror
+      </div>
+
+      <div class="form-group">
+        <label for="stock">Template Height <span class="text-danger">*</span></label>
+        <input id="quantity" type="number" name="template_height" min="0" placeholder="Height in Inches"  value="{{old('template_height')}}" class="form-control">
+        @error('stock')
+        <span class="text-danger">{{$message}}</span>
+        @enderror
+      </div>
+      <div class="form-group">
+        <label for="stock">Template Width <span class="text-danger">*</span></label>
+        <input id="quantity" type="number" name="template_width" min="0" placeholder="Width in Inches"  value="{{old('template_height')}}" class="form-control">
+        @error('stock')
+        <span class="text-danger">{{$message}}</span>
+        @enderror
+      </div>
+      
+
+
+
+
+
         
         <div class="form-group">
           <label for="status" class="col-form-label">Status <span class="text-danger">*</span></label>
@@ -160,6 +200,7 @@
 
 <script>
     $('#lfm').filemanager('image');
+    $('#tempButton').filemanager('image');
 
     $(document).ready(function() {
       $('#summary').summernote({

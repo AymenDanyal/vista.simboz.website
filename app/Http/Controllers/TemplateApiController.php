@@ -1,12 +1,15 @@
 <?php
 
 namespace App\Http\Controllers;
+use Auth;
 use Illuminate\Http\Request;
+use Spatie\PdfToImage\Pdf;
 use App\Models\TemplateApi;
 use App\Models\UserTemplate;
 use App\Models\UserUploads;
-
-
+use App\User;
+use Carbon\Carbon;
+use Imagick;
 use TCPDF;
 
 
@@ -62,75 +65,83 @@ class TemplateApiController extends Controller
         // Return the constructed array as a JSON response
         return response()->json($responseArray);
     }
-
-   public function storeTemp(Request $request)
+    
+      public function storeTemp(Request $request)
     {   
-        $pdf = new TCPDF();
-        $pdf->SetCreator('Your Application');
-        $pdf->SetAuthor('Your Name');
-        $pdf->SetTitle('HTML to PDF/X Example');
-        $pdf->SetSubject('HTML to PDF/X');
-        
-        // Add a page
-        $pdf->AddPage();
+        $startTime = microtime(true); // Record start time
+       
+        try {
+         
+            $userId = $request->input('userId');
+            $frontImage = $request->input('frontImage');
+            $backImage = $request->input('backImage');
+            $templateWidth = $request->input('templateWidth');
+            $templateHeight = $request->input('templateHeight');
+            $role = $request->input('role');
     
-        // Your HTML content
-        $html = $frontJson = $request->input('frontJsonData');
+            $user = User::where('id', $userId)->first();
     
-        // Convert HTML to PDF
-        $pdf->writeHTML($html, true, false, true, false, '');
+            if (!$user) {
+                throw new \Exception('User not found.');
+            }
     
-        // Output the PDF
-        $pdfPath = storage_path('app/public/') . 'html_to_pdf_x.pdf';
-        $pdf->Output($pdfPath, 'F');
+            $token = $user->remember_token;
     
-        return response()->json(['message' => 'PDF/X generated successfully', 'pdf_path' => $pdfPath]);
+            if ($rememberToken == $token) {
+                throw new \Exception('You are not authorized to access this API.');
+            }
     
-    /*
-        // Validate required fields
-        if (!$userId || !$front || !$frontImage || !$back || !$backImage) {
-            throw new \Exception('Required fields are missing.');
+            // Validate required fields
+            if (!$userId || !$frontImage || !$templateWidth || !$backImage || !$templateHeight) {
+                throw new \Exception('Required fields are missing.');
+            }
+    
+            // Generate unique file names for the images
+            $frontName = 'front' . uniqid() . '.svg';
+            $backName = 'back' . uniqid() . '.svg';
+    
+            // Save the images to storage
+            $frontPath = storage_path('app/public/image/') . $frontName;
+            $backPath = storage_path('app/public/image/') . $backName;
+    
+            // Write the decoded image data to the files
+            file_put_contents($frontPath, $frontImage);
+            file_put_contents($backPath, $backImage);
+    
+            // Create a new instance based on the user role
+            if ($role === 'admin') {
+                $templateApi = new TemplateApi();
+            } else {
+                $templateApi = new UserTemplate();
+                $templateApi->user_id = $userId;
+            }
+    
+            // Assign values to model properties
+            $templateApi->front = $frontImage;
+            $templateApi->back = $backImage;
+            $templateApi->front_img_url = $frontPath;
+            $templateApi->back_img_url = $backPath;
+    
+            // Save the template
+            $templateApi->save();
+    
+            // Measure response time
+            $endTime = microtime(true);
+            $executionTime = $endTime - $startTime;
+    
+            return response()->json([
+                'message' => 'Template stored successfully.',
+                'response_time' => $executionTime
+            ]);
+    
+        } catch (\Exception $e) {
+            // Handle exceptions
+            return response()->json(['error' => $e->getMessage()], 500);
         }
-                
-        //$frontJson = $request->input('frontJsonData');
-        //$backJson  = $request->input('backJsonData');
-  
-  
-        // Generate a unique file name for the image
-        $frontName = 'front'.uniqid() . '.svg'; // You can adjust the file extension based on your requirements
-        $backName  = 'back'.uniqid() . '.svg';
-            
-        // Save the image to storage (assuming 'images' is the directory in the public disk)
-        $frontPath = storage_path('app/public/image/') . $frontName;
-        $backPath  = storage_path('app/public/image/') . $backName;
-    
-        
-        // Write the decoded image data to the file
-        file_put_contents($frontPath, $frontImage);
-        file_put_contents($backPath, $backImage);
-            
-        // Create a new TemplateApi instance
-        $templateApi = new TemplateApi();
-    
-        // Assign the JSON data to the 'object' column/property in your model
-
-        $templateApi->front = $frontImage;
-        $templateApi->back = $backImage;
-    
-        // Assign the image path to the 'image' column/property in your model
-        $templateApi->front_img_url = $frontPath;
-        $templateApi->back_img_url  = $backPath;
-            
-        $templateApi->save();
-        
-   
-            
-        
-      */  
-        
     }
 
-   public function show($id,$position)
+
+   public function show($product_id,$user_id)
     {   
         $startTime = microtime(true); // Record start time
         
@@ -140,7 +151,15 @@ class TemplateApiController extends Controller
         
         
         try {
-            $templateApi = TemplateApi::find($id);
+            
+            $user = User::where('id', $user_id)->first();
+            $rememberToken = $user->rememberToken;
+            $role = $user->role;
+           
+            
+       
+            
+            $templateApi = TemplateApi::where('product_id',$product_id)->first();
     
             if (!$templateApi) {
                 return response()->json(['message' => 'Object not found.']);
@@ -149,23 +168,27 @@ class TemplateApiController extends Controller
             $responseArray = [];
             
             $frontData = $templateApi->front;
-           
             $backData = $templateApi->back;
+            $templateWidth = $templateApi->template_width;
+            $templateHeight = $templateApi->template_height;
            
             
             $frontImgUrl = str_replace($localPath, $baseUrl, $templateApi->front_img_url);
             $backImgUrl = str_replace($localPath, $baseUrl, $templateApi->back_img_url);
     
             
+ 
                 
             $responseArray = [
+                'userId'=>$user_id,
                 'front' => $frontData,
                 'back' => $backData,
                 'frontImgUrl' => $frontImgUrl,
                 'backImgUrl' => $backImgUrl,
-                'position' => $position,
-                
-                
+                'templateWidth' => $templateWidth,
+                'templateHeight' => $templateHeight,
+                'rememberToken' => $rememberToken,
+                'role'=>$role,
             ];
     
             // Measure response time
@@ -337,7 +360,7 @@ class TemplateApiController extends Controller
     
     public function loadUserImages($id) 
     {
-            $records = UserUploads::where('user_id', $id)->get();
+        $records = UserUploads::where('user_id', $id)->get();
 
         $data = [
             'data' => [
@@ -377,7 +400,78 @@ class TemplateApiController extends Controller
         }
     }
     
-        
+    public function saveExit (Request $request){
+          $startTime = microtime(true); // Record start time
+          
+        try {
+         
+            $userId = $request->input('userId');
+            $frontImage = $request->input('frontImage');
+            $backImage = $request->input('backImage');
+            $templateWidth = $request->input('templateWidth');
+            $templateHeight = $request->input('templateHeight');
+            $role = $request->input('role');
+            $product_id = $request->input('product_id');
+    
+            $user = User::where('id', $userId)->first();
+    
+            if (!$user) {
+                throw new \Exception('User not found.');
+            }
+    
+    
+            if ($rememberToken == $token) {
+                throw new \Exception('You are not authorized to access this API.');
+            }
+    
+            // Validate required fields
+            if (!$userId || !$frontImage || !$templateWidth || !$backImage || !$templateHeight) {
+                throw new \Exception('Required fields are missing.');
+            }
+    
+            // Generate unique file names for the images
+            $frontName = 'front' . uniqid() . '.svg';
+            $backName = 'back' . uniqid() . '.svg';
+    
+            // Save the images to storage
+            $frontPath = storage_path('app/public/image/') . $frontName;
+            $backPath = storage_path('app/public/image/') . $backName;
+    
+            // Write the decoded image data to the files
+            file_put_contents($frontPath, $frontImage);
+            file_put_contents($backPath, $backImage);
+    
+            // Create a new instance based on the user role
+            if ($role === 'admin') {
+                $templateApi = new TemplateApi();
+            } else {
+                $templateApi = new UserTemplate();
+                $templateApi->user_id = $userId;
+            }
+    
+            // Assign values to model properties
+            $templateApi->front = $frontImage;
+            $templateApi->back = $backImage;
+            $templateApi->front_img_url = $frontPath;
+            $templateApi->back_img_url = $backPath;
+    
+            // Save the template
+            $templateApi->save();
+    
+            // Measure response time
+            $endTime = microtime(true);
+            $executionTime = $endTime - $startTime;
+    
+            return response()->json([
+                'message' => 'Template stored successfully.',
+                'response_time' => $executionTime
+            ]);
+    
+        } catch (\Exception $e) {
+            // Handle exceptions
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
     
     
     

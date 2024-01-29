@@ -21,11 +21,13 @@ Route::get('/clear-config-cache', function () {
 */
 
  
+//Route::prefix('template')->middleware('auth:api')->group(function () {
+  
 Route::prefix('template')->group(function () {
     Route::get('/', 'TemplateApiController@index');
     Route::post('/storeTemp', 'TemplateApiController@storeTemp');
     Route::post('/storePng', 'TemplateApiController@storePng');
-    Route::get('/showTemp/{id}/{position}', 'TemplateApiController@show');
+    Route::get('/editor-vue/{productId}/{userId}', 'TemplateApiController@show');
     Route::put('/updateTemp/{id}', 'TemplateApiController@update');
     Route::delete('/{id}', 'TemplateApiController@destroy');
     Route::get('/getFonts', 'TemplateApiController@getFonts');
@@ -33,6 +35,7 @@ Route::prefix('template')->group(function () {
     Route::post('/uploadImage', 'TemplateApiController@uploadImage');
     Route::get('/loadUserImages/{id}', 'TemplateApiController@loadUserImages');
     Route::get('/getImage/{id}', 'TemplateApiController@getImage');
+    Route::post('/saveExit', 'TemplateApiController@saveExit');
 });
 
 

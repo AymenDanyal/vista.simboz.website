@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TemplateApi extends Model
+class UserTemplate extends Model
 {
     protected $table="user_template";
 

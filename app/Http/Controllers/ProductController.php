@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Brand;
+use App\Models\TemplateApi;
 use App\User;
+use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Str;
 
@@ -44,7 +46,8 @@ class ProductController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
+    {   
+        //dd($request->all());
         // return $request->all();
         $this->validate($request,[
             'title'=>'string|required',
@@ -60,10 +63,15 @@ class ProductController extends Controller
             'status'=>'required|in:active,inactive',
             'condition'=>'required|in:default,new,hot',
             'price'=>'required|numeric',
-            'discount'=>'nullable|numeric'
+            'discount'=>'nullable|numeric',
+            'template'=>'string',
+            'template_width'=>'numeric',
+            'template_height'=>'numeric',
         ]);
-
+        
         $data=$request->all();
+        // Remove the 'template' field from the data array
+        $data = $request->except('template');
         $slug=Str::slug($request->title);
         $count=Product::where('slug',$slug)->count();
         if($count>0){
@@ -81,7 +89,21 @@ class ProductController extends Controller
         // return $size;
         // return $data;
         $status=Product::create($data);
+        $productId= $status->id;
+        
+        $template = $request->input('template');
+        $template_height = $request->input('template_height');
+        $template_width = $request->input('template_width');
+      
         if($status){
+            $status1= TemplateApi::create(['product_id' => $productId,
+                                           'front'=>$template,
+                                           'template_height'=>$template_height,
+                                           'template_width'=>$template_width,
+                                                                         
+        ]);
+        
+
             request()->session()->flash('success','Product Successfully added');
         }
         else{
@@ -173,10 +195,19 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
-        $product=Product::findOrFail($id);
+    public function destroy($product_id)
+    {   
+       
+  
+  
+        $template = TemplateApi::where('product_id', $product_id)->first();
+        $status1=$template->delete();
+
+       
+        $product=Product::findOrFail($product_id);
         $status=$product->delete();
+      
+        
         
         if($status){
             request()->session()->flash('success','Product successfully deleted');

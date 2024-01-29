@@ -144,6 +144,7 @@
         Route::resource('/category', 'CategoryController');
         // Product
         Route::resource('/product', 'ProductController');
+        
         // Ajax for sub category
         Route::post('/category/{id}/child', 'CategoryController@getChildByParent');
         // POST category
@@ -206,6 +207,11 @@
 
     Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth']], function () {
         Lfm::routes();
+    });
+
+      
+    Route::prefix('template')->group(function () {
+        Route::get('/editor/{productId}/{userId}', 'TemplateApiController@editor')->name('template.editor');
     });
 
 
