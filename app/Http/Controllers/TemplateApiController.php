@@ -142,14 +142,12 @@ class TemplateApiController extends Controller
 
 
    public function show($product_id,$user_id)
-    {   
+    {   dd($product_id);
         $startTime = microtime(true); // Record start time
         
         $baseUrl = 'https://';
         $localPath = '/home/simbumrj/';
     
-        
-        
         try {
             
             $user = User::where('id', $user_id)->first();

@@ -10,7 +10,7 @@ use App\User;
 
 class EditorController extends Controller
 {
-    public function index($productId, $userId)
+    public function index($productId)
     {
         $authenticatedUserId = Auth::id();
         $data=[];
@@ -24,7 +24,7 @@ class EditorController extends Controller
                 $back_img_url = $usertemplate->back_img_url ?? 'null';
                 
                 $data = [
-                    'userId' => $userId,
+                    'userId' => $authenticatedUserId,
                     'product_id' => $productId,
                     'template_height' => $template_height,
                     'template_width' => $template_width,
@@ -35,7 +35,7 @@ class EditorController extends Controller
             }
             
         } else {
-            $usertemplate = UserTemplate::where('user_id', $userId)->where('product_id', $productId)->first();
+            $usertemplate = UserTemplate::where('user_id', $authenticatedUserId)->where('product_id', $productId)->first();
             if ($usertemplate) {
                 $template_height = $usertemplate->template_height ?? 'null';
                 $template_width = $usertemplate->template_width ?? 'null';
@@ -43,7 +43,7 @@ class EditorController extends Controller
                 $back_img_url = $usertemplate->back_img_url ?? 'null';
                 
                 $data = [
-                    'userId' => $userId,
+                    'userId' => $authenticatedUserId,
                     'product_id' => $productId,
                     'token' => Str::random(60),
                     'template_height' => $template_height,
@@ -55,15 +55,6 @@ class EditorController extends Controller
             }
         }
     
-    
-        // Remove dd() statements here
-    
-        if ($authenticatedUserId != $userId) {
-            // Handle unauthorized access, redirect, or show an error
-            return abort(403, 'Unauthorized access.');
-        }
-    
-      
     
         return view('editor.index', ['data' => json_encode($data)]);
     }

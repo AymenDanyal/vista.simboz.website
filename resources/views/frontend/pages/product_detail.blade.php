@@ -143,7 +143,7 @@
 														<a href="{{route('add-to-wishlist',$product_detail->slug)}}" class="btn min"><i class="ti-heart"></i></a>
 														
 														@if(Auth::user())
-															<a href="{{ route('editor-vue', ['productId' => urlencode($product_detail->id), 'userId' => Auth()->user()->id]) }}" class="btn min"><i class="ti-pencil"></i> Edit in editor</a></div>
+															<a href="{{ route('editor-vue', ['productId' => urlencode($product_detail->id)]) }}" class="btn min"><i class="ti-pencil"></i> Edit in editor</a></div>
 														@endif
 																										
 												</form>

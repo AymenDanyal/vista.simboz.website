@@ -31,13 +31,14 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+  /*   public function create()
     {
+    
         $brand=Brand::get();
         $category=Category::where('is_parent',1)->get();
         // return $category;
         return view('backend.product.create')->with('categories',$category)->with('brands',$brand);
-    }
+    } */
 
     /**
      * Store a newly created resource in storage.
@@ -71,7 +72,7 @@ class ProductController extends Controller
         
         $data=$request->all();
         // Remove the 'template' field from the data array
-        $data = $request->except('template');
+        
         $slug=Str::slug($request->title);
         $count=Product::where('slug',$slug)->count();
         if($count>0){
@@ -119,10 +120,10 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+   /*  public function show($id)
     {
         //
-    }
+    } */
 
     /**
      * Show the form for editing the specified resource.
@@ -131,16 +132,25 @@ class ProductController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
-    {
-        $brand=Brand::get();
-        $product=Product::findOrFail($id);
-        $category=Category::where('is_parent',1)->get();
-        $items=Product::where('id',$id)->get();
-        // return $items;
-        return view('backend.product.edit')->with('product',$product)
-                    ->with('brands',$brand)
-                    ->with('categories',$category)->with('items',$items);
-    }
+{
+    $brand = Brand::get();
+    $product = Product::findOrFail($id);
+    $category = Category::where('is_parent', 1)->get();
+    
+    // Assuming TemplateApi returns a single object
+    $template = TemplateApi::where('product_id' , $product->id)->first(); // Use first() to retrieve a single result
+   
+    $items = Product::where('id', $id)->get();
+
+    return view('backend.product.edit')
+        ->with('product', $product)
+        ->with('brands', $brand)
+        ->with('template', $template)
+        ->with('categories', $category)
+        ->with('items', $items);
+}
+
+    
 
     /**
      * Update the specified resource in storage.
@@ -166,7 +176,10 @@ class ProductController extends Controller
             'status'=>'required|in:active,inactive',
             'condition'=>'required|in:default,new,hot',
             'price'=>'required|numeric',
-            'discount'=>'nullable|numeric'
+            'discount'=>'nullable|numeric',
+            'template'=>'string',
+            'template_width'=>'numeric',
+            'template_height'=>'numeric',
         ]);
 
         $data=$request->all();
@@ -181,6 +194,14 @@ class ProductController extends Controller
         // return $data;
         $status=$product->fill($data)->save();
         if($status){
+            $template=TemplateApi::where(['product_id'=>$product->id,
+                                          ])->first();
+                                        
+            $template->template_height= $request->input('template_height');
+            $template->template_width= $request->input('template_width');
+            $template->front=$request->input('template');
+            $template->save();
+
             request()->session()->flash('success','Product Successfully updated');
         }
         else{
