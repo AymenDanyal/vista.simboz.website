@@ -134,7 +134,7 @@
                                                     <a title="Wishlist" href="{{route('add-to-wishlist',$product->slug)}}" ><i class=" ti-heart "></i><span>Add to Wishlist</span></a>
                                                 </div>
                                                 <div class="product-action-2">
-                                                    <a title="Add to cart" href="{{route('add-to-cart',$product->slug)}}">Add to cart</a>
+                                                    <button data-slug="{{$product->slug}}" class='cart btn' type="submit" class="btn">Add to cart</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -517,6 +517,7 @@
 @endsection
 
 @push('styles')
+
    <style>
         /* Banner Sliding */
         #Gslider .carousel-inner {
@@ -627,6 +628,28 @@
             }
             return false
         }
+
+        $('.cart').click(function() {
+        var quantity = $('#quantity').val();
+        var slug = $(this).data('slug');
+        // alert(quantity);
+        $.ajax({
+            url: "{{ route('add-to-cart') }}",
+            type: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                quantity: 1,
+                slug: slug
+            },
+
+            success: function(response) {
+                if (response.success) {
+                    $('.reloadCart').html(response.reloadCart);
+                }
+            }
+            
+        })
+    });
     </script>
 
 @endpush

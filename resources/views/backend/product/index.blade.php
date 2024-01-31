@@ -100,7 +100,7 @@
                     <td>
                         <a href="{{route('product.edit',$product->id)}}" class="btn btn-primary btn-sm float-left mr-1" style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" title="edit" data-placement="bottom"><i class="fas fa-edit"></i></a>
                         <a href="{{ route('editor-vue', ['productId' => $product->id, 'userId' => Auth::user()->id]) }}" class="btn btn-primary btn-sm float-left mr-1" style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" title="Open in Editor" data-placement="bottom">
-                          <p>Editor</p>
+                            <i class="fas fa-paint-brush"></i>
                         </a>     
                         <form method="POST" action="{{route('product.destroy',[$product->id])}}">
                       @csrf
