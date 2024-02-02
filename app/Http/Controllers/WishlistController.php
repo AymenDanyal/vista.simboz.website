@@ -24,12 +24,18 @@ class WishlistController extends Controller
             request()->session()->flash('error','Invalid Products');
             return back();
         }
+        $reloadCart = view('frontend.layouts.header')->render();
 
         $already_wishlist = Wishlist::where('user_id', auth()->user()->id)->where('cart_id',null)->where('product_id', $product->id)->first();
         // return $already_wishlist;
         if($already_wishlist) {
-            request()->session()->flash('error','You already placed in wishlist');
-            return back();
+            $already_wishlist->delete();
+            return response()->json([
+                'success' => true,
+                'reloadCart' => $reloadCart,
+                'message' => 'removed',
+            ]); 
+            
         }else{
             
             $wishlist = new Wishlist;
@@ -41,8 +47,12 @@ class WishlistController extends Controller
             if ($wishlist->product->stock < $wishlist->quantity || $wishlist->product->stock <= 0) return back()->with('error','Stock not sufficient!.');
             $wishlist->save();
         }
-        request()->session()->flash('success','Product successfully added to wishlist');
-        return back();       
+        
+        return response()->json([
+            'success' => true,
+            'reloadCart' => $reloadCart,
+            'message' => 'added',
+        ]);     
     }  
     
     public function wishlistDelete(Request $request){

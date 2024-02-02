@@ -144,9 +144,14 @@
                                         <!--/ End Input Order -->
                                     </div>
                                     <div class="add-to-cart mt-4">
-                                        <button data-slug="{{$product_detail->slug}}" id='cart' type="submit" class="btn">Add to cart</button>
-                                        <a href="{{ route('add-to-wishlist', $product_detail->slug) }}" class="btn min"><i
-                                                class="ti-heart"></i></a>
+                                        <button data-slug="{{ $product_detail->slug }}" id='cart' type="submit"
+                                            class="btn">Add to cart</button>
+
+                                        <button data-slug="{{ $product_detail->slug }}"
+                                            class="addWhishList {{ $inWishList ? 'btnLiked' : 'btn' }} btn"id="whishListButton"><i
+                                                class="ti-heart"></i>
+                                        </button>
+
 
                                         @if (Auth::user())
                                             <a href="{{ route('editor-vue', ['productId' => urlencode($product_detail->id)]) }}"
@@ -601,28 +606,67 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 
     <script>
-        $('#cart').click(function() {
-            var quantity = $('#quantity').val();
-            var slug = $(this).data('slug');
-            // alert(quantity);
-            $.ajax({
-                url: "{{ route('add-to-cart') }}",
-                type: "POST",
-                data: {
-                    _token: "{{ csrf_token() }}",
-                    quantity: quantity,
-                    slug: slug
-                },
+        $(document).ready(function() {
+            $('#cart').click(function() {
+                var quantity = $('#quantity').val();
+                var slug = $(this).data('slug');
+                // alert(quantity);
+                $.ajax({
+                    url: "{{ route('add-to-cart') }}",
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        quantity: quantity,
+                        slug: slug
+                    },
 
-				success: function(response) {
-                    if (response.success) {
-                        $('.reloadCart').html(response.reloadCart);
-						
-						$('.alert-success').show();	
+                    success: function(response) {
+                        if (response.success) {
+                            $('.reloadCart').html(response.reloadCart);
+                            $('#addProduct').text('Product Added Successfully').show();
+                            setTimeout(function() {
+                                $('#addProduct').fadeOut();
+                            }, 3000);
+
+                        }
                     }
-                }
-                
-            })
+
+                })
+            });
+            $('.addWhishList').click(function() {
+
+                var slug = $(this).data('slug');
+                // alert(quantity);
+                $.ajax({
+                    url: "{{ route('add-to-wishlist') }}",
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        slug: slug
+                    },
+
+                    success: function(response) {
+                        if (response.success) {
+                            $('.reloadCart').html(response.reloadCart);
+                            if (response.message.includes('added')) {
+                                $('#whishListButton').css('background-color', '#F7941D');
+                                $('#addWishList2').show();
+                                setTimeout(function() {
+                                    $('#addWishList2').fadeOut();
+                                }, 3000);
+                            } else {
+                                $('#removeWishList2').show();
+                                $('#whishListButton').css('background-color', '#333');
+                                setTimeout(function() {
+                                    $('#removeWishList2').fadeOut();
+                                }, 3000);
+                            }
+                        }
+                    }
+
+                })
+
+            });
         });
-	</script>
-    @endpush
+    </script>
+@endpush

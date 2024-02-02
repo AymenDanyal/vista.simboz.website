@@ -1,9 +1,12 @@
-@if(session('success'))
-    <div class="alert alert-success alert-dismissable fade show text-center">
-        <button class="close" data-dismiss="alert" aria-label="Close">×</button>
-        {{session('success')}}
-    </div>
-@endif
+
+<div id="addProduct"  class="alert alert-success alert-dismissable fade show text-center" style="display: none">
+    <button class="close" data-dismiss="alert" aria-label="Close">×</button>
+    <p >Product Added To Cart</p>
+</div>
+<div id="addWishlist"  class="alert alert-success alert-dismissable fade show text-center" style="display: none">
+    <button class="close" data-dismiss="alert" aria-label="Close">×</button>
+    <p >Product Added To Wishlsit</p>
+</div>
 
 
 @if(session('error'))

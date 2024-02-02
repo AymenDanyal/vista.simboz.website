@@ -18,7 +18,7 @@ class CartController extends Controller
     public function addToCart(Request $request){
        //  dd($request->all());
         if (empty($request->slug)) {
-            request()->session()->flash('error','Invalid Products');
+  
             return back();
         }        
         $product = Product::where('slug', $request->slug)->first();
@@ -51,6 +51,7 @@ class CartController extends Controller
             $wishlist=Wishlist::where('user_id',auth()->user()->id)->where('cart_id',null)->update(['cart_id'=>$cart->id]);
         }
         $reloadCart = view('frontend.layouts.header')->render();
+        $notification = view('frontend.layouts.notification')->render();
         
         
         request()->session()->flash('success','Product successfully added to cart');

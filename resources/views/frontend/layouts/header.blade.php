@@ -181,13 +181,27 @@
         </div>
         <!-- Header Inner -->
         <div class="header-inner">
+            <div id="addProduct2"  class="alert alert-success alert-dismissable fade show text-center" style="display: none">
+                <button class="close" data-dismiss="alert" aria-label="Close">×</button>
+                <p >Product Added To Cart</p>
+            </div>
+            <div id="addWishList2"  class="alert alert-success alert-dismissable fade show text-center" style="display: none">
+                <button class="close" data-dismiss="alert" aria-label="Close">×</button>
+                <p >Product Added To Wishlist</p>
+            </div>
+            <div id="removeWishList2"  class="alert alert-success alert-dismissable fade show text-center" style="display: none">
+                <button class="close" data-dismiss="alert" aria-label="Close">×</button>
+                <p >Product Remove From Wishlist</p>
+            </div>
             <div class="container">
                 <div class="cat-nav-head">
                     <div class="row">
                         <div class="col-lg-12 col-12">
                             <div class="menu-area">
                                 <!-- Main Menu -->
+                                
                                 <nav class="navbar navbar-expand-lg">
+                                    
                                     <div class="navbar-collapse">	
                                         <div class="nav-inner">	
                                             <ul class="nav main-menu menu navbar-nav">
@@ -200,7 +214,9 @@
                                                 <li class="{{Request::path()=='contact' ? 'active' : ''}}"><a href="{{route('contact')}}">Contact Us</a></li>
                                             </ul>
                                         </div>
+                                       
                                     </div>
+                                    
                                 </nav>
                                 <!--/ End Main Menu -->	
                             </div>
