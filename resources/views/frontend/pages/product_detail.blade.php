@@ -629,6 +629,15 @@
                             }, 3000);
 
                         }
+                    },
+                    error: function(xhr, status, error) {
+                        if (xhr.status == 401) {
+                            // If unauthenticated, redirect to the login page
+                            window.location.href = "{{ route('login.form') }}";
+                        } else {
+                            // Handle other errors
+                            console.error(error);
+                        }
                     }
 
                 })
@@ -661,6 +670,15 @@
                                     $('#removeWishList2').fadeOut();
                                 }, 3000);
                             }
+                        }
+                    },
+                     error: function(xhr, status, error) {
+                        if (xhr.status == 401) {
+                            // If unauthenticated, redirect to the login page
+                            window.location.href = "{{ route('login.form') }}";
+                        } else {
+                            // Handle other errors
+                            console.error(error);
                         }
                     }
 

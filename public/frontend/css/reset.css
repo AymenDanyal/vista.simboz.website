@@ -9,6 +9,13 @@ Version:1.0
 /*--------------------------------------------------------------
 # Normalize
 --------------------------------------------------------------*/
+#logo-easypaisa{
+	height: 50px;
+}
+
+
+
+
 html {
 	font-family: 'Poppins', sans-serif;
 	-moz-text-size-adjust: 100%;

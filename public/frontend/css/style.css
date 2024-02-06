@@ -35,6 +35,10 @@ Version:1.0
 20. 404 Error CSS
 21. Footer CSS
 ========================================*/
+
+.yellow:hover{
+	color:#F7941D;
+}
 .color-plate {
 	position: fixed;
 	display: block;
@@ -3388,7 +3392,7 @@ Version:1.0
 
 .shop.checkout .single-widget.payement {
 	padding: 0px 38px;
-	text-align: center;
+	
 	margin-top: 30px;
 }
 .shop.checkout .single-widget.get-button {

@@ -2,7 +2,9 @@
 	<!-- Start Footer Area -->
 	<footer class="footer">
 		<!-- Footer Top -->
+		
 		<div class="footer-top section">
+			
 			<div class="container">
 				<div class="row">
 					<div class="col-lg-5 col-md-6 col-12">
@@ -15,7 +17,6 @@
 								$settings=DB::table('settings')->get();
 							@endphp
 							<p class="text">@foreach($settings as $data) {{$data->short_des}} @endforeach</p>
-							<p class="call">Got Question? Call us 24/7<span><a href="tel:123456789">@foreach($settings as $data) {{$data->phone}} @endforeach</a></span></p>
 						</div>
 						<!-- End Single Widget -->
 					</div>
@@ -28,6 +29,9 @@
 								<li><a href="#">Faq</a></li>
 								<li><a href="#">Terms & Conditions</a></li>
 								<li><a href="{{route('contact')}}">Contact Us</a></li>
+								<li><i class="ti-location-pin"></i> <a href="{{ route('order.track') }}">Track Order</a>
+								</li>
+								
 								<li><a href="#">Help</a></li>
 							</ul>
 						</div>
@@ -50,14 +54,16 @@
 					<div class="col-lg-3 col-md-6 col-12">
 						<!-- Single Widget -->
 						<div class="single-footer social">
-							<h4>Get In Tuch</h4>
+							<h4>Get In Touch</h4>
 							<!-- Single Widget -->
+							
 							<div class="contact">
 								<ul>
 									<li>@foreach($settings as $data) {{$data->address}} @endforeach</li>
 									<li>@foreach($settings as $data) {{$data->email}} @endforeach</li>
 									<li>@foreach($settings as $data) {{$data->phone}} @endforeach</li>
 								</ul>
+								
 							</div>
 					
 						</div>
@@ -67,24 +73,7 @@
 			</div>
 		</div>
 		<!-- End Footer Top -->
-		<div class="copyright">
-			<div class="container">
-				<div class="inner">
-					<div class="row">
-						<div class="col-lg-6 col-12">
-							<div class="left">
-								<p>Copyright © {{date('Y')}} <a href="https://github.com/Prajwal100" target="_blank">Prajwal Rai</a>  -  All Rights Reserved.</p>
-							</div>
-						</div>
-						<div class="col-lg-6 col-12">
-							<div class="right">
-								<img src="{{asset('backend/img/payments.png')}}" alt="#">
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+	
 	</footer>
 	<!-- /End Footer Area -->
  
@@ -96,8 +85,7 @@
 	<script src="{{asset('frontend/js/popper.min.js')}}"></script>
 	<!-- Bootstrap JS -->
 	<script src="{{asset('frontend/js/bootstrap.min.js')}}"></script>
-	<!-- Color JS -->
-	<script src="{{asset('frontend/js/colors.js')}}"></script>
+
 	<!-- Slicknav JS -->
 	<script src="{{asset('frontend/js/slicknav.min.js')}}"></script>
 	<!-- Owl Carousel JS -->

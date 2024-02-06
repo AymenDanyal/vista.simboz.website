@@ -157,7 +157,8 @@
                                                 </div>
                                             </div>
                                             <div class="product-content">
-                                                <h3><a
+                                                <h3>
+                                                    <a
                                                         href="{{ route('product-detail', $product->slug) }}">{{ $product->title }}</a>
                                                 </h3>
                                                 <div class="product-price">
@@ -707,7 +708,16 @@
                                 $('#addProduct2').fadeOut();
                             }, 3000);
                         }
+                    },
+                    error: function(xhr, status, error) {
+                    if (xhr.status == 401) {
+                        // If unauthenticated, redirect to the login page
+                        window.location.href = "{{ route('login.form') }}";
+                    } else {
+                        // Handle other errors
+                        console.error(error);
                     }
+                }
 
                 })
 
@@ -738,9 +748,21 @@
                                 }, 3000);
                             }
                         }
+                    },
+                    error: function(xhr, status, error) {
+                    if (xhr.status == 401) {
+                        // If unauthenticated, redirect to the login page
+                        window.location.href = "{{ route('login.form') }}";
+                    } else {
+                        // Handle other errors
+                        console.error(error);
                     }
 
-                })
+
+
+                    
+
+                }})
 
             });
         });

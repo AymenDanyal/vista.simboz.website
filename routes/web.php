@@ -73,8 +73,8 @@ Route::get('/product-cat/{slug}', [FrontendController::class, 'productCat'])->na
 Route::get('/product-sub-cat/{slug}/{sub_slug}', [FrontendController::class, 'productSubCat'])->name('product-sub-cat');
 Route::get('/product-brand/{slug}', [FrontendController::class, 'productBrand'])->name('product-brand');
 // Cart section
-Route::post('/add-to-cart}', [CartController::class, 'addToCart'])->name('add-to-cart')->middleware('user');
-Route::post('/add-to-cart', [CartController::class, 'singleAddToCart'])->name('single-add-to-cart')->middleware('user');
+Route::post('/add-to-cart}', [CartController::class, 'addToCart'])->name('add-to-cart')->middleware('auth');
+Route::post('/add-to-cart', [CartController::class, 'singleAddToCart'])->name('single-add-to-cart')->middleware('auth');
 Route::get('cart-delete/{id}', [CartController::class, 'cartDelete'])->name('cart-delete');
 Route::post('cart-update', [CartController::class, 'cartUpdate'])->name('cart.update');
 
@@ -86,7 +86,7 @@ Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout')->
 Route::get('/wishlist', function () {
     return view('frontend.pages.wishlist');
 })->name('wishlist');
-Route::post('/wishlist', [WishlistController::class, 'wishlist'])->name('add-to-wishlist')->middleware('user');
+Route::post('/wishlist', [WishlistController::class, 'wishlist'])->name('add-to-wishlist')->middleware('auth');
 Route::get('wishlist-delete/{id}', [WishlistController::class, 'wishlistDelete'])->name('wishlist-delete');
 Route::post('cart/order', [OrderController::class, 'store'])->name('cart.order');
 Route::get('order/pdf/{id}', [OrderController::class, 'pdf'])->name('order.pdf');

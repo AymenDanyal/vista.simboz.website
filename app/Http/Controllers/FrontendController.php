@@ -49,13 +49,17 @@ class FrontendController extends Controller
         return view('frontend.pages.contact');
     }
     public function productDetail($slug){
+        
         $product_detail = Product::getProductBySlug($slug);
-        $wishList = Wishlist::where(['product_id' => $product_detail->id, 'user_id' => Auth()->user()->id])->first();
+        if(Auth()->user()){
+            $wishList = Wishlist::where(['product_id' => $product_detail->id, 'user_id' => Auth()->user()->id])->first();
     
-        // Initialize $inWishList
-        $inWishList = ($wishList) ? true : false;
-    
-        return view('frontend.pages.product_detail')->with(['product_detail' => $product_detail, 'inWishList' => $inWishList]);
+            // Initialize $inWishList
+            $inWishList = ($wishList) ? true : false;
+        
+            return view('frontend.pages.product_detail')->with(['product_detail' => $product_detail, 'inWishList' => $inWishList]);    
+        }
+        return view('frontend.pages.product_detail')->with(['product_detail' => $product_detail, 'inWishList' => false]);
     }
 
     public function productGrids(){

@@ -43,10 +43,10 @@ class PaypalController extends Controller
         Cart::where('user_id', auth()->user()->id)->where('order_id', null)->update(['order_id' => session()->get('id')]);
 
         // return session()->get('id');
-        $provider = new ExpressCheckout;
+       /*  $provider = new ExpressCheckout;
   
         $response = $provider->setExpressCheckout($data);
-    
+     */
         return redirect($response['paypal_link']);
     }
    
@@ -67,7 +67,7 @@ class PaypalController extends Controller
      */
     public function success(Request $request)
     {
-        $provider = new ExpressCheckout;
+        //$provider = new ExpressCheckout;
         $response = $provider->getExpressCheckoutDetails($request->token);
         // return $response;
   

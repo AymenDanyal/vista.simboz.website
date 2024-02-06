@@ -17,6 +17,7 @@ class CartController extends Controller
 
     public function addToCart(Request $request){
        //  dd($request->all());
+       
         if (empty($request->slug)) {
   
             return back();
@@ -115,43 +116,74 @@ class CartController extends Controller
         return back();       
     }     
 
-    public function cartUpdate(Request $request){
-        // dd($request->all());
-        if($request->quant){
-            $error = array();
-            $success = '';
-            // return $request->quant;
-            foreach ($request->quant as $k=>$quant) {
-                // return $k;
-                $id = $request->qty_id[$k];
-                // return $id;
-                $cart = Cart::find($id);
-                // return $cart;
-                if($quant > 0 && $cart) {
-                    // return $quant;
+    public function cartUpdate(Request $request)
+{
+    if ($request->ajax()) {
+        $response = [];
+        $error = [];
+        $success = '';
+        $productPrice=0;
+        
 
-                    if($cart->product->stock < $quant){
-                        request()->session()->flash('error','Out of stock');
-                        return back();
+        // Assuming 'qty' and 'qty_id' keys are present in your request
+        if ($request->qty && $request->qty_id) {
+            $qty = $request->qty;
+            $qtyIds = is_array($request->qty_id) ? $request->qty_id : [$request->qty_id];
+
+            foreach ($qtyIds as $k => $qtyId) {
+                $id = $qtyId;
+                $cart = Cart::find($id);
+                $productId=$cart->product_id;    
+
+                if ($qty > 0 && $cart) {
+                    if ($cart->product->stock < $qty) {
+                        $error[] = 'Out of stock for ' . $cart->product->title;
+                        continue;
                     }
-                    $cart->quantity = ($cart->product->stock > $quant) ? $quant  : $cart->product->stock;
-                    // return $cart;
-                    
-                    if ($cart->product->stock <=0) continue;
-                    $after_price=($cart->product->price-($cart->product->price*$cart->product->discount)/100);
-                    $cart->amount = $after_price * $quant;
-                    // return $cart->price;
+
+                    $cart->quantity = ($cart->product->stock > $qty) ? $qty : $cart->product->stock;
+
+                    if ($cart->product->stock <= 0) continue;
+
+                    $afterPrice = ($cart->product->price - ($cart->product->price * $cart->product->discount) / 100);
+                    $productPrice=$productPrice+$afterPrice * $qty;
+                    $cart->amount = $afterPrice * $qty;
                     $cart->save();
                     $success = 'Cart successfully updated!';
-                }else{
-                    $error[] = 'Cart Invalid!';
+                } else {
+                    $error[] = 'Invalid cart for ' . $cart->product->title;
                 }
             }
-            return back()->with($error)->with('success', $success);
-        }else{
-            return back()->with('Cart Invalid!');
-        }    
+            $total= Cart::where('user_id',Auth()->user()->id)->where('order_id',null)->sum('amount');
+
+            if (!empty($error)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => $error,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => $success,
+                    'newAmount' => $total,
+                    'productId' => $productId,    
+                    'productPrice' => $productPrice,
+                    
+                ]);
+            }
+        } else {
+            $response['status'] = 'error';
+            $response['message'] = 'Invalid cart request!';
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid cart request!',
+            ]);
+            
+        }
+    } else {
+        return back()->with('error', 'Invalid request!');
     }
+}
 
     // public function addToCart(Request $request){
     //     // return $request->all();
