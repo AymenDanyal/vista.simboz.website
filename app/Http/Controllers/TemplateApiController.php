@@ -417,10 +417,7 @@ class TemplateApiController extends Controller
                 throw new \Exception('User not found.');
             }
     
-    
-            if ($rememberToken == $token) {
-                throw new \Exception('You are not authorized to access this API.');
-            }
+
     
             // Validate required fields
             if (!$userId || !$frontImage || !$templateWidth || !$backImage || !$templateHeight) {

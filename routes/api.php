@@ -24,6 +24,7 @@ Route::get('/clear-config-cache', function () {
 Route::prefix('template')->group(function () {
     Route::get('/', 'TemplateApiController@index');
     Route::post('/storeTemp', 'TemplateApiController@storeTemp');
+    Route::post('/saveExit', 'TemplateApiController@saveExit');
     Route::post('/storePng', 'TemplateApiController@storePng');
     Route::get('/showTemp/{id}/{position}', 'TemplateApiController@show');
     Route::put('/updateTemp/{id}', 'TemplateApiController@update');

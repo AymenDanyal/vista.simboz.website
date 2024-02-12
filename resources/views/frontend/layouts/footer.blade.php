@@ -138,4 +138,16 @@
 
 			});
 		});
-	  </script>
+	</script>
+
+
+	
+
+<!-- new front end -->
+	<script src="{{asset('frontend/new/js/jquery.js')}}"></script>
+	<!-- include jQuery -->
+	<script  src="{{asset('frontend/new/js/plugins.js')}}" ></script>
+	<!-- include jQuery -->
+	<script src="{{asset('frontend/new/js/jquery.main.js')}}"></script>
+
+	  

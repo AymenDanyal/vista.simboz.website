@@ -44,6 +44,7 @@ class EditorController extends Controller
                     'front_img_url' => $usertemplate->front_img_url ?? 'null',
                     'back_img_url' => $usertemplate->back_img_url ?? 'null',
                     'role' => false,
+                    "back"=>false,
                 ];
             } else {
                 // If UserTemplate is not found, fallback to TemplateApi
@@ -58,11 +59,13 @@ class EditorController extends Controller
                         'front_img_url' => $templateApi->front_img_url ?? 'null',
                         'back_img_url' => $templateApi->back_img_url ?? 'null',
                         'role' => false, // or false, depending on your logic
+                        "back"=>false,
                     ];
                 }
             }
         }
-
+        //'{"userId":1,"product_id":"30","template_height":72,"template_width":36,"front_img_url":"null","back":false,"role":false}';
+  
         return view('editor.index', ['data' => json_encode($data)]);
 
     }
