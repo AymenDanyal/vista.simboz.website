@@ -7,7 +7,21 @@
 	
 	
 	<!-- End Preloader -->
-	
+	<div id="wrapper">
+		<!-- Page Loader -->
+		<div id="pre-loader" class="loader-container">
+			<div class="loader">
+				<img src="images/svg/rings.svg" alt="loader">
+			</div>
+		</div>
+		<!-- W1 start here -->
+		<div class="w1">
+
+
+			
+
+
+			
 	@include('frontend.layouts.notification')
 	<!-- Header -->
 	@include('frontend.layouts.header')
@@ -17,4 +31,4 @@
 	@include('frontend.layouts.footer')
 
 </body>
-</html>
+</html>	

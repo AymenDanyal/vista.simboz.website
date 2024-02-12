@@ -2,38 +2,38 @@
 @section('title', 'E-SHOP || HOME PAGE')
 @section('main-content')
     <!-- Slider Area -->
-    @if (count($banners) > 0)
-        <section id="Gslider" class="carousel slide" data-ride="carousel">
-            <ol class="carousel-indicators">
-                @foreach ($banners as $key => $banner)
-                    <li data-target="#Gslider" data-slide-to="{{ $key }}" class="{{ $key == 0 ? 'active' : '' }}">
-                    </li>
-                @endforeach
 
-            </ol>
-            <div class="carousel-inner" role="listbox">
+    <div class="mt-main-slider">
+        <!-- slider banner-slider start here -->
+        <div class="slider banner-slider">
+            @if (count($banners) > 0)
                 @foreach ($banners as $key => $banner)
-                    <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
-                        <img class="first-slide" src="{{ $banner->photo }}" alt="First slide">
-                        <div class="carousel-caption d-none d-md-block text-left">
-                            <h1 class="wow fadeInDown">{{ $banner->title }}</h1>
-                            <p>{!! html_entity_decode($banner->description) !!}</p>
-                            <a class="btn btn-lg ws-btn wow fadeInUpBig" href="{{ route('product-grids') }}"
-                                role="button">Shop Now<i class="far fa-arrow-alt-circle-right"></i></i></a>
+                    <div class="holder text-center" style="background-image: url({{ $banner->photo }});">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="text centerize">
+                                        <strong class="title">{{ $banner->title }}</strong>
+                                        <h1>LIGHTING</h1>
+                                        <h2>PENDANT LAMPS</h2>
+                                        <div class="txt">
+                                            <p>{!! html_entity_decode($banner->description) !!}</p>
+                                        </div>
+                                        <a href="{{ route('product-grids') }}" class="shop">shop now</a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 @endforeach
-            </div>
-            <a class="carousel-control-prev" href="#Gslider" role="button" data-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="sr-only">Previous</span>
-            </a>
-            <a class="carousel-control-next" href="#Gslider" role="button" data-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="sr-only">Next</span>
-            </a>
-        </section>
-    @endif
+
+            @endif
+
+        </div>
+
+    </div>
+
+
 
     <!--/ End Slider Area -->
 
@@ -42,10 +42,7 @@
         <div class="container-fluid">
             <div class="row">
                 @php
-                    $category_lists = DB::table('categories')
-                        ->where('status', 'active')
-                        ->limit(3)
-                        ->get();
+                    $category_lists = DB::table('categories')->where('status', 'active')->limit(3)->get();
                 @endphp
                 @if ($category_lists)
                     @foreach ($category_lists as $cat)
@@ -73,7 +70,83 @@
     </section>
     <!-- End Small Banner -->
 
+
     <!-- Start Product Area -->
+    <!-- mt producttabs start here -->
+    <div class="mt-producttabs wow fadeInUp" data-wow-delay="0.4s">
+        <!-- producttabs start here -->
+        @php
+            $categories = DB::table('categories')->where('status', 'active')->where('is_parent', 1)->get();
+            // dd($categories);
+        @endphp
+
+        <ul class="producttabs">
+            @foreach ($categories as $key => $cat)
+                <li><a href="#{{ $cat->id }}" class="active">{{ $cat->title }}</a></li>
+            @endforeach
+        </ul>
+        <!-- producttabs end here -->
+        <div class="tab-content text-center">
+            @foreach ($product_lists as $key => $product)
+                <div id="{{ $product->cat_id }}">
+                    <!-- tabs slider start here -->
+                    <div class="tabs-slider">
+                        <!-- slide start here -->
+
+                        <div class="slide">
+                            <!-- mt product1 center start here -->
+                            <div class="mt-product1 mt-paddingbottom20">
+                                <div class="box">
+                                    <div class="b1">
+                                        <div class="b2">
+                                            <a href="{{ route('product-detail', $product->slug) }}"><img
+                                                    src="{{ $product->photo }}" alt="image description"></a>
+                                            @if ($product->stock <= 0)
+                                                <span class="out-of-stock">Sale out</span>
+                                            @elseif($product->condition == 'new')
+                                            <span class="new">New</span @elseif($product->condition == 'hot') <span
+                                                    class="hot">Hot</span>
+                                            @else
+                                                <span class="price-dec">{{ $product->discount }}% Off</span>
+                                            @endif
+
+                                            <ul class="links">
+                                                <li>
+                                                    <a class="cart btn"  data-slug="{{ $product->slug }}">
+                                                        <i class="icon-handbag"></i>
+                                                        <span>Add to Cart</span>
+                                                    </a>
+                                                </li>
+                                                <li><a data-slug="{{ $product->slug }}" class="addWhishlist"href="#"><i class="icomoon icon-heart-empty"></i></a></li>
+                                                <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                               
+                            </div><!-- mt product1 center end here -->
+                            <!-- mt product1 center start here -->
+                            
+                            <!-- mt product1 center end here -->
+                        </div>
+                        <!-- slide end here -->
+                    </div>
+                    <!-- tabs slider end here -->
+                </div>
+            @endforeach
+
+        </div>
+    </div>
+    <!-- mt producttabs end here -->
+
+
+
+
+
+
+
+
     <div class="product-area section">
         <div class="container">
             <div class="row">
@@ -90,10 +163,7 @@
                             <!-- Tab Nav -->
                             <ul class="nav nav-tabs filter-tope-group" id="myTab" role="tablist">
                                 @php
-                                    $categories = DB::table('categories')
-                                        ->where('status', 'active')
-                                        ->where('is_parent', 1)
-                                        ->get();
+                                    $categories = DB::table('categories')->where('status', 'active')->where('is_parent', 1)->get();
                                     // dd($categories);
                                 @endphp
                                 @if ($categories)
@@ -129,8 +199,9 @@
                                                     @if ($product->stock <= 0)
                                                         <span class="out-of-stock">Sale out</span>
                                                     @elseif($product->condition == 'new')
-                                                    <span class="new">New</span @elseif($product->condition == 'hot')
-                                                            <span class="hot">Hot</span>
+                                                        <span class="new">New</span
+                                                        @elseif($product->condition == 'hot') <span
+                                                            class="hot">Hot</span>
                                                     @else
                                                         <span class="price-dec">{{ $product->discount }}% Off</span>
                                                     @endif
@@ -295,11 +366,7 @@
                     </div>
                     <div class="row">
                         @php
-                            $product_lists = DB::table('products')
-                                ->where('status', 'active')
-                                ->orderBy('id', 'DESC')
-                                ->limit(6)
-                                ->get();
+                            $product_lists = DB::table('products')->where('status', 'active')->orderBy('id', 'DESC')->limit(6)->get();
                         @endphp
                         @foreach ($product_lists as $product)
                             <div class="col-md-4">
@@ -374,50 +441,6 @@
     </section>
     <!-- End Shop Blog  -->
 
-    <!-- Start Shop Services Area -->
-    <section class="shop-services section home">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-3 col-md-6 col-12">
-                    <!-- Start Single Service -->
-                    <div class="single-service">
-                        <i class="ti-rocket"></i>
-                        <h4>Free shiping</h4>
-                        <p>Orders over $100</p>
-                    </div>
-                    <!-- End Single Service -->
-                </div>
-                <div class="col-lg-3 col-md-6 col-12">
-                    <!-- Start Single Service -->
-                    <div class="single-service">
-                        <i class="ti-reload"></i>
-                        <h4>Free Return</h4>
-                        <p>Within 30 days returns</p>
-                    </div>
-                    <!-- End Single Service -->
-                </div>
-                <div class="col-lg-3 col-md-6 col-12">
-                    <!-- Start Single Service -->
-                    <div class="single-service">
-                        <i class="ti-lock"></i>
-                        <h4>Sucure Payment</h4>
-                        <p>100% secure payment</p>
-                    </div>
-                    <!-- End Single Service -->
-                </div>
-                <div class="col-lg-3 col-md-6 col-12">
-                    <!-- Start Single Service -->
-                    <div class="single-service">
-                        <i class="ti-tag"></i>
-                        <h4>Best Peice</h4>
-                        <p>Guaranteed price</p>
-                    </div>
-                    <!-- End Single Service -->
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- End Shop Services Area -->
 
     @include('frontend.layouts.newsletter')
 
@@ -614,7 +637,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
     <script>
         /*==================================================================
-                        [ Isotope ]*/
+                                [ Isotope ]*/
         $(document).ready(function() {
             var $topeContainer = $('.isotope-grid');
             var $filter = $('.filter-tope-group');
@@ -710,14 +733,14 @@
                         }
                     },
                     error: function(xhr, status, error) {
-                    if (xhr.status == 401) {
-                        // If unauthenticated, redirect to the login page
-                        window.location.href = "{{ route('login.form') }}";
-                    } else {
-                        // Handle other errors
-                        console.error(error);
+                        if (xhr.status == 401) {
+                            // If unauthenticated, redirect to the login page
+                            window.location.href = "{{ route('login.form') }}";
+                        } else {
+                            // Handle other errors
+                            console.error(error);
+                        }
                     }
-                }
 
                 })
 
@@ -750,19 +773,20 @@
                         }
                     },
                     error: function(xhr, status, error) {
-                    if (xhr.status == 401) {
-                        // If unauthenticated, redirect to the login page
-                        window.location.href = "{{ route('login.form') }}";
-                    } else {
-                        // Handle other errors
-                        console.error(error);
+                        if (xhr.status == 401) {
+                            // If unauthenticated, redirect to the login page
+                            window.location.href = "{{ route('login.form') }}";
+                        } else {
+                            // Handle other errors
+                            console.error(error);
+                        }
+
+
+
+
+
                     }
-
-
-
-                    
-
-                }})
+                })
 
             });
         });
