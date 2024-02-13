@@ -80,63 +80,76 @@
             // dd($categories);
         @endphp
 
-        <ul class="producttabs">
+        <ul class="producttabs" >
             @foreach ($categories as $key => $cat)
-                <li><a href="#{{ $cat->id }}" class="active">{{ $cat->title }}</a></li>
+                <li>
+                    <a href="#{{ $cat->id }}" class="">{{ $cat->title }}</a>
+                </li>
             @endforeach
         </ul>
         <!-- producttabs end here -->
+        
         <div class="tab-content text-center">
-            @foreach ($product_lists as $key => $product)
-                <div id="{{ $product->cat_id }}">
+            @php
+                $product_lists = DB::table('products')->where('status', 'active')->orderBy('id', 'DESC')->get();
+                $product_groups = $product_lists->groupBy('cat_id');
+                $slides_needed = count($product_groups);
+                $products_per_slide = 2;
+            @endphp
+        
+            @foreach ($product_groups as $cat_id => $products)
+                <div id="{{ $cat_id }}">
                     <!-- tabs slider start here -->
                     <div class="tabs-slider">
                         <!-- slide start here -->
-
                         <div class="slide">
-                            <!-- mt product1 center start here -->
-                            <div class="mt-product1 mt-paddingbottom20">
-                                <div class="box">
-                                    <div class="b1">
-                                        <div class="b2">
-                                            <a href="{{ route('product-detail', $product->slug) }}"><img
-                                                    src="{{ $product->photo }}" alt="image description"></a>
-                                            @if ($product->stock <= 0)
-                                                <span class="out-of-stock">Sale out</span>
-                                            @elseif($product->condition == 'new')
-                                            <span class="new">New</span @elseif($product->condition == 'hot') <span
-                                                    class="hot">Hot</span>
-                                            @else
-                                                <span class="price-dec">{{ $product->discount }}% Off</span>
-                                            @endif
-
-                                            <ul class="links">
-                                                <li>
-                                                    <a class="cart btn"  data-slug="{{ $product->slug }}">
-                                                        <i class="icon-handbag"></i>
-                                                        <span>Add to Cart</span>
+                            @foreach ($products->chunk($products_per_slide) as $chunk)
+                                <div class="mt-product1 mt-paddingbottom20">
+                                    <div class="box">
+                                        <div class="b1">
+                                            <div class="b2">
+                                                @foreach ($chunk as $product)
+                                                    <a href="{{ route('product-detail', $product->slug) }}">
+                                                        <img src="{{ $product->photo }}" alt="image description">
                                                     </a>
-                                                </li>
-                                                <li><a data-slug="{{ $product->slug }}" class="addWhishlist"href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a>
-                                                </li>
-                                            </ul>
+                                                    <span class="caption">
+                                                        @if ($product->stock <= 0)
+                                                            <span class="out-of-stock">Sale out</span>
+                                                        @elseif($product->condition == 'new')
+                                                            <span class="new">New</span>
+                                                        @elseif($product->condition == 'hot') 
+                                                            <span class="hot">Hot</span>
+                                                        @else
+                                                            <span class="price-dec">{{ $product->discount }}% Off</span>
+                                                        @endif
+                                                    </span>
+                                                    <ul class="links">
+                                                        <li>
+                                                            <a class="cart" data-slug="{{ $product->slug }}">
+                                                                <i class="icon-handbag"></i>
+                                                                <span id="test">Add to Cart</span>
+                                                            </a>
+                                                        </li>
+                                                        <li><a data-slug="{{ $product->slug }}" class="addWhishlist" href="#"><i
+                                                                    class="icomoon icon-heart-empty"></i></a></li>
+                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a>
+                                                        </li>
+                                                    </ul>
+                                                @endforeach
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                               
-                            </div><!-- mt product1 center end here -->
-                            <!-- mt product1 center start here -->
-                            
-                            <!-- mt product1 center end here -->
+                                </div><!-- mt product1 center end here -->
+                            @endforeach
                         </div>
                         <!-- slide end here -->
                     </div>
                     <!-- tabs slider end here -->
                 </div>
             @endforeach
-
         </div>
+        
+        
     </div>
     <!-- mt producttabs end here -->
 
@@ -144,124 +157,12 @@
 
 
 
-
-
-
-    <div class="product-area section">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <div class="section-title">
-                        <h2>Trending Item</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <div class="product-info">
-                        <div class="nav-main">
-                            <!-- Tab Nav -->
-                            <ul class="nav nav-tabs filter-tope-group" id="myTab" role="tablist">
-                                @php
-                                    $categories = DB::table('categories')->where('status', 'active')->where('is_parent', 1)->get();
-                                    // dd($categories);
-                                @endphp
-                                @if ($categories)
-                                    <button class="btn" style="background:black"data-filter="*">
-                                        All Products
-                                    </button>
-                                    @foreach ($categories as $key => $cat)
-                                        <button class="btn"
-                                            style="background:none;color:black;"data-filter=".{{ $cat->id }}">
-                                            {{ $cat->title }}
-                                        </button>
-                                    @endforeach
-                                @endif
-                            </ul>
-                            <!--/ End Tab Nav -->
-                        </div>
-                        <div class="tab-content isotope-grid" id="myTabContent">
-                            <!-- Start Single Tab -->
-                            @if ($product_lists)
-                                @foreach ($product_lists as $key => $product)
-                                    <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item {{ $product->cat_id }}">
-                                        <div class="single-product">
-                                            <div class="product-img">
-                                                <a href="{{ route('product-detail', $product->slug) }}">
-                                                    @php
-                                                        $photo = explode(',', $product->photo);
-                                                        // dd($photo);
-                                                    @endphp
-                                                    <img class="default-img" src="{{ $photo[0] }}"
-                                                        alt="{{ $photo[0] }}">
-                                                    <img class="hover-img" src="{{ $photo[0] }}"
-                                                        alt="{{ $photo[0] }}">
-                                                    @if ($product->stock <= 0)
-                                                        <span class="out-of-stock">Sale out</span>
-                                                    @elseif($product->condition == 'new')
-                                                        <span class="new">New</span
-                                                        @elseif($product->condition == 'hot') <span
-                                                            class="hot">Hot</span>
-                                                    @else
-                                                        <span class="price-dec">{{ $product->discount }}% Off</span>
-                                                    @endif
-
-
-                                                </a>
-                                                <div class="button-head">
-                                                    <div class="product-action">
-                                                        <a data-toggle="modal" data-target="#{{ $product->id }}"
-                                                            title="Quick View" href="#">
-                                                            <i class="ti-eye"></i>
-                                                            <span>Quick Shop</span>
-                                                        </a>
-
-                                                        <span data-slug="{{ $product->slug }}" class="addWhishlist">
-                                                            <span>Add to Wishlist</span>
-                                                            <i class="ti-heart"></i>
-                                                        </span>
-                                                    </div>
-                                                    <div class="product-action-2">
-                                                        <button data-slug="{{ $product->slug }}" class='cart btn'
-                                                            type="submit" class="btn">Add to cart</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="product-content">
-                                                <h3>
-                                                    <a
-                                                        href="{{ route('product-detail', $product->slug) }}">{{ $product->title }}</a>
-                                                </h3>
-                                                <div class="product-price">
-                                                    @php
-                                                        $after_discount = $product->price - ($product->price * $product->discount) / 100;
-                                                    @endphp
-                                                    <span>${{ number_format($after_discount, 2) }}</span>
-                                                    <del
-                                                        style="padding-left:4%;">${{ number_format($product->price, 2) }}</del>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-
-                                <!--/ End Single Tab -->
-                            @endif
-
-                            <!--/ End Single Tab -->
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     <!-- End Product Area -->
-    {{-- @php
-    $featured=DB::table('products')->where('is_featured',1)->where('status','active')->orderBy('id','DESC')->limit(1)->get();
-@endphp --}}
+    @php
+        $featured = DB::table('products')->where('is_featured', 1)->where('status', 'active')->orderBy('id', 'DESC')->limit(1)->get();
+    @endphp
     <!-- Start Midium Banner  -->
-    <section class="midium-banner">
+    {{-- <section class="midium-banner">
         <div class="container">
             <div class="row">
                 @if ($featured)
@@ -285,7 +186,7 @@
                 @endif
             </div>
         </div>
-    </section>
+    </section> --}}
     <!-- End Midium Banner -->
 
     <!-- Start Most Popular -->
@@ -352,59 +253,7 @@
     </div>
     <!-- End Most Popular Area -->
 
-    <!-- Start Shop Home List  -->
-    <section class="shop-home-list section">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 col-md-12 col-12">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="shop-section-title">
-                                <h1>Latest Items</h1>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        @php
-                            $product_lists = DB::table('products')->where('status', 'active')->orderBy('id', 'DESC')->limit(6)->get();
-                        @endphp
-                        @foreach ($product_lists as $product)
-                            <div class="col-md-4">
-                                <!-- Start Single List  -->
-                                <div class="single-list">
-                                    <div class="row">
-                                        <div class="col-lg-6 col-md-6 col-12">
-                                            <div class="list-image overlay">
-                                                @php
-                                                    $photo = explode(',', $product->photo);
-                                                    // dd($photo);
-                                                @endphp
-                                                <img src="{{ $photo[0] }}" alt="{{ $photo[0] }}">
-                                                <a data-slug="{{ $product->slug }}" class="buy cart">
-                                                    <i class="fa fa-shopping-bag "></i>
-                                                </a>
 
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 col-md-6 col-12 no-padding">
-                                            <div class="content">
-                                                <h4 class="title"><a href="#">{{ $product->title }}</a></h4>
-                                                <p class="price with-discount">${{ number_format($product->discount, 2) }}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- End Single List  -->
-                            </div>
-                        @endforeach
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- End Shop Home List  -->
 
     <!-- Start Shop Blog  -->
     <section class="shop-blog section">
@@ -637,7 +486,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
     <script>
         /*==================================================================
-                                [ Isotope ]*/
+                                        [ Isotope ]*/
         $(document).ready(function() {
             var $topeContainer = $('.isotope-grid');
             var $filter = $('.filter-tope-group');

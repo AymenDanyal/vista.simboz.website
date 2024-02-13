@@ -16,11 +16,6 @@
 		</div>
 		<!-- W1 start here -->
 		<div class="w1">
-
-
-			
-
-
 			
 	@include('frontend.layouts.notification')
 	<!-- Header -->
