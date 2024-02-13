@@ -77,77 +77,91 @@
         <!-- producttabs start here -->
         @php
             $categories = DB::table('categories')->where('status', 'active')->where('is_parent', 1)->get();
-            // dd($categories);
+            $firstLoop = true;
         @endphp
-
-        <ul class="producttabs" >
+        
+        <ul class="producttabs">
             @foreach ($categories as $key => $cat)
                 <li>
-                    <a href="#{{ $cat->id }}" class="">{{ $cat->title }}</a>
+                    <a href="#{{ $cat->id }}" class="{{ $firstLoop ? 'active' : '' }}">{{ $cat->title }}</a>
                 </li>
+                @php
+                    $firstLoop = false; // Set the flag to false after the first iteration
+                @endphp
             @endforeach
         </ul>
+    
         <!-- producttabs end here -->
         
         <div class="tab-content text-center">
             @php
                 $product_lists = DB::table('products')->where('status', 'active')->orderBy('id', 'DESC')->get();
-                $product_groups = $product_lists->groupBy('cat_id');
-                $slides_needed = count($product_groups);
+                $product_categories = $product_lists->pluck('cat_id')->unique();
+                $slides_needed = $product_categories->count();
                 $products_per_slide = 2;
+                $current_product_index = 0;
             @endphp
         
-            @foreach ($product_groups as $cat_id => $products)
-                <div id="{{ $cat_id }}">
+            @for ($i = 0; $i < $slides_needed; $i++)
+                @php
+                    $current_category_id = $product_categories[$i];
+                  
+                @endphp
+                <div id="{{ $current_category_id }}">
                     <!-- tabs slider start here -->
                     <div class="tabs-slider">
-                        <!-- slide start here -->
-                        <div class="slide">
-                            @foreach ($products->chunk($products_per_slide) as $chunk)
+                        @foreach ($product_lists as $product)
+                            @if ($product->cat_id == $current_category_id)
+                                <!-- mt product1 center start here -->
                                 <div class="mt-product1 mt-paddingbottom20">
                                     <div class="box">
                                         <div class="b1">
                                             <div class="b2">
-                                                @foreach ($chunk as $product)
-                                                    <a href="{{ route('product-detail', $product->slug) }}">
-                                                        <img src="{{ $product->photo }}" alt="image description">
-                                                    </a>
-                                                    <span class="caption">
-                                                        @if ($product->stock <= 0)
-                                                            <span class="out-of-stock">Sale out</span>
-                                                        @elseif($product->condition == 'new')
-                                                            <span class="new">New</span>
-                                                        @elseif($product->condition == 'hot') 
-                                                            <span class="hot">Hot</span>
-                                                        @else
-                                                            <span class="price-dec">{{ $product->discount }}% Off</span>
-                                                        @endif
-                                                    </span>
-                                                    <ul class="links">
-                                                        <li>
-                                                            <a class="cart" data-slug="{{ $product->slug }}">
-                                                                <i class="icon-handbag"></i>
-                                                                <span id="test">Add to Cart</span>
-                                                            </a>
-                                                        </li>
-                                                        <li><a data-slug="{{ $product->slug }}" class="addWhishlist" href="#"><i
-                                                                    class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a>
-                                                        </li>
-                                                    </ul>
-                                                @endforeach
+                                                <a href="{{ route('product-detail', $product->slug) }}">
+                                                    <img src="{{ $product->photo }}" alt="image description">
+                                                </a>
+                                                <span class="caption">
+                                                    @if ($product->stock <= 0)
+                                                        <span class="out-of-stock">Sale out</span>
+                                                    @elseif($product->condition == 'new')
+                                                        <span class="new">New</span>
+                                                    @elseif($product->condition == 'hot') 
+                                                        <span class="hot">Hot</span>
+                                                    @else
+                                                        <span class="price-dec">{{ $product->discount }}% Off</span>
+                                                    @endif
+                                                </span>
+                                                <ul class="links">
+                                                    <li>
+                                                        <a class="cart" data-slug="{{ $product->slug }}">
+                                                            <i class="icon-handbag"></i>
+                                                            <span id="test">Add to Cart</span>
+                                                        </a>
+                                                    </li>
+                                                    <li><a data-slug="{{ $product->slug }}" class="addWhishlist" href="#"><i
+                                                                class="icomoon icon-heart-empty"></i></a></li>
+                                                    <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a>
+                                                    </li>
+                                                </ul>
                                             </div>
                                         </div>
                                     </div>
                                 </div><!-- mt product1 center end here -->
-                            @endforeach
-                        </div>
-                        <!-- slide end here -->
+                                @php
+                                    $current_product_index++;
+                                @endphp
+                                @if ($current_product_index >= $products_per_slide)
+                                    @break
+                                @endif
+                            @endif
+                        @endforeach
                     </div>
                     <!-- tabs slider end here -->
                 </div>
-            @endforeach
+            @endfor
         </div>
+        
+        
         
         
     </div>
