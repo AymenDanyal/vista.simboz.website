@@ -5,7 +5,7 @@
             <div class="row">
                 <div class="col-xs-12">
                     <!-- mt logo start here -->
-                    <div class="mt-logo"><a href="#"><img src="images/mt-logo.png" alt="schon"></a>
+                    <div class="mt-logo"><a href="#"><img src="https://htmlbeans.com/html/schon/images/mt-logo.png" alt="schon"></a>
                     </div>
                     <!-- mt icon list start here -->
                     <ul class="mt-icon-list">
@@ -86,7 +86,7 @@
                     <div class="mt-side-widget">
                         <!-- cart row start here -->
                         <div class="cart-row">
-                            <a href="#" class="img"><img src="images/products/img36.jpg" alt="image"
+                            <a href="#" class="img"><img src="https://htmlbeans.com/html/schon/images/products/img36.jpg" alt="image"
                                     class="img-responsive"></a>
                             <div class="mt-h">
                                 <span class="mt-h-title"><a href="#">Marvelous Modern 3
@@ -99,7 +99,7 @@
                         </div><!-- cart row end here -->
                         <!-- cart row start here -->
                         <div class="cart-row">
-                            <a href="#" class="img"><img src="images/products/img37.jpg" alt="image"
+                            <a href="#" class="img"><img src="https://htmlbeans.com/html/schon/images/products/img37.jpg" alt="image"
                                     class="img-responsive"></a>
                             <div class="mt-h">
                                 <span class="mt-h-title"><a href="#">Marvelous Modern 3
@@ -112,7 +112,7 @@
                         </div><!-- cart row end here -->
                         <!-- cart row start here -->
                         <div class="cart-row">
-                            <a href="#" class="img"><img src="images/products/img38.jpg" alt="image"
+                            <a href="#" class="img"><img src="https://htmlbeans.com/html/schon/images/products/img38.jpg" alt="image"
                                     class="img-responsive"></a>
                             <div class="mt-h">
                                 <span class="mt-h-title"><a href="#">Marvelous Modern 3
@@ -171,17 +171,17 @@
                                     </ul>
                                 </div> --}}
                 </li>
-                <li>
-                    <a {{-- class="drop-link" --}} href="{{ route('blog') }}">Blog <i
+                {{-- <li>
+                    <a  class="drop-link"  href="{{ route('blog') }}">Blog <i
                             class="fa fa-angle-down hidden-lg hidden-md" aria-hidden="true"></i></a>
-                    {{-- <div class="s-drop">
+                     <div class="s-drop">
                                     <ul>
                                         <li><a href="blog-fullwidth-page.html">Blog Fullwidth Page</a></li>
                                         </li>
                                     </ul>
-                                </div> --}}
-                </li>
-                {{ Helper::getHeaderCategory() }}
+                                </div> 
+                </li> --}}
+                {{-- {{ Helper::getHeaderCategory() }} --}}
                 <li><a href="{{ route('about-us') }}">About</a></li>
                 <li>
                     <a {{-- class="drop-link" --}} href="{{ route('contact') }}">Contact <i
