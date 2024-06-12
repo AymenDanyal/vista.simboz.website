@@ -1,122 +1,43 @@
 @extends('frontend.layouts.master')
-@section('title', 'E-SHOP || HOME PAGE')
+@section('title', 'Vizu || HOME PAGE')
 @section('main-content')
 
 
-{{-- banner
-	Category
-	Name
-	Description
-	url to product page	
-featured category
-	Name 
-	Discount
-	price
-	url to product page
 
-Feateured products
-	featured
-	latest
-	best seller
-	hot sale
-	sale product
-	top rated
-best seller
-	name
-	price --}}
 
 <div class="mt-main-slider" >
+   
     <!-- slider banner-slider start here -->
     <div class="slider banner-slider slick-slider" role="toolbar" >
         <!-- holder start here -->
+        @foreach($banners as $banner)
+        
         <div aria-live="polite" class="slick-list draggable" style="height: 586px;" >
-            <div class="slick-track" >
-            <div class="holder text-center slick-slide" style="background-image: url(&quot;https://htmlbeans.com/html/schon/images/sliders/img06.jpg&quot;); width: 1863px;" >
-            <div class="container" >
-                <div class="row" >
-                    <div class="col-xs-12" >
-                        <div class="text" >
-                            <strong class="title">FURNITURE DESIGNS IDEAS</strong>
-                            <h1>CARDBOARD</h1>
-                            <h2> Sofas and Armchairs</h2>
-                            <div class="txt" >
-                                <p>Consectetur adipisicing elit. Beatae accusamus, optio, repellendus inventore</p>
+                <div class="slick-track" >
+                <div class="holder text-center slick-slide" style="background-image: url(&quot;https://htmlbeans.com/html/schon/images/sliders/img06.jpg&quot;); width: 1863px;" >
+                    <div class="container" >
+                        <div class="row" >
+                            <div class="col-xs-12" >
+                                <div class="text" >
+                                    <strong class="title">{{$banner->summary}}</strong>
+                                    <h1>{{$banner->category}}</h1>
+                                    <h2> {{$banner->title}}</h2>
+                                    <div class="txt" >
+                                        <p>{{$banner->description}}</p>
+                                    </div>
+                                    <a href="product-detail.html" class="shop" tabindex="-1" >shop now</a>
+                                </div>
                             </div>
-                            <a href="product-detail.html" class="shop" tabindex="-1" >shop now</a>
                         </div>
                     </div>
                 </div>
             </div>
-        </div><div class="holder text-center slick-slide" style="background-image: url(&quot;https://htmlbeans.com/html/schon/images/sliders/img04.jpg&quot;); width: 1863px;"  >
-            <div class="container" >
-                <div class="row" >
-                    <div class="col-xs-12" >
-                        <div class="text centerize" >
-                            <strong class="title">FURNITURE DESIGNS IDEAS</strong>
-                            <h1>LIGHTING</h1>
-                            <h2>PENDANT LAMPS</h2>
-                            <div class="txt" >
-                                <p>Consectetur adipisicing elit. Beatae accusamus, optio, repellendus inventore</p>
-                            </div>
-                            <a href="product-detail.html" class="shop" tabindex="0" >shop now</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div><div class="holder text-center slick-slide" style="background-image: url(&quot;https://htmlbeans.com/html/schon/images/sliders/img05.jpg&quot;); width: 1863px;" >
-            <div class="container" >
-                <div class="row" >
-                    <div class="col-xs-12" >
-                        <div class="text right" >
-                            <strong class="title">FURNITURE DESIGNS IDEAS</strong>
-                            <h1>LOUNGE CHAIRS</h1>
-                            <h2>SW DAYBED</h2>
-                            <div class="txt" >
-                                <p>Consectetur adipisicing elit. Beatae accusamus, optio, repellendus inventore</p>
-                            </div>
-                            <a href="product-detail.html" class="shop" tabindex="-1" >shop now</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div><div class="holder text-center slick-slide" style="background-image: url(&quot;https://htmlbeans.com/html/schon/images/sliders/img06.jpg&quot;); width: 1863px;"  >
-            <div class="container" >
-                <div class="row" >
-                    <div class="col-xs-12" >
-                        <div class="text" >
-                            <strong class="title">FURNITURE DESIGNS IDEAS</strong>
-                            <h1>CARDBOARD</h1>
-                            <h2> Sofas and Armchairs</h2>
-                            <div class="txt" >
-                                <p>Consectetur adipisicing elit. Beatae accusamus, optio, repellendus inventore</p>
-                            </div>
-                            <a href="product-detail.html" class="shop" tabindex="-1" >shop now</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div><div class="holder text-center slick-slide " style="background-image: url(&quot;https://htmlbeans.com/html/schon/images/sliders/img04.jpg&quot;); width: 1863px;"  >
-            <div class="container" >
-                <div class="row" >
-                    <div class="col-xs-12" >
-                        <div class="text centerize" >
-                            <strong class="title">FURNITURE DESIGNS IDEAS</strong>
-                            <h1>LIGHTING</h1>
-                            <h2>PENDANT LAMPS</h2>
-                            <div class="txt" >
-                                <p>Consectetur adipisicing elit. Beatae accusamus, optio, repellendus inventore</p>
-                            </div>
-                            <a href="product-detail.html" class="shop" tabindex="-1" >shop now</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div></div></div>
-        <!-- holder end here -->
-
+        </div>
      
-    <ul class="slick-dots" style="display: block;" role="tablist"><li class="slick-active" aria-hidden="false" role="presentation" aria-selected="true" aria-controls="navigation00" id="slick-slide00"><button type="button" data-role="none" role="button" aria-required="false" tabindex="0">1</button></li><li aria-hidden="true" role="presentation" aria-selected="false" aria-controls="navigation01" id="slick-slide01"><button type="button" data-role="none" role="button" aria-required="false" tabindex="0">2</button></li><li aria-hidden="true" role="presentation" aria-selected="false" aria-controls="navigation02" id="slick-slide02"><button type="button" data-role="none" role="button" aria-required="false" tabindex="0">3</button></li></ul></div>
+        @endforeach
+    </div>
     <!-- slider regular end here -->
+    
 </div>
 <main id="mt-main">
     <div class="container">
@@ -181,7 +102,7 @@ best seller
                     <!-- banner-4 end here -->
                 </div>
                 <!-- banner frame end here -->
-                <!-- mt producttabs start here -->
+                {{-- <!-- mt producttabs start here -->
                 <div class="mt-producttabs wow fadeInUp" data-wow-delay="0.4s">
                     <!-- producttabs start here -->
                     <ul class="producttabs">
@@ -194,913 +115,381 @@ best seller
                         <div id="tab1">
                             <!-- tabs slider start here -->
                             <div class="tabs-slider">
-                                <!-- slide start here -->
-                                <div class="slide">
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img01.jpg" alt="image description"></a>
-                                                    <span class="caption">
-                                                        <span class="new">NEW</span>
-                                                    </span>
-                                                    <ul class="mt-stars">
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star-o"></i></li>
-                                                    </ul>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
+
+                                @php
+                                    $counter = 0;
+                                @endphp
+
+                                @foreach($featured as $feature)
+                                    <!-- slide start here -->
+                                    <div class="slide">
+                                        @if(isset($featured[$counter]))
+                                        <!-- mt product1 center start here -->
+                                        <div class="mt-product1 mt-paddingbottom20">
+                                            <div class="box">
+                                                <div class="b1">
+                                                    <div class="b2">
+                                                        <a href="product-detail.html"><img src="{{ $featured[$counter]->photo }}" alt="image description"></a>
+                                                        <span class="caption">
+                                                            @if($featured[$counter]->condition !== 'default')
+                                                                <span class="new">{{ $featured[$counter]->condition }}</span>
+                                                            @endif
+                                                            @if($featured[$counter]->discount > 50)
+                                                                <span class="off">{{ $featured[$counter]->discount }}% Off</span>
+                                                            @endif
+                                                        </span>
+                                                        <ul class="mt-stars">
+                                                            <li><i class="fa fa-star"></i></li>
+                                                            <li><i class="fa fa-star"></i></li>
+                                                            <li><i class="fa fa-star"></i></li>
+                                                            <li><i class="fa fa-star-o"></i></li>
+                                                        </ul>
+                                                        <ul class="links">
+                                                            <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
+                                                            <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
+                                                            <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
+                                                        </ul>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Puff Chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>287,00</span></span>
-                                        </div>
-                                    </div><!-- mt product1 center end here -->
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img06.jpg" alt="image description"></a>
-                                                    <ul class="mt-stars">
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star-o"></i></li>
-                                                    </ul>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
+                                            <div class="txt">
+                                                <strong class="title"><a href="product-detail.html">{{ $featured[$counter]->title }}</a></strong>
+                                                <span class="price"><i class="fa fa-eur"></i> <span>{{ $featured[$counter]->price }}</span></span>
                                             </div>
                                         </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Easy chair with armrests</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>287,00</span></span>
+                                        <!-- mt product1 center end here -->
+                                        
+                                        @php
+                                            $counter++;
+                                        @endphp
+                                        @endif
+                                        
+                                        @if(isset($featured[$counter]))
+                                        <!-- mt product1 center start here -->
+                                        <div class="mt-product1 mt-paddingbottom20">
+                                            <div class="box">
+                                                <div class="b1">
+                                                    <div class="b2">
+                                                        <a href="product-detail.html"><img src="{{ $featured[$counter]->photo }}" alt="image description"></a>
+                                                        <span class="caption">
+                                                            @if($featured[$counter]->condition !== 'default')
+                                                                <span class="new">{{ $featured[$counter]->condition }}</span>
+                                                            @endif
+                                                            @if($featured[$counter]->discount > 50)
+                                                                <span class="off">{{ $featured[$counter]->discount }}% Off</span>
+                                                            @endif
+                                                        </span>
+                                                        <ul class="mt-stars">
+                                                            <li><i class="fa fa-star"></i></li>
+                                                            <li><i class="fa fa-star"></i></li>
+                                                            <li><i class="fa fa-star"></i></li>
+                                                            <li><i class="fa fa-star-o"></i></li>
+                                                        </ul>
+                                                        <ul class="links">
+                                                            <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
+                                                            <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
+                                                            <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="txt">
+                                                <strong class="title"><a href="product-detail.html">{{ $featured[$counter]->title }}</a></strong>
+                                                <span class="price"><i class="fa fa-eur"></i> <span>{{ $featured[$counter]->price }}</span></span>
+                                            </div>
                                         </div>
+                                        <!-- mt product1 center end here -->
+                                        
+                                        @php
+                                            $counter++;
+                                        @endphp
+                                        @endif
                                     </div>
-                                    <!-- mt product1 center end here -->
-                                </div>
-                                <!-- slide end here -->
-                                <!-- slide start here -->
-                                <div class="slide">
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img02.jpg" alt="image description"></a>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Bombi Chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>399,00</span></span>
-                                        </div>
-                                    </div><!-- mt product1 center end here -->
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img07.jpg" alt="image description"></a>
-                                                    <span class="caption">
-                                                        <span class="off">15% Off</span>
-                                                    </span>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Upholstered chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>399,00</span></span>
-                                        </div>
-                                    </div>
-                                    <!-- mt product1 center end here -->
-                                </div>
-                                <!-- slide end here -->
-                                <!-- slide start here -->
-                                <div class="slide">
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img03.jpg" alt="image description"></a>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Wood Chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>198,00</span></span>
-                                        </div>
-                                    </div><!-- mt product1 center end here -->
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img08.jpg" alt="image description"></a>
-                                                    <ul class="mt-stars">
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star-o"></i></li>
-                                                    </ul>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Trestle-based chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>198,00</span></span>
-                                        </div>
-                                    </div>
-                                    <!-- mt product1 center end here -->
-                                </div>
-                                <!-- slide end here -->
-                                <!-- slide start here -->
-                                <div class="slide">
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img04.jpg" alt="image description"></a>
-                                                    <span class="caption">
-                                                        <span class="off">15% Off</span>
-                                                        <span class="new">NEW</span>
-                                                    </span>
-                                                    <ul class="mt-stars">
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star-o"></i></li>
-                                                    </ul>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Bombi Chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>200,00</span></span>
-                                        </div>
-                                    </div><!-- mt product1 center end here -->
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img09.jpg" alt="image description"></a>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Bombi Chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>200,00</span></span>
-                                        </div>
-                                    </div>
-                                    <!-- mt product1 center end here -->
-                                </div>
-                                <!-- slide end here -->
-                                <!-- slide start here -->
-                                <div class="slide">
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img05.jpg" alt="image description"></a>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Bombi Chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>200,00</span></span>
-                                        </div>
-                                    </div><!-- mt product1 center end here -->
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img10.jpg" alt="image description"></a>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Bombi Chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>200,00</span></span>
-                                        </div>
-                                    </div>
-                                    <!-- mt product1 center end here -->
-                                </div>
-                                <!-- slide end here -->
-                                <!-- slide start here -->
-                                <div class="slide">
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img02.jpg" alt="image description"></a>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Bombi Chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>399,00</span></span>
-                                        </div>
-                                    </div><!-- mt product1 center end here -->
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img07.jpg" alt="image description"></a>
-                                                    <span class="caption">
-                                                        <span class="off">15% Off</span>
-                                                    </span>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Upholstered chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>399,00</span></span>
-                                        </div>
-                                    </div>
-                                    <!-- mt product1 center end here -->
-                                </div>
-                                <!-- slide end here -->
+                                    <!-- slide end here -->
+                                @endforeach
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                
                             </div>
                             <!-- tabs slider end here -->
                         </div>
                         <div id="tab2">
                             <!-- tabs slider start here -->
                             <div class="tabs-slider">
-                                <!-- slide start here -->
-                                <div class="slide">
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img06.jpg" alt="image description"></a>
-                                                    <ul class="mt-stars">
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star-o"></i></li>
-                                                    </ul>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
+
+                                @php
+                                    $counter = 0;
+                                @endphp
+
+                                @foreach($latests as $latest)
+                                    <!-- slide start here -->
+                                    <div class="slide">
+                                        @if(isset($latests[$counter]))
+                                        <!-- mt product1 center start here -->
+                                        <div class="mt-product1 mt-paddingbottom20">
+                                            <div class="box">
+                                                <div class="b1">
+                                                    <div class="b2">
+                                                        <a href="product-detail.html"><img src="{{ $latests[$counter]->photo }}" alt="image description"></a>
+                                                        <span class="caption">
+                                                            @if($latests[$counter]->condition !== 'default')
+                                                                <span class="new">{{ $latests[$counter]->condition }}</span>
+                                                            @endif
+                                                            @if($latests[$counter]->discount > 50)
+                                                                <span class="off">{{ $latests[$counter]->discount }}% Off</span>
+                                                            @endif
+                                                        </span>
+                                                        <ul class="mt-stars">
+                                                            <li><i class="fa fa-star"></i></li>
+                                                            <li><i class="fa fa-star"></i></li>
+                                                            <li><i class="fa fa-star"></i></li>
+                                                            <li><i class="fa fa-star-o"></i></li>
+                                                        </ul>
+                                                        <ul class="links">
+                                                            <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
+                                                            <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
+                                                            <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
+                                                        </ul>
+                                                    </div>
                                                 </div>
                                             </div>
+                                            <div class="txt">
+                                                <strong class="title"><a href="product-detail.html">{{ $latests[$counter]->title }}</a></strong>
+                                                <span class="price"><i class="fa fa-eur"></i> <span>{{ $latests[$counter]->price }}</span></span>
+                                            </div>
                                         </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Easy chair with armrests</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>287,00</span></span>
+                                        <!-- mt product1 center end here -->
+                                        
+                                        @php
+                                            $counter++;
+                                        @endphp
+                                        @endif
+                                        
+                                        @if(isset($latests[$counter]))
+                                        <!-- mt product1 center start here -->
+                                        <div class="mt-product1 mt-paddingbottom20">
+                                            <div class="box">
+                                                <div class="b1">
+                                                    <div class="b2">
+                                                        <a href="product-detail.html"><img src="{{ $latests[$counter]->photo }}" alt="image description"></a>
+                                                        <span class="caption">
+                                                            @if($latests[$counter]->condition !== 'default')
+                                                                <span class="new">{{ $latests[$counter]->condition }}</span>
+                                                            @endif
+                                                            @if($latests[$counter]->discount > 50)
+                                                                <span class="off">{{ $latests[$counter]->discount }}% Off</span>
+                                                            @endif
+                                                        </span>
+                                                        <ul class="mt-stars">
+                                                            <li><i class="fa fa-star"></i></li>
+                                                            <li><i class="fa fa-star"></i></li>
+                                                            <li><i class="fa fa-star"></i></li>
+                                                            <li><i class="fa fa-star-o"></i></li>
+                                                        </ul>
+                                                        <ul class="links">
+                                                            <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
+                                                            <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
+                                                            <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="txt">
+                                                <strong class="title"><a href="product-detail.html">{{ $latests[$counter]->title }}</a></strong>
+                                                <span class="price"><i class="fa fa-eur"></i> <span>{{ $latests[$counter]->price }}</span></span>
+                                            </div>
                                         </div>
+                                        <!-- mt product1 center end here -->
+                                        
+                                        @php
+                                            $counter++;
+                                        @endphp
+                                        @endif
                                     </div>
-                                    <!-- mt product1 center end here -->
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img01.jpg" alt="image description"></a>
-                                                    <span class="caption">
-                                                        <span class="new">NEW</span>
-                                                    </span>
-                                                    <ul class="mt-stars">
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star-o"></i></li>
-                                                    </ul>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Puff Chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>287,00</span></span>
-                                        </div>
-                                    </div><!-- mt product1 center end here -->
-                                </div>
-                                <!-- slide end here -->
-                                <!-- slide start here -->
-                                <div class="slide">
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img07.jpg" alt="image description"></a>
-                                                    <span class="caption">
-                                                        <span class="off">15% Off</span>
-                                                    </span>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Upholstered chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>399,00</span></span>
-                                        </div>
-                                    </div>
-                                    <!-- mt product1 center end here -->
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img02.jpg" alt="image description"></a>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Bombi Chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>399,00</span></span>
-                                        </div>
-                                    </div><!-- mt product1 center end here -->
-                                </div>
-                                <!-- slide end here -->
-                                <!-- slide start here -->
-                                <div class="slide">
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img08.jpg" alt="image description"></a>
-                                                    <ul class="mt-stars">
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star-o"></i></li>
-                                                    </ul>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Trestle-based chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>198,00</span></span>
-                                        </div>
-                                    </div>
-                                    <!-- mt product1 center end here -->
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img03.jpg" alt="image description"></a>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Wood Chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>198,00</span></span>
-                                        </div>
-                                    </div><!-- mt product1 center end here -->
-                                </div>
-                                <!-- slide end here -->
-                                <!-- slide start here -->
-                                <div class="slide">
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img09.jpg" alt="image description"></a>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Bombi Chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>200,00</span></span>
-                                        </div>
-                                    </div>
-                                    <!-- mt product1 center end here -->
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img04.jpg" alt="image description"></a>
-                                                    <span class="caption">
-                                                        <span class="off">15% Off</span>
-                                                        <span class="new">NEW</span>
-                                                    </span>
-                                                    <ul class="mt-stars">
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star-o"></i></li>
-                                                    </ul>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Bombi Chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>200,00</span></span>
-                                        </div>
-                                    </div><!-- mt product1 center end here -->
-                                </div>
-                                <!-- slide end here -->
-                                <!-- slide start here -->
-                                <div class="slide">
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img10.jpg" alt="image description"></a>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Bombi Chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>200,00</span></span>
-                                        </div>
-                                    </div>
-                                    <!-- mt product1 center end here -->
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img05.jpg" alt="image description"></a>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Bombi Chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>200,00</span></span>
-                                        </div>
-                                    </div><!-- mt product1 center end here -->
-                                </div>
-                                <!-- slide end here -->
-                                <!-- slide start here -->
-                                <div class="slide">
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img07.jpg" alt="image description"></a>
-                                                    <span class="caption">
-                                                        <span class="off">15% Off</span>
-                                                    </span>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Upholstered chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>399,00</span></span>
-                                        </div>
-                                    </div>
-                                    <!-- mt product1 center end here -->
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img02.jpg" alt="image description"></a>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Bombi Chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>399,00</span></span>
-                                        </div>
-                                    </div><!-- mt product1 center end here -->
-                                </div>
-                                <!-- slide end here -->
+                                    <!-- slide end here -->
+                                @endforeach
+                                
                             </div>
                             <!-- tabs slider end here -->
                         </div>
                         <div id="tab3">
                             <!-- tabs slider start here -->
                             <div class="tabs-slider">
-                                <!-- slide start here -->
-                                <div class="slide">
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img01.jpg" alt="image description"></a>
-                                                    <span class="caption">
-                                                        <span class="new">NEW</span>
-                                                    </span>
-                                                    <ul class="mt-stars">
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star-o"></i></li>
-                                                    </ul>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
+
+                                @php
+                                    $counter = 0;
+                                @endphp
+
+                                @foreach($bestSellers as $bestSeller)
+                                    <!-- slide start here -->
+                                    <div class="slide">
+                                        @if(isset($bestSellers[$counter]))
+                                        <!-- mt product1 center start here -->
+                                        <div class="mt-product1 mt-paddingbottom20">
+                                            <div class="box">
+                                                <div class="b1">
+                                                    <div class="b2">
+                                                        <a href="product-detail.html"><img src="{{ $bestSellers[$counter]->photo }}" alt="image description"></a>
+                                                        <span class="caption">
+                                                            @if($bestSellers[$counter]->condition !== 'default')
+                                                                <span class="new">{{ $bestSellers[$counter]->condition }}</span>
+                                                            @endif
+                                                            @if($bestSellers[$counter]->discount > 50)
+                                                                <span class="off">{{ $bestSellers[$counter]->discount }}% Off</span>
+                                                            @endif
+                                                        </span>
+                                                        <ul class="mt-stars">
+                                                            <li><i class="fa fa-star"></i></li>
+                                                            <li><i class="fa fa-star"></i></li>
+                                                            <li><i class="fa fa-star"></i></li>
+                                                            <li><i class="fa fa-star-o"></i></li>
+                                                        </ul>
+                                                        <ul class="links">
+                                                            <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
+                                                            <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
+                                                            <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
+                                                        </ul>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Puff Chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>287,00</span></span>
-                                        </div>
-                                    </div><!-- mt product1 center end here -->
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img06.jpg" alt="image description"></a>
-                                                    <ul class="mt-stars">
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star-o"></i></li>
-                                                    </ul>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
+                                            <div class="txt">
+                                                <strong class="title"><a href="product-detail.html">{{ $bestSellers[$counter]->title }}</a></strong>
+                                                <span class="price"><i class="fa fa-eur"></i> <span>{{ $bestSellers[$counter]->price }}</span></span>
                                             </div>
                                         </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Easy chair with armrests</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>287,00</span></span>
+                                        <!-- mt product1 center end here -->
+                                        
+                                        @php
+                                            $counter++;
+                                        @endphp
+                                        @endif
+                                        
+                                        @if(isset($bestSellers[$counter]))
+                                        <!-- mt product1 center start here -->
+                                        <div class="mt-product1 mt-paddingbottom20">
+                                            <div class="box">
+                                                <div class="b1">
+                                                    <div class="b2">
+                                                        <a href="product-detail.html"><img src="{{ $bestSellers[$counter]->photo }}" alt="image description"></a>
+                                                        <span class="caption">
+                                                            @if($bestSellers[$counter]->condition !== 'default')
+                                                                <span class="new">{{ $bestSellers[$counter]->condition }}</span>
+                                                            @endif
+                                                            @if($bestSellers[$counter]->discount > 50)
+                                                                <span class="off">{{ $bestSellers[$counter]->discount }}% Off</span>
+                                                            @endif
+                                                        </span>
+                                                        <ul class="mt-stars">
+                                                            <li><i class="fa fa-star"></i></li>
+                                                            <li><i class="fa fa-star"></i></li>
+                                                            <li><i class="fa fa-star"></i></li>
+                                                            <li><i class="fa fa-star-o"></i></li>
+                                                        </ul>
+                                                        <ul class="links">
+                                                            <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
+                                                            <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
+                                                            <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="txt">
+                                                <strong class="title"><a href="product-detail.html">{{ $bestSellers[$counter]->title }}</a></strong>
+                                                <span class="price"><i class="fa fa-eur"></i> <span>{{ $bestSellers[$counter]->price }}</span></span>
+                                            </div>
                                         </div>
+                                        <!-- mt product1 center end here -->
+                                        
+                                        @php
+                                            $counter++;
+                                        @endphp
+                                        @endif
                                     </div>
-                                    <!-- mt product1 center end here -->
-                                </div>
-                                <!-- slide end here -->
-                                <!-- slide start here -->
-                                <div class="slide">
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img07.jpg" alt="image description"></a>
-                                                    <span class="caption">
-                                                        <span class="off">15% Off</span>
-                                                    </span>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Upholstered chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>399,00</span></span>
-                                        </div>
-                                    </div>
-                                    <!-- mt product1 center end here -->
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img02.jpg" alt="image description"></a>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Bombi Chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>399,00</span></span>
-                                        </div>
-                                    </div><!-- mt product1 center end here -->
-                                </div>
-                                <!-- slide end here -->
-                                <!-- slide start here -->
-                                <div class="slide">
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img03.jpg" alt="image description"></a>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Wood Chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>198,00</span></span>
-                                        </div>
-                                    </div><!-- mt product1 center end here -->
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img08.jpg" alt="image description"></a>
-                                                    <ul class="mt-stars">
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star-o"></i></li>
-                                                    </ul>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Trestle-based chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>198,00</span></span>
-                                        </div>
-                                    </div>
-                                    <!-- mt product1 center end here -->
-                                </div>
-                                <!-- slide end here -->
-                                <!-- slide start here -->
-                                <div class="slide">
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img09.jpg" alt="image description"></a>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Bombi Chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>200,00</span></span>
-                                        </div>
-                                    </div>
-                                    <!-- mt product1 center end here -->
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img04.jpg" alt="image description"></a>
-                                                    <span class="caption">
-                                                        <span class="off">15% Off</span>
-                                                        <span class="new">NEW</span>
-                                                    </span>
-                                                    <ul class="mt-stars">
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star"></i></li>
-                                                        <li><i class="fa fa-star-o"></i></li>
-                                                    </ul>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Bombi Chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>200,00</span></span>
-                                        </div>
-                                    </div><!-- mt product1 center end here -->
-                                </div>
-                                <!-- slide end here -->
-                                <!-- slide start here -->
-                                <div class="slide">
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img05.jpg" alt="image description"></a>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Bombi Chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>200,00</span></span>
-                                        </div>
-                                    </div><!-- mt product1 center end here -->
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img10.jpg" alt="image description"></a>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Bombi Chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>200,00</span></span>
-                                        </div>
-                                    </div>
-                                    <!-- mt product1 center end here -->
-                                </div>
-                                <!-- slide end here -->
-                                <!-- slide start here -->
-                                <div class="slide">
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img07.jpg" alt="image description"></a>
-                                                    <span class="caption">
-                                                        <span class="off">15% Off</span>
-                                                    </span>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Upholstered chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>399,00</span></span>
-                                        </div>
-                                    </div>
-                                    <!-- mt product1 center end here -->
-                                    <!-- mt product1 center start here -->
-                                    <div class="mt-product1 mt-paddingbottom20">
-                                        <div class="box">
-                                            <div class="b1">
-                                                <div class="b2">
-                                                    <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img02.jpg" alt="image description"></a>
-                                                    <ul class="links">
-                                                        <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
-                                                        <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                        <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="txt">
-                                            <strong class="title"><a href="product-detail.html">Bombi Chair</a></strong>
-                                            <span class="price"><i class="fa fa-eur"></i> <span>399,00</span></span>
-                                        </div>
-                                    </div><!-- mt product1 center end here -->
-                                </div>
-                                <!-- slide end here -->
+                                    <!-- slide end here -->
+                                @endforeach                             
                             </div>
                             <!-- tabs slider end here -->
                         </div>
                     </div>
                 </div>
-                <!-- mt producttabs end here -->
+                <!-- mt producttabs end here --> --}}
             </div>
         </div>
     </div>
     <!-- mt bestseller start here -->
+    <div class="mt-bestseller mt-3 bg-grey text-center wow fadeInUp" data-wow-delay="0.4s">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 mt-heading text-uppercase">
+                    <h2 class="heading">BEST SELLER</h2>
+                    <p>EXCEPTEUR SINT OCCAECAT</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="bestseller-slider">
+                        @foreach($bestSellers as $bestSeller)
+                        <!-- slide start here -->
+                        <div class="slide">
+                        
+                            <!-- mt product1 center start here -->
+                            <div class="mt-product1 mt-paddingbottom20">
+                                <div class="box">
+                                    <div class="b1">
+                                        <div class="b2">
+                                            <a href="product-detail.html"><img src="{{ $bestSeller->photo }}" alt="image description"></a>
+                                            <span class="caption">
+                                                @if($bestSeller->condition !== 'default')
+                                                    <span class="new">{{ $bestSeller->condition }}</span>
+                                                @endif
+                                                @if($bestSeller->discount > 50)
+                                                    <span class="off">{{ $bestSeller->discount }}% Off</span>
+                                                @endif
+                                            </span>
+                                            <ul class="mt-stars">
+                                                <li><i class="fa fa-star"></i></li>
+                                                <li><i class="fa fa-star"></i></li>
+                                                <li><i class="fa fa-star"></i></li>
+                                                <li><i class="fa fa-star-o"></i></li>
+                                            </ul>
+                                            <ul class="links">
+                                                <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
+                                                <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
+                                                <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="txt">
+                                    <strong class="title"><a href="product-detail.html">{{ $bestSeller->title }}</a></strong>
+                                    <span class="price"><i class="fa fa-eur"></i> <span>{{ $bestSeller->price }}</span></span>
+                                </div>
+                            </div>
+                            <!-- mt product1 center end here -->
+                            
+                           
+                            
+                        </div>
+                        <!-- slide end here -->
+                    @endforeach
+                      
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="mt-bestseller bg-grey text-center wow fadeInUp" data-wow-delay="0.4s">
         <div class="container">
             <div class="row">
@@ -1112,18 +501,32 @@ best seller
             <div class="row">
                 <div class="col-xs-12">
                     <div class="bestseller-slider">
+                        @foreach($bestSellers as $bestSeller)
+                        <!-- slide start here -->
                         <div class="slide">
+                        
                             <!-- mt product1 center start here -->
-                            <div class="mt-product1 large">
+                            <div class="mt-product1 mt-paddingbottom20">
                                 <div class="box">
                                     <div class="b1">
                                         <div class="b2">
-                                            <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img11.jpg" alt="image description"></a>
+                                            <a href="product-detail.html"><img src="{{ $bestSeller->photo }}" alt="image description"></a>
                                             <span class="caption">
-                                                <span class="best-price">Best Price</span>
+                                                @if($bestSeller->condition !== 'default')
+                                                    <span class="new">{{ $bestSeller->condition }}</span>
+                                                @endif
+                                                @if($bestSeller->discount > 50)
+                                                    <span class="off">{{ $bestSeller->discount }}% Off</span>
+                                                @endif
                                             </span>
-                                            <ul class="links add">
-                                                <li><a href="#"><i class="icon-handbag"></i></a></li>
+                                            <ul class="mt-stars">
+                                                <li><i class="fa fa-star"></i></li>
+                                                <li><i class="fa fa-star"></i></li>
+                                                <li><i class="fa fa-star"></i></li>
+                                                <li><i class="fa fa-star-o"></i></li>
+                                            </ul>
+                                            <ul class="links">
+                                                <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
                                                 <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
                                                 <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
                                             </ul>
@@ -1131,65 +534,77 @@ best seller
                                     </div>
                                 </div>
                                 <div class="txt">
-                                    <strong class="title"><a href="product-detail.html">Bombi Chair</a></strong>
-                                    <span class="price"><i class="fa fa-eur"></i> <span>399,00</span></span>
+                                    <strong class="title"><a href="product-detail.html">{{ $bestSeller->title }}</a></strong>
+                                    <span class="price"><i class="fa fa-eur"></i> <span>{{ $bestSeller->price }}</span></span>
                                 </div>
-                            </div><!-- mt product1 center end here -->
+                            </div>
+                            <!-- mt product1 center end here -->
+                            
+                           
+                            
                         </div>
+                        <!-- slide end here -->
+                    @endforeach
+                      
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="holder text-center mt-5" style="background-image: url(&quot;https://htmlbeans.com/html/schon/images/sliders/img06.jpg&quot;);width: 1863px;height: 600px;" aria-hidden="true" >
+        <div class="container" >
+            <div class="row" >
+                <div class="col-xs-12">
+                    <div class="text">
+                        {{-- <strong class="title">lure delectus earum</strong>
+                        <h1>lure delectus earum</h1>
+                        <h2> Iure delectus earum</h2>
+                        <div class="txt" >
+                            <p>lure delectus earum</p>
+                        </div>
+                        <a href="product-detail.html" class="shop" tabindex="0">shop now</a> --}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mt-bestseller mt-3  bg-grey text-center wow fadeInUp" data-wow-delay="0.4s">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 mt-heading text-uppercase">
+                    <h2 class="heading">BEST SELLER</h2>
+                    <p>EXCEPTEUR SINT OCCAECAT</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="bestseller-slider">
+                        @foreach($bestSellers as $bestSeller)
+                        <!-- slide start here -->
                         <div class="slide">
+                        
                             <!-- mt product1 center start here -->
-                            <div class="mt-product1 large">
+                            <div class="mt-product1 mt-paddingbottom20">
                                 <div class="box">
                                     <div class="b1">
                                         <div class="b2">
-                                            <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img12.jpg" alt="image description"></a>
-                                            <ul class="links add">
-                                                <li><a href="#"><i class="icon-handbag"></i></a></li>
-                                                <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="txt">
-                                    <strong class="title"><a href="product-detail.html">Marvelous Modern 3 Seater</a></strong>
-                                    <span class="price"><i class="fa fa-eur"></i> <span>599,00</span></span>
-                                </div>
-                            </div><!-- mt product1 center end here -->
-                        </div>
-                        <div class="slide">
-                            <!-- mt product1 center start here -->
-                            <div class="mt-product1 large">
-                                <div class="box">
-                                    <div class="b1">
-                                        <div class="b2">
-                                            <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img13.jpg" alt="image description"></a>
-                                            <ul class="links add">
-                                                <li><a href="#"><i class="icon-handbag"></i></a></li>
-                                                <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="txt">
-                                    <strong class="title"><a href="product-detail.html">Puff  Armchair</a></strong>
-                                    <span class="price"><i class="fa fa-eur"></i> <span>200,00</span></span>
-                                </div>
-                            </div><!-- mt product1 center end here -->
-                        </div>
-                        <div class="slide">
-                            <!-- mt product1 center start here -->
-                            <div class="mt-product1 large">
-                                <div class="box">
-                                    <div class="b1">
-                                        <div class="b2">
-                                            <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img11.jpg" alt="image description"></a>
+                                            <a href="product-detail.html"><img src="{{ $bestSeller->photo }}" alt="image description"></a>
                                             <span class="caption">
-                                                <span class="best-price">Best Price</span>
+                                                @if($bestSeller->condition !== 'default')
+                                                    <span class="new">{{ $bestSeller->condition }}</span>
+                                                @endif
+                                                @if($bestSeller->discount > 50)
+                                                    <span class="off">{{ $bestSeller->discount }}% Off</span>
+                                                @endif
                                             </span>
-                                            <ul class="links add">
-                                                <li><a href="#"><i class="icon-handbag"></i></a></li>
+                                            <ul class="mt-stars">
+                                                <li><i class="fa fa-star"></i></li>
+                                                <li><i class="fa fa-star"></i></li>
+                                                <li><i class="fa fa-star"></i></li>
+                                                <li><i class="fa fa-star-o"></i></li>
+                                            </ul>
+                                            <ul class="links">
+                                                <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
                                                 <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
                                                 <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
                                             </ul>
@@ -1197,44 +612,60 @@ best seller
                                     </div>
                                 </div>
                                 <div class="txt">
-                                    <strong class="title"><a href="product-detail.html">Bombi Chair</a></strong>
-                                    <span class="price"><i class="fa fa-eur"></i> <span>399,00</span></span>
+                                    <strong class="title"><a href="product-detail.html">{{ $bestSeller->title }}</a></strong>
+                                    <span class="price"><i class="fa fa-eur"></i> <span>{{ $bestSeller->price }}</span></span>
                                 </div>
-                            </div><!-- mt product1 center end here -->
+                            </div>
+                            <!-- mt product1 center end here -->
+                            
+                           
+                            
                         </div>
+                        <!-- slide end here -->
+                    @endforeach
+                      
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mt-bestseller bg-grey text-center wow fadeInUp" data-wow-delay="0.4s">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 mt-heading text-uppercase">
+                    <h2 class="heading">BEST SELLER</h2>
+                    <p>EXCEPTEUR SINT OCCAECAT</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="bestseller-slider">
+                        @foreach($bestSellers as $bestSeller)
+                        <!-- slide start here -->
                         <div class="slide">
+                        
                             <!-- mt product1 center start here -->
-                            <div class="mt-product1 large">
+                            <div class="mt-product1 mt-paddingbottom20">
                                 <div class="box">
                                     <div class="b1">
                                         <div class="b2">
-                                            <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img12.jpg" alt="image description"></a>
-                                            <ul class="links add">
-                                                <li><a href="#"><i class="icon-handbag"></i></a></li>
-                                                <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
-                                                <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="txt">
-                                    <strong class="title"><a href="product-detail.html">Marvelous Modern 3 Seater</a></strong>
-                                    <span class="price"><i class="fa fa-eur"></i> <span>599,00</span></span>
-                                </div>
-                            </div><!-- mt product1 center end here -->
-                        </div>
-                        <div class="slide">
-                            <!-- mt product1 center start here -->
-                            <div class="mt-product1 large">
-                                <div class="box">
-                                    <div class="b1">
-                                        <div class="b2">
-                                            <a href="product-detail.html"><img src="https://htmlbeans.com/html/schon/images/products/img13.jpg" alt="image description"></a>
+                                            <a href="product-detail.html"><img src="{{ $bestSeller->photo }}" alt="image description"></a>
                                             <span class="caption">
-                                                <span class="off">15% Off</span>
+                                                @if($bestSeller->condition !== 'default')
+                                                    <span class="new">{{ $bestSeller->condition }}</span>
+                                                @endif
+                                                @if($bestSeller->discount > 50)
+                                                    <span class="off">{{ $bestSeller->discount }}% Off</span>
+                                                @endif
                                             </span>
-                                            <ul class="links add">
-                                                <li><a href="#"><i class="icon-handbag"></i></a></li>
+                                            <ul class="mt-stars">
+                                                <li><i class="fa fa-star"></i></li>
+                                                <li><i class="fa fa-star"></i></li>
+                                                <li><i class="fa fa-star"></i></li>
+                                                <li><i class="fa fa-star-o"></i></li>
+                                            </ul>
+                                            <ul class="links">
+                                                <li><a href="#"><i class="icon-handbag"></i><span>Add to Cart</span></a></li>
                                                 <li><a href="#"><i class="icomoon icon-heart-empty"></i></a></li>
                                                 <li><a href="#popup1" class="lightbox"><i class="icomoon icon-eye"></i></a></li>
                                             </ul>
@@ -1242,18 +673,25 @@ best seller
                                     </div>
                                 </div>
                                 <div class="txt">
-                                    <strong class="title"><a href="product-detail.html">Puff  Armchair</a></strong>
-                                    <span class="price"><i class="fa fa-eur"></i> <span>200,00</span></span>
+                                    <strong class="title"><a href="product-detail.html">{{ $bestSeller->title }}</a></strong>
+                                    <span class="price"><i class="fa fa-eur"></i> <span>{{ $bestSeller->price }}</span></span>
                                 </div>
-                            </div><!-- mt product1 center end here -->
+                            </div>
+                            <!-- mt product1 center end here -->
+                            
+                           
+                            
                         </div>
+                        <!-- slide end here -->
+                    @endforeach
+                      
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <!-- mt bestseller start here -->
-    <div class="mt-smallproducts">
+    {{-- <div class="mt-smallproducts">
         <div class="container">
             <div class="row">
                 <div class="col-xs-12 col-sm-6 col-md-3 mt-paddingbottomsm wow fadeInLeft" data-wow-delay="0.4s">
@@ -1460,7 +898,7 @@ best seller
                 </div>
             </div>
         </div>
-    </div><!-- mt bestseller end here -->
+    </div><!-- mt bestseller end here --> --}}
 </main><!-- mt main end here -->
 
 @endsection

@@ -79,6 +79,41 @@
 						</div>
 						<!-- F Widget About of the Page end -->
 					</div>
+					<div class="col-xs-12 col-sm-6 col-md-3 text-right">
+						<nav id="nav">
+							<ul>
+								<li>
+									<a href="{{ route('home') }}">HOME
+										<i class="fa fa-angle-down hidden-lg hidden-md" aria-hidden="true"></i>
+									</a>
+				
+								</li>
+								<li>
+									<a href="{{ route('product-grids', ['cat_id' => 0]) }}">PRODUCTS
+										<i class="fa fa-angle-down hidden-lg hidden-md" aria-hidden="true"></i>
+									</a>
+				
+								</li>
+								<li>
+									<a class="drop-link" href="{{ route('blog') }}">Blog
+										<i class="fa fa-angle-down hidden-lg hidden-md" aria-hidden="true"></i>
+									</a>
+				
+								</li>
+							
+				
+							<li>
+								<a href="{{ route('about-us') }}">About</a>
+							</li>
+							<li>
+								<a href="{{ route('contact') }}">Contact
+									<i class="fa fa-angle-down hidden-lg hidden-md" aria-hidden="true"></i>
+								</a>
+							</li>
+							</ul>
+						</nav>
+					</div
+					
 				</div>
 			</div>
 		</div>

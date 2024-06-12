@@ -1,6 +1,6 @@
 @extends('backend.layouts.master')
 
-@section('title','E-SHOP || Banner Create')
+@section('title','Vizu || Banner Create')
 
 @section('main-content')
 
@@ -16,14 +16,30 @@
         <span class="text-danger">{{$message}}</span>
         @enderror
         </div>
+        <div class="form-group">
+          <label for="inputDesc" class="col-form-label">Summary</label>
+          <input class="form-control" id="summary" name="summary">{{old('summary')}}</input>
+          @error('summary')
+          <span class="text-danger">{{$message}}</span>
+          @enderror
+        </div>
 
+        
         <div class="form-group">
           <label for="inputDesc" class="col-form-label">Description</label>
-          <textarea class="form-control" id="description" name="description">{{old('description')}}</textarea>
+          <input class="form-control" id="description" name="description">{{old('description')}}</input>
           @error('description')
           <span class="text-danger">{{$message}}</span>
           @enderror
         </div>
+        <div class="form-group">
+          <label for="category">Category</label>
+          <select name="category" id="category" class="form-control">
+              @foreach($categories as $category)
+                  <option value="{{ $category->id }}">{{ $category->title }}</option>
+              @endforeach
+          </select>
+      </div>
 
         <div class="form-group">
         <label for="inputPhoto" class="col-form-label">Photo <span class="text-danger">*</span></label>
@@ -62,20 +78,13 @@
 @endsection
 
 @push('styles')
-<link rel="stylesheet" href="{{asset('backend/summernote/summernote.min.css')}}">
 @endpush
 @push('scripts')
 <script src="/vendor/laravel-filemanager/js/stand-alone-button.js"></script>
-<script src="{{asset('backend/summernote/summernote.min.js')}}"></script>
+<
 <script>
     $('#lfm').filemanager('image');
 
-    $(document).ready(function() {
-    $('#description').summernote({
-      placeholder: "Write short description.....",
-        tabsize: 2,
-        height: 150
-    });
-    });
+    
 </script>
 @endpush

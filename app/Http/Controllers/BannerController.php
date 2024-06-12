@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Banner;
+use App\Models\Category;
 use Illuminate\Support\Str;
 class BannerController extends Controller
 {
@@ -25,7 +26,8 @@ class BannerController extends Controller
      */
     public function create()
     {
-        return view('backend.banner.create');
+        $categories = Category::where('is_parent', 1)->get();
+        return view('backend.banner.create', compact('categories'));
     }
 
     /**

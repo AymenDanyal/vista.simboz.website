@@ -32,14 +32,14 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-  /*   public function create()
+     public function create()
     {
     
         $brand=Brand::get();
         $category=Category::where('is_parent',1)->get();
-        // return $category;
+        
         return view('backend.product.create')->with('categories',$category)->with('brands',$brand);
-    } */
+    }
 
     /**
      * Store a newly created resource in storage.

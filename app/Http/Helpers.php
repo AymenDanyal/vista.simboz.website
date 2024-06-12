@@ -23,38 +23,18 @@ class Helper{
     {
         $category = new Category();
         $menu = $category->getAllParentWithChild();
-    
+
         if ($menu) {
-            echo '<li class="drop">';
-            echo '<a href="javascript:void(0)">Categories  <i class="fa fa-angle-down" aria-hidden="true"></i></a>';
-            echo '<div class="mt-dropmenu text-left">';
-            echo '<div class="mt-frame">';
-            echo '<div class="mt-f-box">';
+            echo '<div class="row">';
     
             foreach ($menu as $cat_info) {
-                if ($cat_info->child_cat->count() > 0) {
-                    echo '<div class="mt-col-3">';
-                    echo '<div class="sub-dropcont">';
-                    echo '<strong class="title"><a href="' . route('product-cat', $cat_info->slug) . '" class="mt-subopener">Shop Pages</a></strong>';
-                    echo '<div class="sub-drop"><ul>';
-    
-                    foreach ($cat_info->child_cat as $sub_menu) {
-                        echo '<li><a href="' . route('product-sub-cat', [$cat_info->slug, $sub_menu->slug]) . '">' . $sub_menu->title . '</a></li>';
-                    }
-    
-                    echo '</ul></div></div></div>';
-    
-                    // Add promo banner every 3rd category
-                    if ($cat_info->child_cat->count() % 3 == 0) {
-                        echo '<div class="mt-col-3 promo">';
-                        echo '<div class="mt-promobox">';
-                        echo '<a href="#"><img src="images/banner-drop.jpg" alt="promo banner" class="img-responsive"></a>';
-                        echo '</div></div>';
-                    }
-                }
+                echo '<div class="col-1 p-2 text-center" style="margin-left: 17px;"> ';
+                    echo '<span class="category-bar"><a href="/product-grids/'.$cat_info->id.'">'.$cat_info->title.'</span>';
+                echo '</div>';
+            
             }
     
-            echo '</div></div></div><span class="mt-mdropover"></span></li>';
+           
         }
     }
     
