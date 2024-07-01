@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\UserTemplate;
-use App\Models\TemplateApi;
+use App\Models\Template;
 use Illuminate\Support\Str;
 use App\User;
 
@@ -18,7 +18,7 @@ class EditorController extends Controller
         $data = [];
 
         if (auth()->user()->role === 'admin') {
-            $usertemplate = TemplateApi::where('product_id', $productId)->first();
+            $usertemplate = Template::where('product_id', $productId)->first();
 
             if ($usertemplate) {
                 $data = [
@@ -47,8 +47,8 @@ class EditorController extends Controller
                     "back"=>false,
                 ];
             } else {
-                // If UserTemplate is not found, fallback to TemplateApi
-                $templateApi = TemplateApi::where('product_id', $productId)->first();
+                // If UserTemplate is not found, fallback to Template
+                $templateApi = Template::where('product_id', $productId)->first();
 
                 if ($templateApi) {
                     $data = [

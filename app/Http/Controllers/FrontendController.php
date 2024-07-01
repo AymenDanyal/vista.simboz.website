@@ -8,8 +8,11 @@ use App\Models\PostTag;
 use App\Models\PostCategory;
 use App\Models\Wishlist;
 use App\Models\Post;
-use App\Models\Cart;
+use App\Models\Filter;
 use App\Models\Brand;
+use App\Models\FilterCategory;
+use App\Models\FilterValue;
+use App\Models\FilterParameter;
 use App\User;
 use Auth;
 use Session;
@@ -24,7 +27,6 @@ class FrontendController extends Controller
     public function index(Request $request){
         return redirect()->route($request->user()->role);
     }
-
     public function home(){
 
 
@@ -74,75 +76,116 @@ class FrontendController extends Controller
                 ->with('product_lists',$products)
                 ->with('category_lists',$category);
     }   
-
     public function aboutUs(){
         return view('frontend.pages.about-us');
     }
-
     public function contact(){
         return view('frontend.pages.contact');
     }
-
-
 
     public function productGrids($cat_id) {
     
         if ($cat_id == 0) {
             // Get all products and paginate the results with 16 per page
-            $products = Product::paginate(15);
+            $products = Product::paginate(16);
         } else {
             // Get products where 'cat_id' matches $cat_id and paginate the results with 16 per page
-            $products = Product::where('cat_id', $cat_id)->paginate(15);
+            $products = Product::where('cat_id', $cat_id)->paginate(16);
          
         }
     
         // Fetch all parent categories with their child categories
         $categories = Category::where('id', $cat_id)->first();
-       
-        // Loop through the categories to check if they have child categories
-        // foreach ($categories as $category) {
-        //     $hasChildCategories = Category::where('parent_id', $category->id)->exists();
-        //     // Add the attribute to the category
-        //     $category->has_child_categories = $hasChildCategories;
-        // }
-    
+        
         // Pass the total number of products, the number currently being shown, and the total number of pages to the view
         $totalProducts = $products->total();
         $currentShowing = $products->count();
         $totalPages = $products->lastPage();
         
-           //dd($products);
-        
-        return view('frontend.pages.product-grids', compact('products', 'categories', 'totalProducts', 'currentShowing', 'totalPages'));
-    }
-    public function productSearch(Request $request) {
-        
-        if($request->categoryId){
-            $products = Product::where('cat_id',$request->categoryId)
-            ->orderBy('id', 'DESC')
-            ->paginate(15);    
-        }else{
-        // Search for matching categories
-        $categoryIds = Category::where('title', 'like', '%' . $request->search . '%')
-                               ->pluck('id')
-                               ->toArray();
+         //  dd($tags);
+      
+
+        $filterCategories = FilterCategory::where('cat_id', $cat_id)
+        ->with(['filter' => function($query) {
+            $query->with('parameters');
+        }])
+        ->get();
+
     
-        // Search for products matching the search term or category IDs
-        $products = Product::where(function ($query) use ($request, $categoryIds) {
-                            $query->where('title', 'like', '%' . $request->search . '%')
-                                  ->orWhere('slug', 'like', '%' . $request->search . '%')
-                                  ->orWhere('description', 'like', '%' . $request->search . '%')
-                                  ->orWhere('summary', 'like', '%' . $request->search . '%')
-                                  ->orWhere('price', 'like', '%' . $request->search . '%');
-                            
-                            // Include products with matching category IDs
-                            if (!empty($categoryIds)) {
-                                $query->orWhereIn('cat_id', $categoryIds);
-                            }
-                        })
-                        ->orderBy('id', 'DESC')
-                        ->paginate(15);
+       
+        $filterArray = [];
+        foreach ($filterCategories as $filterCategory) {
+            $filter = $filterCategory->filter;
+            foreach ($filter as $f) {
+                if ($filter) {
+                    $filterArray[] = [
+                        'filter_id' => $f->filter_id,
+                        'filter_name' => $f->filter_name,
+                        'parameters' => $f->parameters->pluck('param_value','param_id')
+                    ];
+                }
+            }
         }
+        //dd($filterArray);
+        return view('frontend.pages.product-grids', compact('products', 'categories', 'totalProducts', 'currentShowing', 'totalPages','filterArray','cat_id'));
+    }
+    public function productSearch(Request $request)
+{
+    try {
+        $filterId = $request->input('filterId', []);
+        $paramId = $request->input('paramId', []);
+        $categoryId = $request->input('categoryId');
+        $search = $request->input('search');
+
+        // Record the start time
+        $startTime = microtime(true);
+
+        // Initialize the query
+        $query = Product::query();
+
+        // Scenario 1: Filter by categoryId only
+        if (!empty($categoryId) && empty($paramId) && empty($search)) {
+            $query->where('cat_id', $categoryId);
+        }
+        // Scenario 2: Filter by categoryId and paramId
+        elseif (!empty($categoryId) && !empty($paramId) && empty($search)) {
+            $query->where('cat_id', $categoryId)
+                  ->whereHas('filterValues', function ($q) use ($filterId, $paramId) {
+                      $q->whereIn('filter_id', $filterId)
+                        ->whereIn('param_id', $paramId);
+                  });
+        }
+        // Scenario 3: Search by term
+        elseif (!empty($search) && empty($categoryId) && empty($paramId)) {
+            // Search for matching categories
+            $categoryIds = Category::where('title', 'like', '%' . $search . '%')
+                                   ->pluck('id')
+                                   ->toArray();
+
+            // Search for products matching the search term or category IDs
+            $query->where(function ($q) use ($search, $categoryIds) {
+                $q->where('title', 'like', '%' . $search . '%')
+                  ->orWhere('slug', 'like', '%' . $search . '%')
+                  ->orWhere('description', 'like', '%' . $search . '%')
+                  ->orWhere('summary', 'like', '%' . $search . '%')
+                  ->orWhere('price', 'like', '%' . $search . '%');
+
+                // Include products with matching category IDs
+                if (!empty($categoryIds)) {
+                    $q->orWhereIn('cat_id', $categoryIds);
+                }
+            });
+        }
+
+        // Paginate the results
+        $products = $query->orderBy('id', 'DESC')->paginate(16);
+
+        // Record the end time
+        $endTime = microtime(true);
+
+        // Calculate the response time in milliseconds
+        $responseTime = ($endTime - $startTime) * 1000;
+
         return response()->json([
             'current_page' => $products->currentPage(),
             'data' => $products->items(),
@@ -152,12 +195,19 @@ class FrontendController extends Controller
             'per_page' => $products->perPage(),
             'to' => $products->lastItem(),
             'total' => $products->total(),
-        ]);
+            'response_time_ms' => $responseTime,
+        ], 200); // HTTP status code 200 for success
+
+    } catch (\Exception $e) {
+        // Log the error
+        Log::error('Product search error: ' . $e->getMessage());
+
+        return response()->json([
+            'message' => 'An error occurred while processing your request.',
+            'error' => $e->getMessage(),
+        ], 500); // HTTP status code 500 for internal server error
     }
-
-
-
-
+}
     public function productDetail($slug){
         
         $product_detail = Product::getProductBySlug($slug);
@@ -268,8 +318,6 @@ class FrontendController extends Controller
                 return redirect()->route('product-lists',$catURL.$brandURL.$priceRangeURL.$showURL.$sortByURL);
             }
     }
-   
-
     public function productBrand(Request $request){
         $products=Brand::getProductByBrand($request->slug);
         $recent_products=Product::where('status','active')->orderBy('id','DESC')->limit(3)->get();
@@ -345,7 +393,6 @@ class FrontendController extends Controller
         // return $post;
         return view('frontend.pages.blog-detail')->with('post',$post)->with('recent_posts',$rcnt_post);
     }
-
     public function blogSearch(Request $request){
         // return $request->all();
         $rcnt_post=Post::where('status','active')->orderBy('id','DESC')->limit(3)->get();
@@ -358,7 +405,6 @@ class FrontendController extends Controller
             ->paginate(8);
         return view('frontend.pages.blog')->with('posts',$posts)->with('recent_posts',$rcnt_post);
     }
-
     public function blogFilter(Request $request){
         $data=$request->all();
         // return $data;
@@ -395,7 +441,6 @@ class FrontendController extends Controller
         $rcnt_post=Post::where('status','active')->orderBy('id','DESC')->limit(3)->get();
         return view('frontend.pages.blog')->with('posts',$post->post)->with('recent_posts',$rcnt_post);
     }
-
     public function blogByTag(Request $request){
         // dd($request->slug);
         $post=Post::getBlogByTag($request->slug);
@@ -403,8 +448,6 @@ class FrontendController extends Controller
         $rcnt_post=Post::where('status','active')->orderBy('id','DESC')->limit(3)->get();
         return view('frontend.pages.blog')->with('posts',$post)->with('recent_posts',$rcnt_post);
     }
-
-    // Login
     public function login(){
         return view('frontend.pages.login');
     }
@@ -420,7 +463,6 @@ class FrontendController extends Controller
             return redirect()->back();
         }
     }
-
     public function logout(){
         Session::forget('user');
         Auth::logout();

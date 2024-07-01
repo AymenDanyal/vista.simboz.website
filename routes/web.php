@@ -15,7 +15,7 @@ use App\Http\Controllers\CouponController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\HomeController;
-
+use App\Http\Controllers\FilterController;
 use App\Http\Controllers\EditorController;
 
 Route::get('/editor-vue/{productId}', [EditorController::class, 'index'])->name('editor-vue')->middleware('user');
@@ -141,6 +141,22 @@ Route::group(['prefix' => '/admin', 'middleware' => ['auth', 'admin']], function
     Route::get('/profile', [AdminController::class, 'profile'])->name('admin-profile');
     Route::post('/profile/{id}', [AdminController::class, 'profileUpdate'])->name('profile-update');
     // Category
+
+
+    // Filter Route
+    Route::group(['prefix' => '/filter'], function () {
+        Route::get('/', [FilterController::class, 'index'])->name('filter.index');
+        Route::get('/create', [FilterController::class, 'create'])->name('filter.create');
+        Route::post('/', [FilterController::class, 'store'])->name('filter.store');
+        Route::get('/{filter_id}', [FilterController::class, 'show'])->name('filter.show');
+        Route::get('/{filter_id}/edit', [FilterController::class, 'edit'])->name('filter.edit');
+        Route::patch('/update', [FilterController::class, 'update'])->name('filter.update');
+        Route::delete('/{filter_id}', [FilterController::class, 'destroy'])->name('filter.destroy');
+        Route::delete('/filter/{id}', [FilterController::class, 'destroy'])->name('filter.destroy');
+        Route::post('/deleteParam', [FilterController::class, 'deleteParam'])->name('filter.deleteParam');
+
+    });
+
     Route::resource('/category', 'CategoryController');
     // Product
     Route::resource('/product', 'ProductController');
@@ -151,6 +167,7 @@ Route::group(['prefix' => '/admin', 'middleware' => ['auth', 'admin']], function
     Route::resource('/post-category', 'PostCategoryController');
     // Post tag
     Route::resource('/post-tag', 'PostTagController');
+    
     // Post
     Route::resource('/post', 'PostController');
     // Message
@@ -211,7 +228,7 @@ Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth']
 
 
 Route::prefix('template')->group(function () {
-    Route::get('/editor/{productId}/{userId}', 'TemplateApiController@editor')->name('template.editor');
+    Route::get('/editor/{productId}/{userId}', 'TemplateController@editor')->name('template.editor');
 });
 
 

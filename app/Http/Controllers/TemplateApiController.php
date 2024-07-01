@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 use Auth;
 use Illuminate\Http\Request;
 use Spatie\PdfToImage\Pdf;
-use App\Models\TemplateApi;
+use App\Models\Template;
 use App\Models\UserTemplate;
 use App\Models\UserUploads;
 use App\User;
@@ -15,11 +15,11 @@ use TCPDF;
 
 use Illuminate\Support\Facades\File;
 
-class TemplateApiController extends Controller
+class TemplateController extends Controller
 {
    public function index()
     {
-        $data = TemplateApi::all();
+        $data = Template::all();
         $count = count($data);
         $responseArray = ["data" => []];
         $i = 1;
@@ -110,7 +110,7 @@ class TemplateApiController extends Controller
     
             // Create a new instance based on the user role
             if ($role === 'admin') {
-                $templateApi = new TemplateApi();
+                $templateApi = new Template();
             } else {
                 $templateApi = new UserTemplate();
                 $templateApi->user_id = $userId;
@@ -157,7 +157,7 @@ class TemplateApiController extends Controller
             
        
             
-            $templateApi = TemplateApi::where('product_id',$product_id)->first();
+            $templateApi = Template::where('product_id',$product_id)->first();
     
             if (!$templateApi) {
                 return response()->json(['message' => 'Object not found.']);
@@ -209,8 +209,8 @@ class TemplateApiController extends Controller
 
    public function destroy($id)
     {
-        // Find the TemplateApi object by its ID
-        $templateApi = TemplateApi::find($id);
+        // Find the Template object by its ID
+        $templateApi = Template::find($id);
         
         if (!$templateApi) {
         // If the object is not found, return an appropriate response (e.g., 404 Not Found)
@@ -438,7 +438,7 @@ class TemplateApiController extends Controller
     
             // Create a new instance based on the user role
             if ($role === 'admin') {
-                $templateApi = new TemplateApi();
+                $templateApi = new Template();
             } else {
                 $templateApi = new UserTemplate();
                 $templateApi->user_id = $userId;

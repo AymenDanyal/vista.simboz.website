@@ -29,7 +29,9 @@ class Helper{
     
             foreach ($menu as $cat_info) {
                 echo '<div class="col-1 p-2 text-center" style="margin-left: 17px;"> ';
-                    echo '<span class="category-bar"><a href="/product-grids/'.$cat_info->id.'">'.$cat_info->title.'</span>';
+                    echo '<span class="category-bar">
+                                <a href="/product-grids/'.$cat_info->id.'">'.$cat_info->title.'</a>'.
+                            '</span>';
                 echo '</div>';
             
             }

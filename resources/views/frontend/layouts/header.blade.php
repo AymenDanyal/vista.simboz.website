@@ -1,6 +1,8 @@
+<div class="news-bar" style="background-color: #F4F4FB;height: 18px;width: 100%;"></div>
+   
 <header id="mt-header">
     <!-- mt bottom bar start here -->
-    <div class="mt-bottom-bar">
+     <div class="mt-bottom-bar">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-xs-12">
@@ -202,13 +204,13 @@
             </div><!-- mt drop end here -->
             <span class="mt-mdropover"></span>
         </li>
-        <li>
+        {{-- <li>
             <a href="#" class="bar-opener side-opener">
                 <span class="bar"></span>
                 <span class="bar small"></span>
                 <span class="bar"></span>
             </a>
-        </li>
+        </li> --}}
         </ul><!-- mt icon list end here -->
         <!-- navigation start here -->
 
@@ -227,7 +229,7 @@
 
 </header>
 <!-- mt side menu start here -->
-<div class="mt-side-menu" bis_skin_checked="1">
+{{-- <div class="mt-side-menu" bis_skin_checked="1">
     <!-- mt holder start here -->
     <div class="mt-holder" bis_skin_checked="1">
         <a href="#" class="side-close"><span></span><span></span></a>
@@ -268,7 +270,7 @@
         <!-- mt side widget end here -->
     </div>
     <!-- mt holder end here -->
-</div>
+</div> --}}
 <!-- mt side menu end here -->
 
 
@@ -307,5 +309,14 @@
         border-radius: 10px;
         margin: 12px 0px;
         background-color: #fff;
+    }
+    .news-bar{
+        background-color: #F4F4F4;
+        height: 26px;
+        width: 100%;
+        position: absolute;
+        top: 0px;
+        z-index: 5;
+        left: 0;
     }
 </style>

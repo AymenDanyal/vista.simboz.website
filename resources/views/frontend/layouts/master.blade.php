@@ -1,6 +1,5 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zxx">
 <head>
 	@include('frontend.layouts.head')	
 </head>
@@ -17,9 +16,8 @@
 		</div>
 		<!-- W1 start here -->
 		<div class="w1">
-		</div>
-	</div>	
-	
+			
+	@include('frontend.layouts.notification')
 	<!-- Header -->
 	@include('frontend.layouts.header')
 	<!--/ End Header -->

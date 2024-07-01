@@ -14,7 +14,7 @@ class PostTagController extends Controller
      */
     public function index()
     {
-        $postTag=PostTag::orderBy('id','DESC')->paginate(10);
+        $postTag=PostTag::orderBy('id','DESC')->where('is_parent',1)->paginate(10);
         return view('backend.posttag.index')->with('postTags',$postTag);
     }
 
@@ -25,7 +25,8 @@ class PostTagController extends Controller
      */
     public function create()
     {
-        return view('backend.posttag.create');
+        $parent_cats=PostTag::where('is_parent',1)->orderBy('title','ASC')->get();
+        return view('backend.posttag.create')->with('parent_cats',$parent_cats);
     }
 
     /**

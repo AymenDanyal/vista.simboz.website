@@ -22,18 +22,18 @@ Route::get('/clear-config-cache', function () {
 
  
 Route::prefix('template')->group(function () {
-    Route::get('/', 'TemplateApiController@index');
-    Route::post('/storeTemp', 'TemplateApiController@storeTemp');
-    Route::post('/saveExit', 'TemplateApiController@saveExit');
-    Route::post('/storePng', 'TemplateApiController@storePng');
-    Route::get('/showTemp/{id}/{position}', 'TemplateApiController@show');
-    Route::put('/updateTemp/{id}', 'TemplateApiController@update');
-    Route::delete('/{id}', 'TemplateApiController@destroy');
-    Route::get('/getFonts', 'TemplateApiController@getFonts');
+    Route::get('/', 'TemplateController@index');
+    Route::post('/storeTemp', 'TemplateController@storeTemp');
+    Route::post('/saveExit', 'TemplateController@saveExit');
+    Route::post('/storePng', 'TemplateController@storePng');
+    Route::get('/showTemp/{id}/{position}', 'TemplateController@show');
+    Route::put('/updateTemp/{id}', 'TemplateController@update');
+    Route::delete('/{id}', 'TemplateController@destroy');
+    Route::get('/getFonts', 'TemplateController@getFonts');
     
-    Route::post('/uploadImage', 'TemplateApiController@uploadImage');
-    Route::get('/loadUserImages/{id}', 'TemplateApiController@loadUserImages');
-    Route::get('/getImage/{id}', 'TemplateApiController@getImage');
+    Route::post('/uploadImage', 'TemplateController@uploadImage');
+    Route::get('/loadUserImages/{id}', 'TemplateController@loadUserImages');
+    Route::get('/getImage/{id}', 'TemplateController@getImage');
     
 });
 

@@ -72,13 +72,15 @@ class Product extends Model
     }
     public function getProductDetails()
     {
-        $product=($this)->toArray();
+        // Get category
         $category = ($this->category)->toArray();
+
+        // Get filters associated with this product
         $filters = $this->filters()->with('parameters')->get()->toArray();
 
         // Get filter values
-        $filterValues = $this->filterValues()->with('parameters')->get()->toArray();
-        
+        $filterValues = $this->filterValues()->with('filter')->get()->toArray();
+        $product=($this)->toArray();
         // Combine the data into a structured array
         $details = [
             'product' => $product,

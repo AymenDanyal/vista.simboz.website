@@ -1,0 +1,9 @@
+{
+    "blade.format.enable": true,
+    "bladeFormatter.format.indentInnerHtml": true,
+    "bladeFormatter.format.noMultipleEmptyLines": true,
+    "bladeFormatter.format.noPhpSyntaxCheck": false,
+    "bladeFormatter.format.sortTailwindcssClasses": false,
+    "bladeFormatter.format.useTabs": false,
+    "editor.detectIndentation": false
+}
