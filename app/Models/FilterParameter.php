@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class FilterParameter extends Model
 {
     protected $table = 'filter_parameter';
-    protected $fillable=['filter_id','param_value','param_id'];
+    protected $fillable=['filter_id','param_value','param_id','param_price'];
     protected $primaryKey = 'param_id';
 
     // Define the relationship with Filter

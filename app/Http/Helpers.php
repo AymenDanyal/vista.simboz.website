@@ -7,7 +7,7 @@ use App\Models\Order;
 use App\Models\Wishlist;
 use App\Models\Shipping;
 use App\Models\Cart;
-// use Auth;
+use Illuminate\Support\Facades\Auth;
 class Helper{
     public static function messageList()
     {
@@ -30,7 +30,7 @@ class Helper{
             foreach ($menu as $cat_info) {
                 echo '<div class="col-1 p-2 text-center" style="margin-left: 17px;"> ';
                     echo '<span class="category-bar">
-                                <a href="/product-grids/'.$cat_info->id.'">'.$cat_info->title.'</a>'.
+                                <a class="text-truncate" href="/product-grids/'.$cat_info->id.'/0">'.$cat_info->title.'</a>'.
                             '</span>';
                 echo '</div>';
             

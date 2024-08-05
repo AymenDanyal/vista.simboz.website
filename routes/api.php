@@ -23,10 +23,9 @@ Route::get('/clear-config-cache', function () {
  
 Route::prefix('template')->group(function () {
     Route::get('/', 'TemplateController@index');
-    Route::post('/storeTemp', 'TemplateController@storeTemp');
+    Route::post('/storeUserTemp', 'TemplateController@storeUserTemp');
+    Route::post('/storeAdminTemp', 'TemplateController@storeAdminTemp');
     Route::post('/saveExit', 'TemplateController@saveExit');
-    Route::post('/storePng', 'TemplateController@storePng');
-    Route::get('/showTemp/{id}/{position}', 'TemplateController@show');
     Route::put('/updateTemp/{id}', 'TemplateController@update');
     Route::delete('/{id}', 'TemplateController@destroy');
     Route::get('/getFonts', 'TemplateController@getFonts');
@@ -34,6 +33,7 @@ Route::prefix('template')->group(function () {
     Route::post('/uploadImage', 'TemplateController@uploadImage');
     Route::get('/loadUserImages/{id}', 'TemplateController@loadUserImages');
     Route::get('/getImage/{id}', 'TemplateController@getImage');
+    Route::get('/showTemp/{product_id}/{user_id}', 'TemplateController@showTemp');
     
 });
 

@@ -14,7 +14,7 @@
         
         <div aria-live="polite" class="slick-list draggable" style="height: 586px;" >
                 <div class="slick-track" >
-                <div class="holder text-center slick-slide" style="background-image: url(&quot;https://htmlbeans.com/html/schon/images/sliders/img06.jpg&quot;); width: 1863px;" >
+                <div class="holder text-center slick-slide" style="background-image: url(&quot;https://htmlbeans.com/html/schon/images/sliders/img06.jpg&quot;); width: 100%;" >
                     <div class="container" >
                         <div class="row" >
                             <div class="col-xs-12" >

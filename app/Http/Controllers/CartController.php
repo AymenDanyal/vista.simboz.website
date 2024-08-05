@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Wishlist;
@@ -15,14 +15,35 @@ class CartController extends Controller
         $this->product=$product;
     }
 
+    public function index(){
+        $cartTotal = 0;
+        $totalSaved = 0;
+        $cartQuantity = 0;
+        $subtotal= 0;
+        $cartItems = Cart::where('user_id', Auth()->user()->id)->with('product')->get();
+
+            foreach ($cartItems as $cartItem) {
+                $product = $cartItem->product;
+                $originalPrice = $product->price;
+                $subtotal+=$originalPrice*$cartItem->quantity;
+                $discount = $product->discount;
+                $discountedPrice = round($originalPrice - ($originalPrice * $discount / 100));
+                $amountSavedPerItem = round(($originalPrice - $discountedPrice) * $cartItem->quantity);
+                
+                $totalSaved += round($amountSavedPerItem);
+                $cartTotal += $cartItem->amount; // Using $cartItem->amount to get the amount after discount for each item
+            }
+
+        return view('frontend.pages.cart',compact('cartTotal','totalSaved','subtotal'));
+    }
     public function addToCart(Request $request){
        //  dd($request->all());
        
-        if (empty($request->slug)) {
+        if (empty($request->id)) {
   
             return back();
         }        
-        $product = Product::where('slug', $request->slug)->first();
+        $product = Product::where('id', $request->id)->first();
         // return $product;
         if (empty($product)) {
             request()->session()->flash('error','Invalid Products');
@@ -51,7 +72,6 @@ class CartController extends Controller
             $cart->save();
             $wishlist=Wishlist::where('user_id',auth()->user()->id)->where('cart_id',null)->update(['cart_id'=>$cart->id]);
         }
-        $reloadCart = view('frontend.layouts.header')->render();
         $notification = view('frontend.layouts.notification')->render();
         
         
@@ -62,7 +82,7 @@ class CartController extends Controller
         ]);     
     }  
 
-   /*  public function singleAddToCart($slug){
+    public function singleAddToCart($slug){
         
         // dd($request->quant[1]);
 
@@ -104,86 +124,91 @@ class CartController extends Controller
         request()->session()->flash('success','Product successfully added to cart.');
         return back();       
     } 
-     */
-    public function cartDelete(Request $request){
-        $cart = Cart::find($request->id);
+     
+    public function cartDelete($id){
+        $cart = Cart::find($id);
+       
         if ($cart) {
             $cart->delete();
+            $cartTotal=Helper::cartCount();
             request()->session()->flash('success','Cart successfully removed');
-            return back();  
+            return response()->json([
+                'message' => 'Cart deleted.',
+                'cartTotal'=>$cartTotal,
+            ]);  
         }
         request()->session()->flash('error','Error please try again');
-        return back();       
+        return response()->json([
+            'message' => 'Error Cart not found.'
+        ]);
     }     
 
     public function cartUpdate(Request $request)
-{
-    if ($request->ajax()) {
-        $response = [];
-        $error = [];
-        $success = '';
-        $productPrice=0;
-        
+    {
+        $quantity = $request->quantity;
+        $cartId = $request->cartId;
 
-        // Assuming 'qty' and 'qty_id' keys are present in your request
-        if ($request->qty && $request->qty_id) {
-            $qty = $request->qty;
-            $qtyIds = is_array($request->qty_id) ? $request->qty_id : [$request->qty_id];
+        // Retrieve the cart item along with its product information
+        $cart = Cart::where('id', $cartId)->with('product')->first();
 
-            foreach ($qtyIds as $k => $qtyId) {
-                $id = $qtyId;
-                $cart = Cart::find($id);
-                $productId=$cart->product_id;    
-
-                if ($qty > 0 && $cart) {
-                    if ($cart->product->stock < $qty) {
-                        $error[] = 'Out of stock for ' . $cart->product->title;
-                        continue;
-                    }
-
-                    $cart->quantity = ($cart->product->stock > $qty) ? $qty : $cart->product->stock;
-
-                    if ($cart->product->stock <= 0) continue;
-
-                    $afterPrice = ($cart->product->price - ($cart->product->price * $cart->product->discount) / 100);
-                    $productPrice=$productPrice+$afterPrice * $qty;
-                    $cart->amount = $afterPrice * $qty;
-                    $cart->save();
-                    $success = 'Cart successfully updated!';
-                } else {
-                    $error[] = 'Invalid cart for ' . $cart->product->title;
-                }
-            }
-            $total= Cart::where('user_id',Auth()->user()->id)->where('order_id',null)->sum('amount');
-
-            if (!empty($error)) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => $error,
-                ]);
-            } else {
-                return response()->json([
-                    'status' => 'success',
-                    'message' => $success,
-                    'newAmount' => $total,
-                    'productId' => $productId,    
-                    'productPrice' => $productPrice,
-                    
-                ]);
-            }
-        } else {
-            $response['status'] = 'error';
-            $response['message'] = 'Invalid cart request!';
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Invalid cart request!',
-            ]);
-            
+        // Check if the cart item exists
+        if (!$cart) {
+            return response()->json(['error' => 'Cart item not found'], 404);
         }
-    } else {
-        return back()->with('error', 'Invalid request!');
+
+        $product = $cart->product;
+        $originalPrice = $product->price;
+        $discount = $product->discount;
+        $discountedPrice = $originalPrice - ($originalPrice * $discount / 100);
+        $amountSavedPerItem = ($originalPrice - $discountedPrice) * $quantity;
+
+        // Update the cart quantity
+        $cart->quantity = $quantity;
+        $cart->price = $discountedPrice;
+        $cart->amount = round($cart->quantity * $cart->price);
+
+        if ($cart->quantity <= 0) {
+            // Delete the cart item if quantity is zero or less
+            $cart->delete();
+            return response()->json(['message' => 'Cart item removed'], 200);
+        } else {
+            // Save the updated cart item
+            $cart->save();
+
+            // Calculate the total cart value for the user
+            $cartTotal = 0;
+            $totalSaved = 0;
+            $cartQuantity = 0;
+            $cartItems = Cart::where('user_id', $cart->user_id)->with('product')->get();
+
+            foreach ($cartItems as $cartItem) {
+                $product = $cartItem->product;
+                $originalPrice = $product->price;
+                $discount = $product->discount;
+                $discountedPrice = round($originalPrice - ($originalPrice * $discount / 100));
+                $amountSavedPerItem = round(($originalPrice - $discountedPrice) * $cartItem->quantity);
+
+                $cartQuantity += $cartItem->quantity;
+                $totalSaved += round($amountSavedPerItem);
+                $cartTotal += $cartItem->amount; // Using $cartItem->amount to get the amount after discount for each item
+            }
+
+            // Return the updated cart information as a JSON response
+            return response()->json([
+                'cartId' => $cart->id,
+                'quantity' => $cart->quantity,
+                'priceBeforeDiscount' => $originalPrice,
+                'priceAfterDiscount' => $discountedPrice,
+                'amount' => $cart->amount,
+                'discount' => $discount,
+                'amountSaved' => $amountSavedPerItem, // Amount saved for this specific item
+                'totalSaved' => $totalSaved, // Total amount saved for the entire cart
+                'cartTotal' => $cartTotal,
+                'cartQuantity' => $cartQuantity, // Total quantity of items in the cart
+            ]);
+        }
     }
-}
+
 
     // public function addToCart(Request $request){
     //     // return $request->all();
@@ -257,35 +282,35 @@ class CartController extends Controller
     //     }
     // }
 
-    // public function removeCart(Request $request){
-    //     $index=$request->index;
-    //     // return $index;
-    //     $cart=session('cart');
-    //     unset($cart[$index]);
-    //     session()->put('cart',$cart);
-    //     return redirect()->back()->with('success','Successfully remove item');
-    // }
+    public function removeCart(Request $request){
+        $index=$request->index;
+        // return $index;
+        $cart=session('cart');
+        unset($cart[$index]);
+        session()->put('cart',$cart);
+        return redirect()->back()->with('success','Successfully remove item');
+    }
 
     public function checkout(Request $request){
-        // $cart=session('cart');
-        // $cart_index=\Str::random(10);
-        // $sub_total=0;
-        // foreach($cart as $cart_item){
-        //     $sub_total+=$cart_item['amount'];
-        //     $data=array(
-        //         'cart_id'=>$cart_index,
-        //         'user_id'=>$request->user()->id,
-        //         'product_id'=>$cart_item['id'],
-        //         'quantity'=>$cart_item['quantity'],
-        //         'amount'=>$cart_item['amount'],
-        //         'status'=>'new',
-        //         'price'=>$cart_item['price'],
-        //     );
+        $cartTotal = 0;
+        $totalSaved = 0;
+        $cartQuantity = 0;
+        $subtotal= 0;
+        $cartItems = Cart::where('user_id', Auth()->user()->id)->with('product')->get();
 
-        //     $cart=new Cart();
-        //     $cart->fill($data);
-        //     $cart->save();
-        // }
-        return view('frontend.pages.checkout');
+            foreach ($cartItems as $cartItem) {
+                $product = $cartItem->product;
+                $originalPrice = $product->price;
+                $subtotal+=$originalPrice*$cartItem->quantity;
+                $discount = $product->discount;
+                $discountedPrice = round($originalPrice - ($originalPrice * $discount / 100));
+                $amountSavedPerItem = round(($originalPrice - $discountedPrice) * $cartItem->quantity);
+                
+                $totalSaved += round($amountSavedPerItem);
+                $cartTotal += $cartItem->amount; // Using $cartItem->amount to get the amount after discount for each item
+            }
+
+        return view('frontend.pages.checkout',compact('cartTotal','totalSaved','subtotal'));
+    
     }
 }

@@ -50,48 +50,43 @@ class FilterController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            $this->validate($request, [
-                'filter_name' => 'string|required',
-                'parameters.*' => 'string|required',
-                'filter_cat' => 'integer|required',
-            ]);
-
-            $parameters = $request->input('parameters');
-            $category = $request->input('filter_cat');
-
-            // Create Filter
-            $filter = Filter::create([
-                'filter_name' => $request->input('filter_name'),
-            ]);
-
-            // Create FilterCategory
-
-            $filterCategory = FilterCategory::create([
-                'cat_id' => $category,
+        $request->validate([
+            'filter_name' => 'string|required',
+            'parameters.*' => 'string|required',
+            'filter_cat' => 'integer|required',
+            'param_price' => 'integer|nullable'
+        ]);
+    
+        $parameters = $request->input('parameters');
+        $category = $request->input('filter_cat');
+    
+        // Create Filter
+        $filter = Filter::create([
+            'filter_name' => $request->input('filter_name'),
+        ]);
+    
+        // Create FilterCategory
+        $filterCategory = FilterCategory::create([
+            'cat_id' => $category,
+            'filter_id' => $filter->filter_id,
+        ]);
+    
+        // Create FilterParameters
+        foreach ($parameters as $parameter) {
+            FilterParameter::create([
                 'filter_id' => $filter->filter_id,
+                'param_value' => $parameter,
+                'param_price' => $request->param_price,
             ]);
-
-
-            // Create FilterParameters
-            foreach ($parameters as $parameter) {
-                FilterParameter::create([
-                    'filter_id' => $filter->filter_id,
-                    'param_value' => $parameter,
-                ]);
-            }
-
-            // Flash success message
-            request()->session()->flash('success', 'Filter successfully added');
-
-
-            // Redirect to index route
-            return redirect()->route('filter.index');
-        } catch (\Exception $e) {
-
-            request()->session()->flash('error', 'Please try again!!');
         }
+    
+        // Flash success message
+        request()->session()->flash('success', 'Filter successfully added');
+    
+        // Redirect to index route
+        return redirect()->route('filter.index');
     }
+    
 
 
     /**
@@ -120,7 +115,7 @@ class FilterController extends Controller
 
         // Group parameters by filter name
         $groupedParameters = Filter::groupParametersByFilterName($filters);
-        //=dd($filters,$groupedParameters);
+        //dd($filters,$groupedParameters);
         return view('backend.filter.edit', compact('groupedParameters', 'categories'));
     }
 
@@ -133,13 +128,14 @@ class FilterController extends Controller
      */
     public function update(Request $request)
     {
-
+        dd($request->all());
         try {
             // Validate the incoming request data
             $this->validate($request, [
                 'filter_name' => 'string|required',
                 'filter_id' => 'integer|required',
                 'filter_cat' => 'string|required',
+                'param_value' => 'integer|required',
                 'parameters' => 'array',
                 'parameters.*' => 'string',
             ]);
@@ -163,11 +159,13 @@ class FilterController extends Controller
 
                     if ($filterParameter) {
                         $filterParameter->param_value = $paramValue;
+                        $filterParameter->param_price =$request->param_price;
                         $filterParameter->save();
                     } else {
                         FilterParameter::create([
                             'filter_id' => $request->filter_id,
                             'param_value' => $paramValue,
+                            'param_price' =>$request->param_price,
                         ]);
                     }
                 }

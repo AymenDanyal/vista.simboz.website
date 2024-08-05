@@ -8,8 +8,10 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Socialite;
 use App\User;
-use Auth;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 class LoginController extends Controller
+
 {
     /*
     |--------------------------------------------------------------------------
@@ -60,12 +62,15 @@ class LoginController extends Controller
             Auth::login($users);
             return redirect('/')->with('success','You are login from '.$provider);
         }else{
+            $token = Str::random(60);
             $user = User::create([
                 'name'          => $userSocial->getName(),
                 'email'         => $userSocial->getEmail(),
                 'image'         => $userSocial->getAvatar(),
                 'provider_id'   => $userSocial->getId(),
                 'provider'      => $provider,
+                'api_token' => hash('sha256', $token),
+                
             ]);
          return redirect()->route('home');
         }

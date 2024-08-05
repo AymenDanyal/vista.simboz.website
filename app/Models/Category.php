@@ -19,23 +19,10 @@ class Category extends Model
         return $this->belongsToMany(Filter::class, 'filter_category', 'cat_id', 'filter_id');
     }
 
-    // public function filters()
-    // {
-    //     return $this->hasMany(FilterCategory::class, 'cat_id', 'id');
-    // }
+
+
+
     
-
-
-
-
-
-
-
-
-
-
-
-
 
     public function parent_info(){
         return $this->hasOne('App\Models\Category','id','parent_id');

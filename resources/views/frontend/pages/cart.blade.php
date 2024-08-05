@@ -1,233 +1,370 @@
 @extends('frontend.layouts.master')
 @section('title', 'Cart Page')
 @section('main-content')
-    <!-- Breadcrumbs -->
-    <div class="breadcrumbs">
-        <div class="container">
+
+
+<div class="container">
+    <div class="row" >
+        <div class="col-lg-6 col-12 wow fadeInLeft" style=" visibility: hidden; animation-delay: 0.4s; animation-name: none; padding: 20px 40px 0px 0px;">
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="d-flex">
+                        <h1 class="display-5">My Cart</h1>
+                        <div class="d-flex ml-4">
+                            <h2 class="display-6  ">
+                                <span class="cart-quantity m-3"> {{ Helper::cartCount() }}</span>
+                                <span class="visually-hidden"> items</span>
+                            </h2>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
             <div class="row">
                 <div class="col-12">
-                    <div class="bread-inner">
-                        <ul class="bread-list">
-                            <li><a href="{{ 'home' }}">Home<i class="ti-arrow-right"></i></a></li>
-                            <li class="active"><a href="">Cart</a></li>
-                        </ul>
-                    </div>
+
+                    <ul class="list-unstyled mt-6">
+                        @if (Helper::getAllProductFromCart())
+                        @foreach (Helper::getAllProductFromCart() as $key => $cart)
+                        <li id="cart-li-{{$cart->id}}" class="wow fadeInLeft" style="visibility: hidden; animation-delay: 0.6s">
+                            <hr class="divider">
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="grid-container">
+                                        <div class="row mb-1">
+                                            <div class="col-12">
+                                                <div class="preview">
+                                                    <img class="preview-img" src="{{ asset($cart->product['photo']) }}"
+                                                        loading="lazy" alt="Product image">
+                                                </div>
+                                                <div class="d-flex flex-column align-items-center text-center">
+                                                    <button type="button" class="btn btn-link p-0">
+                                                        <img src="https://swan.prod.merch.vpsvc.com/v2/icons/zoom_in.714c54c4dc4f195abc1746b320009833.svg"
+                                                            alt="" class="icon icon-size-32">
+                                                        <span class="visually-hidden">View larger image</span>
+                                                    </button>
+                                                    <div class="mt-3">
+                                                        <a href="/editor-vue/{{ ($cart->product['id']) }}"
+                                                            class="link form-button">Edit</a>
+                                                    </div>
+                                                </div>
+                                                <div class="modal" role="dialog" aria-modal="true"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-8 offset-1">
+                                    <div class="grid-container">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h4 id="product-name-{{ $key }}" class="display-6 ">
+                                                    {{$cart->product->title}}
+                                                </h4>
+                                            </div>
+
+                                            <div>
+                                                <button data-id="{{$cart->id}}" type="button"
+                                                    class="btn btn-link form-button remove">Remove</button>
+                                            </div>
+                                        </div>
+                                        <hr class="divider">
+                                        <div class="row">
+                                            <div class="col-12 mb-2">
+                                                <div
+                                                    class="d-flex justify-content-between align-items-baseline flex-wrap mt-1">
+
+                                                    <div>
+                                                        <span>Quantity</span>
+                                                    </div>
+                                                    <div>
+                                                        <input type="number" value="{{$cart->quantity}}" min="0"
+                                                            data-cart-id="{{$cart->id}}"
+                                                            data-previous-quantity="{{$cart->quantity}}"
+                                                            class="form-control product-quantity" style="max-width: 70px;">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 mb-2">
+                                                <div
+                                                    class="d-flex justify-content-between align-items-baseline flex-wrap mt-1">
+
+                                                    <div>
+                                                        <span>Price ( per piece )</span>
+                                                    </div>
+                                                    <div>
+                                                        <span>Rs {{$cart->product->price}}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 mb-2">
+
+                                                <div class="col-12 mb-2">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div>Discount ( per piece )</div>
+                                                        <div class="d-flex flex-column align-items-end">
+                                                            <div class="d-flex flex-row align-items-end">
+                                                                <div class="d-flex flex-row">
+                                                                    <span>{{ $cart->product->discount }} %</span>
+
+                                                                </div>
+                                                                <hr class="divider">
+                                                            </div>
+
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                <hr class="divider">
+                                                <div class="col-12 mb-2">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div>Grand Total</div>
+
+                                                        <div class="d-flex flex-column align-items-end">
+                                                            <div class="d-flex flex-row align-items-end">
+                                                                <div class="d-flex flex-row">
+                                                                    <span id='grand-total-{{$cart->id}}'>Rs {{
+                                                                        $cart->product->price * $cart->quantity * ((100 -
+                                                                        $cart->product->discount) / 100) }}</span>
+
+                                                                    <div class="cart-spinner-{{$cart->id}} spinner-border d-none"
+                                                                        role="status">
+                                                                        <span class="sr-only">Loading...</span>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                <hr class="divider">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </li>
+
+                        @endforeach
+                        @else
+                        <tr>
+                            <td class="text-center">
+                                You need to <a href="{{ route('login.form') }}" style="color:rgb(54, 54, 204)">Login</a>
+                                OR <a style="color:blue" href="{{ route('register.form') }}">Register</a> for comment.
+                            </td>
+                        </tr>
+                        @endif
+
+                    </ul>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- End Breadcrumbs -->
-
-    <!-- Shopping Cart -->
-    <div class="shopping-cart section">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <!-- Shopping Summery -->
-                    <table class="table shopping-summery">
-                        <thead>
-                            <tr class="main-hading">
-                                <th>PRODUCT</th>
-                                <th>NAME</th>
-                                <th class="text-center">UNIT PRICE</th>
-                                <th class="text-center">QUANTITY</th>
-                                <th class="text-center">TOTAL</th>
-                                <th class="text-center"><i class="ti-trash remove-icon"></i></th>
-                            </tr>
-                        </thead>
-                        
-                            <form action="{{ route('cart.update') }}"
-                            <tbody id="cart_item_list">
-                                @if (Helper::getAllProductFromCart()) @foreach (Helper::getAllProductFromCart() as $key => $cart)
-										<tr>
-											@php
-											$photo=explode(',',$cart->product['photo']);
-											@endphp
-											<td class="image" data-title="No"><img src="{{ $photo[0] }}" alt="{{ $photo[0] }}"></td>
-											<td class="product-des" data-title="Description">
-												<p class="product-name"><a href="{{ route('product-detail', $cart->product['slug']) }}" target="_blank">{{ $cart->product['title'] }}</a></p>
-												<p class="product-des">{!! $cart['summary'] !!}</p>
-											</td>
-											<td class="price" data-title="Price"><span>${{ number_format($cart['price'], 2) }}</span></td>
-											<td class="qty" data-title="Qty"><!-- Input Order -->
-												<div class="input-group">
-													<div class="button minus">
-														<button type="button" class="btn btn-primary btn-number" disabled="disabled" data-type="minus" data-field="quant[{{ $key }}]">
-															<i class="ti-minus"></i>
-														</button>
-													</div>
-													<input type="text" name="quant[{{ $key }}]" class="input-number"  data-min="1" data-max="100" value="{{ $cart->quantity }}">
-													<input type="hidden" name="qty_id[]" value="{{ $cart->id }}">
-													<div class="button plus">
-														<button type="button" class="btn btn-primary btn-number" data-type="plus" data-field="quant[{{ $key }}]">
-															<i class="ti-plus"></i>
-														</button>
-													</div>
-												</div>
-												<!--/ End Input Order -->
-											</td>
-											<td class="total-amount" data-title="Total" >
-												<span class="money cart_single_price{{ $cart->product_id }}">${{ $cart->amount }}</span>
-											</td>
-											<td class="action" data-title="Remove" data-cart-id="{{ $cart->id }}">
-												<a href="#" class="remove-cart-item">
-													<i class="ti-trash remove-icon"></i>
-												</a>
-											</td>				</tr>
-									@endforeach
-									<track>
-										<td></td>
-										<td></td>
-										<td></td>
-										<td></td>
-										<td></td>
-										
-									</track>
-								@else
-										<tr>
-											<td class="text-center">
-												You need to <a href="{{route('login.form')}}" style="color:rgb(54, 54, 204)">Login</a> OR <a style="color:blue" href="{{route('register.form')}}">Register</a> for comment.
 
 
-											</td>
-										</tr> @endif
-                                </form>
-                        </tbody>
-                    </table>
-                    <!--/ End Shopping Summery -->
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <!-- Total Amount -->
-                    <div class="total-amount">
-                        <div class="row">
-                            <div class="col-lg-8 col-md-5 col-12">
-                                <div class="left">
-                                    <div class="coupon">
-                                        <form action="{{ route('coupon-store') }}" method="POST">
-                                            @csrf
-                                            <input name="code" placeholder="Enter Your Coupon">
-                                            <button class="btn">Apply</button>
-                                        </form>
+        <div class="col-lg-6 col-12 wow fadeInRight" style="visibility: hidden; animation-delay: 0.4s; animation-name: none;padding: 20px 0px 0px 40px;">
+            <div class="row mt-4">
+                <div class="col-12 px-3 py-2 py-sm-5 mb-4 bg-light">
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h2 class="display-6">Order Summary</h2>
+                            <div role="table">
+                                <div role="rowgroup">
+                                    <div class="mt-3">
+                                        <div data-testid="tax-aware-price-row">
+                                            <div data-testid="price-row" role="row"
+                                                class="d-flex justify-content-between align-items-start">
+                                                <div role="columnheader" class="text-secondary font-weight-normal">
+                                                    Subtotal
+                                                </div>
+                                                <div role="cell" class="d-flex flex-column align-items-end">
+                                                    <div class="d-flex flex-row align-items-end">
+                                                        <span data-testid="price-display"
+                                                            class="text-dark text-secondary font-weight-normal">
+                                                            <span id="subtotal" class="order-amount">Rs {{ $subtotal }}</span>
+                                                            <div class="order-spinner spinner-border d-none"role="status">
+                                                                <span class="sr-only">Loading...</span>
+                                                            </div>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div data-testid="price-row" role="row"
+                                            class="d-flex justify-content-between align-items-start">
+                                            <div role="columnheader" class="text-secondary font-weight-normal">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="text-secondary font-weight-normal">
+                                                        <h4 class="">Savings</h4>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div role="cell" class="d-flex flex-column align-items-end">
+                                                <div class="d-flex flex-row align-items-end">
+                                                    <span data-testid="price-display"
+                                                        class="text-secondary font-weight-normal">
+                                                        <span id='savings' class="order-amount">Rs {{ $totalSaved }}</span>
+                                                        <div class="order-spinner spinner-border d-none" role="status">
+                                                            <span class="sr-only">Loading...</span>
+                                                        </div>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mt-3">
+                                            <div data-testid="tax-aware-price-row">
+                                                <div data-testid="price-row" role="row"
+                                                    class="d-flex justify-content-between align-items-start">
+                                                    <div role="columnheader" class="text-secondary font-weight-normal">
+                                                        <a href="/shipping" target="_blank"
+                                                            class="text-decoration-none">Shipping</a>
+                                                        <span> (calculated at checkout)</span>
+                                                    </div>
+                                                    <div role="cell" class="d-flex flex-column align-items-end">
+                                                        <div class="d-flex flex-row align-items-end">
+                                                            <span data-testid="price-display"
+                                                                class="text-dark text-secondary font-weight-normal">
+                                                                <output>-</output>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div data-testid="price-row" role="row"
+                                                class="d-flex mt-3 justify-content-between align-items-start">
+                                                <div role="columnheader" class="text-secondary font-weight-normal">
+                                                    <span>Tax</span>
+                                                    <span> (calculated at checkout)</span>
+                                                </div>
+                                                <div role="cell" class="d-flex flex-column align-items-end">
+                                                    <div class="d-flex flex-row align-items-end">
+                                                        <span data-testid="price-display"
+                                                            class="text-dark text-secondary font-weight-normal">
+                                                            <output>-</output>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr class="my-4">
+                                            <div>
+                                                <div data-testid="tax-aware-price-row">
+                                                    <div data-testid="price-row" role="row"
+                                                        class="d-flex justify-content-between align-items-start">
+                                                        <h4>Total</h4>
+                                                        <div role="cell" class="d-flex flex-column align-items-end">
+                                                            <div class="d-flex flex-row align-items-end">
+                                                                <span data-testid="price-display"
+                                                                    class="text-dark text-primary font-weight-bold">
+                                                                    <h4 id="total" class="order-amount">Rs {{ $cartTotal }}</h4>
+                                                                    <div class="order-spinner spinner-border d-none"
+                                                                        role="status">
+                                                                        <span class="sr-only">Loading...</span>
+                                                                    </div>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr class="mt-4">
+                                            <dialog role="dialog" aria-modal="true" class="d-none"
+                                                style="z-index: 9000;">
+                                            </dialog>
+                                        </div>
                                     </div>
-                                    {{-- <div class="checkbox">`
-										@php
-											$shipping=DB::table('shippings')->where('status','active')->limit(1)->get();
-										@endphp
-										<label class="checkbox-inline" for="2"><input name="news" id="2" type="checkbox" onchange="showMe('shipping');"> Shipping</label>
-									</div> --}}
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-7 col-12">
-                                <div class="right">
-                                    <ul>
-										<li id="orderSubtotal" class="order_subtotal" data-price="{{ Helper::totalCartPrice() }}">
-											You Pay<span>${{ number_format(Helper::totalCartPrice(), 2) }}</span>
-										</li>
 
-                                        @if (session()->has('coupon'))
-                                            <li class="coupon_price" data-price="{{ Session::get('coupon')['value'] }}">You
-                                                Save<span>${{ number_format(Session::get('coupon')['value'], 2) }}</span>
-                                            </li>
-                                        @endif
-                                        @php
-                                            $total_amount = Helper::totalCartPrice();
-                                            if (session()->has('coupon')) {
-                                                $total_amount = $total_amount - Session::get('coupon')['value'];
-                                            }
-                                        @endphp
-                                        @if (session()->has('coupon'))
-                                            <li class="last" id="order_total_price">You
-                                                Pay<span>${{ number_format($total_amount, 2) }}</span></li>
-                                        @else
-                                            {{-- <li class="last" id="order_total_price">You
-                                                Pay<span>${{ number_format($total_amount, 2) }}</span>
-                                            </li> --}}
-                                            
-                                        @endif
-                                    </ul>
-                                    <div class="button5">
-                                        <a href="{{ route('checkout') }}" class="btn">Checkout</a>
-                                        <a href="{{ route('product-grids') }}" class="btn">Continue shopping</a>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <a href="{{route('checkout')}}" class="btn btn-primary btn-block w-100">Order Now</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div data-pp-id="1">
+                                            <span id="zoid-paypal-message-uid_ca371166d7_mtk6mjm6ntg">
+                                                <style nonce="">
+                                                    #zoid-paypal-message-uid_ca371166d7_mtk6mjm6ntg>iframe {
+                                                        width: 100%;
+                                                        height: 0;
+                                                    }
+
+                                                    #zoid-paypal-message-uid_ca371166d7_mtk6mjm6ntg>iframe:nth-of-type(2) {
+                                                        display: none;
+                                                    }
+                                                </style>
+                                                <iframe allowtransparency="true"
+                                                    name="__zoid__paypal_message__eyJzZW5kZXIiOnsiZG9tYWluIjoiaHR0cHM6Ly93d3cudmlzdGFwcmludC5jb20ifSwibWV0YURhdGEiOnsid2luZG93UmVmIjp7InR5cGUiOiJwYXJlbnQiLCJkaXN0YW5jZSI6MH19LCJyZWZlcmVuY2UiOnsidHlwZSI6InJhdyIsInZhbCI6IntcInVpZFwiOlwiem9pZC1wYXlwYWwtbWVzc2FnZS11aWRfY2EzNzExNjZkN19tdGs2bWptNm50Z1wiLFwiY29udGV4dFwiOlwiaWZyYW1lXCIsXCJ0YWdcIjpcInBheXBhbC1tZXNzYWdlXCIsXCJjaGlsZERvbWFpbk1hdGNoXCI6e1wiX190eXBlX19cIjpcInJlZ2V4XCIsXCJfX3ZhbF9fXCI6XCJcXFxcLnBheXBhbFxcXFwuY29tKDpcXFxcZCspPyRcIn0sXCJ2ZXJzaW9uXCI6XCIxMF8zXzNcIixcInByb3BzXCI6e1wiYWNjb3VudFwiOlwiY2xpZW50LWlkOkFaODFmZ0JOcXZiQTV0a2FxOHQwV2lrLXg4SW1vVWJfM0FzT0I2aTNQWTlzbjNvWDc0QTkzT1d6SUJCaERtVEtFS0d4Q1Rla1FvNklVRWI4XCIsXCJtZXJjaGFudElkXCI6e1wiX190eXBlX19cIjpcInVuZGVmaW5lZFwifSxcImN1c3RvbWVySWRcIjp7XCJfX3R5cGVfX1wiOlwidW5kZWZpbmVkXCJ9LFwiY3VycmVuY3lcIjp7XCJfX3R5cGVfX1wiOlwidW5kZWZpbmVkXCJ9LFwiYW1vdW50XCI6Ny4xOSxcImJ1eWVyQ291bnRyeVwiOntcIl9fdHlwZV9fXCI6XCJ1bmRlZmluZWRcIn0sXCJpZ25vcmVDYWNoZVwiOntcIl9fdHlwZV9fXCI6XCJ1bmRlZmluZWRcIn0sXCJjaGFubmVsXCI6XCJVUFNUUkVBTVwiLFwiZWNUb2tlblwiOntcIl9fdHlwZV9fXCI6XCJ1bmRlZmluZWRcIn0sXCJjb250ZXh0XCI6e1wiY2FsbFwiOnRydWV9LFwiU2Vzc2lvblwiOlwiY2xhc3NpY2F1c3VhbGQtY2FsbC1nbm9wZXJhbGxcIixcIk91dGJveCBFbnRyeVwiOm51bGx9LFwiU2VyaWFsXCI6bnVsbH19"></iframe>
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!--/ End Total Amount -->
                 </div>
             </div>
         </div>
     </div>
-    <!--/ End Shopping Cart -->
 
-    <!-- Start Shop Newsletter  -->
-    @include('frontend.layouts.newsletter')
-    <!-- End Shop Newsletter -->
+</div>
 
+
+  
 @endsection
 @push('styles')
-    <style>
-        li.shipping {
-            display: inline-flex;
-            width: 100%;
-            font-size: 14px;
-        }
+<style>
+    .icon {
+        display: inline-block;
+        vertical-align: middle;
+    }
 
-        li.shipping .input-group-icon {
-            width: 100%;
-            margin-left: 10px;
-        }
+    .icon-size-32 {
+        width: 32px;
+        height: 32px;
+        font-size: 32px;
+        background-size: cover;
+    }
 
-        .input-group-icon .icon {
-            position: absolute;
-            left: 20px;
-            top: 0;
-            line-height: 40px;
-            z-index: 3;
-        }
+    .cart-quantity {
+        background-color: #307db7;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        font-size: 16px;
+        text-align: center;
+        line-height: 50px;
+    }
 
-        .form-select {
-            height: 30px;
-            width: 100%;
-        }
+    .form-button {
+        border: 1px solid black;
+        padding: 3px 20px;
+        border-radius: 11px;
+        color: black;
+        background: white;
+    }
 
-        .form-select .nice-select {
-            border: none;
-            border-radius: 0px;
-            height: 40px;
-            background: #f6f6f6 !important;
-            padding-left: 45px;
-            padding-right: 40px;
-            width: 100%;
-        }
+   
+ 
 
-        .list li {
-            margin-bottom: 0 !important;
-        }
-
-        .list li:hover {
-            background: #F7941D !important;
-            color: white !important;
-        }
-
-        .form-select .nice-select::after {
-            top: 14px;
-        }
-    </style>
+   
+</style>
 @endpush
 @push('scripts')
-    <script src="{{ asset('frontend/js/nice-select/js/jquery.nice-select.min.js') }}"></script>
-    <script src="{{ asset('frontend/js/select2/js/select2.min.js') }}"></script>
-    <script>
-        $(document).ready(function() {
-            $("select.select2").select2();
-        });
-        $('select.nice-select').niceSelect();
-    </script>
-    <script>
-        $(document).ready(function() {
+<link href="{{asset('backend/vendor/datatables/dataTables.bootstrap4.min.css')}}" rel="stylesheet">
+<!-- SweetAlert2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+<!-- SweetAlert2 JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    $(document).ready(function() {
             $('.shipping select[name=shipping]').change(function() {
                 let cost = parseFloat($(this).find('option:selected').data('price')) || 0;
                 let subtotal = parseFloat($('.order_subtotal').data('price'));
@@ -235,53 +372,160 @@
                 // alert(coupon);
                 $('#order_total_price span').text('$' + (subtotal + cost - coupon).toFixed(2));
             });
-            // Listen for changes in the input fields
-            $('.input-number').on('change', function() {
-                updateCart($(this).closest('tr'));
-            });
 
             
+            // Listen for changes in the input fields
+            let debounceTimer;
 
-            // Function to update the cart using AJAX
-            function updateCart(row) {
-                // Get the data from the row
-                var qty = row.find('.input-number').val();
-                var qty_id = row.find('input[name="qty_id[]"]').val();
-                var _token = $('input[name="_token"]').val();
-				let cartId = $(this).closest('td').data('cart-id');
+            $('.product-quantity').on('change', function() {
+                var $this = $(this);
+                var newQuantity = $this.val();
+                var cartId = $this.data('cart-id');
+                var previousQuantity = $this.data('previous-quantity');
 
-                // Make the AJAX request
-                $.ajax({
-                    type: 'POST',
-                    url: "{{ route('cart.update') }}",
-                    data: {
-                        qty: qty,
-                        qty_id: qty_id,
-                        _token: _token
-                    },
-                    success: function(data) {
-                        // Handle success, update the DOM if needed
-                        
-						
-                        let orderSubtotal = $('#orderSubtotal');
-                        orderSubtotal.attr('data-price', data.newAmount);
-                        orderSubtotal.find('span').text('$' + data.newAmount.toFixed(2));
-                        // You may want to update the total price, or display a success message
+                // Show the spinner and hide the cart total
+                $(`.cart-spinner-${cartId}`).removeClass('d-none');
+                $(`.order-spinner`).removeClass('d-none');
+                $(`#grand-total-${cartId}`).addClass('d-none');
+                $(`.order-amount`).addClass('d-none');
 
-						let productPrice = '$' + data.productPrice.toFixed(2);
-                        console.log(productPrice);
-                        $(`.cart_single_price${data.productId}`).text(productPrice);
-                        
-                        
-                    },
-                    error: function(data) {
-                        // Handle errors and display error messages
-                        var errors = data.responseJSON.errors;
-                        console.log(errors);
-                        // Handle errors as needed
-                    }
-                });
-            }
+                if (newQuantity == 0) {
+                    Swal.fire({
+                        title: "Are you sure?",
+                        text: "You want to remove this item from the cart?",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Yes, delete it!",
+                        cancelButtonText: "No, cancel!",
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Proceed with deletion logic
+                            $.ajax({
+                                url: '/cart-update',
+                                type: 'POST',
+                                data: {
+                                    "_token": "{{ csrf_token() }}",
+                                    quantity: newQuantity,
+                                    cartId: cartId
+                                },
+                                success: function(response) {
+                                    console.log(response);
+                                    $(`#cart-li-${cartId}`).remove();
+                                    Swal.fire("Deleted!", "The item has been removed from the cart.", "success");
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error('Error updating cart:', error);
+                                },
+                                complete: function() {
+                                    // Hide the spinner and show the cart total
+                                    $(`.cart-spinner-${cartId}`).addClass('d-none');
+                                    $(`.order-spinner`).addClass('d-none');
+                                    $(`#grand-total-${cartId}`).removeClass('d-none');
+                                    $(`.order-amount`).removeClass('d-none');
+                                }
+                            });
+                        } else {
+                            // User canceled deletion, revert the quantity
+                            $this.val(previousQuantity);
+                            Swal.fire("Cancelled", "The item was not removed.", "info");
+                            
+                            // Hide the spinner and show the cart total
+                            $(`.cart-spinner-${cartId}`).addClass('d-none');
+                            $(`.order-spinner`).addClass('d-none');
+                            $(`#grand-total-${cartId}`).removeClass('d-none');
+                            $(`.order-amount`).removeClass('d-none');
+                        }
+                    });
+                } else {
+                    // Update previous quantity data
+                    $this.data('previous-quantity', newQuantity);
+
+                    // Debounced AJAX request for quantity change
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(function() {
+                        $.ajax({
+                            url: '/cart-update',
+                            type: 'POST',
+                            data: {
+                                "_token": "{{ csrf_token() }}",
+                                quantity: newQuantity,
+                                cartId: cartId
+                            },
+                            success: function(response) {
+                                console.log(response);
+                                $('#grand-total-' + response.cartId).text(response.amount); // Product total price
+                                $('.cart-quantity').text(response.cartQuantity); // Cart product quantity
+                                $('#subtotal').text('Rs ' + (response.cartTotal + response.totalSaved)); // Cart total without discount
+                                $('#savings').text('Rs ' + response.totalSaved); // Amount saved because of discount
+                                $('#total').text('Rs ' + response.cartTotal); // Amount after discount
+
+
+                                $(`.order-amount`).removeClass('d-none');
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Error updating cart:', error);
+                            },
+                            complete: function() {
+                                // Hide the spinner and show the cart total
+                                $(`.cart-spinner-${cartId}`).addClass('d-none');
+                                $(`.order-spinner`).addClass('d-none');
+                                $(`#grand-total-${cartId}`).removeClass('d-none');
+                            }
+                        });
+                    }, 500); // 500ms debounce delay
+                }
+            });
+
+
+            $('.remove').on('click', function() {
+                var id = $(this).data('id');
+                console.log(id);
+                    Swal.fire({
+                        title: "Are you sure?",
+                        text: "You want to remove this item from the cart?",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Yes, delete it!",
+                        cancelButtonText: "No, cancel!",
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            if(id) {
+                                
+                                $.ajax({
+                                    type: 'DELETE',
+                                    url: `cart-delete/${id}`,
+                                    data: {
+                                        "_token": "{{ csrf_token() }}",
+                                    },
+                                    success: function(data) {
+                                        $(`#cart-li-${id}`).remove();
+                                        $('.cart-quantity').text(data.cartTotal);
+                                        $('#subtotal').text('Rs '+response.cartTotal+response.totalSaved);
+                                        $('#savings').text('Rs '+response.totalSaved);
+                                        $('#total').text('Rs '+response.cartTotal);
+                                        $(`.order-amount`).removeClass('d-none');
+                                        Swal.fire("Deleted!", "The item has been removed from the list.", "success");
+                                    },
+                                    error: function(data) {
+                                        // Handle errors and display error messages
+                                        var errors = data.responseJSON.errors;
+                                        console.log(errors);
+                                        // Handle errors as needed
+                                    }
+                                });
+                            }
+                        } else {
+                            Swal.fire("Cancelled", "The item was not removed.", "info");
+                        }
+                        return;
+                    });
+            });
+
+         
         });
-    </script>
+</script>
 @endpush

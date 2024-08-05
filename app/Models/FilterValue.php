@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class FilterValue extends Model
 {   
+    protected $primaryKey = 'filter_id';
     protected $table = 'filter_value';
     protected $fillable=['filter_value_id','filter_value','filter_id','product_id' ,'param_id'];
     

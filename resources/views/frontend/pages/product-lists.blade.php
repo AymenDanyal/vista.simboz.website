@@ -1,6 +1,6 @@
 @extends('frontend.layouts.master')
 
-@section('title','Vizu || PRODUCT PAGE')
+@section('title','Vizu || PRODUCT GRID')
 
 @section('main-content')
 	

@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="zxx">
 <head>
-	@include('frontend.layouts.head')	
+	@include('frontend.layouts.head')
+    @include('frontend.layouts.notification')	
 </head>
 <body class="js">
 	

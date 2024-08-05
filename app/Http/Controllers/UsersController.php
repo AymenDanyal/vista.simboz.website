@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\User;
+use Illuminate\Support\Str;
 class UsersController extends Controller
 {
     /**
@@ -49,7 +50,17 @@ class UsersController extends Controller
         $data=$request->all();
         $data['password']=Hash::make($request->password);
         // dd($data);
-        $status=User::create($data);
+        $token = Str::random(60);
+        $data = [
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'password' => Hash::make($request->input('password')),
+            'role'=>$request->input('role'),
+            'api_token' => hash('sha256', $token),
+        ];
+        
+        $status = User::create($data);
+        
         // dd($status);
         if($status){
             request()->session()->flash('success','Successfully added user');

@@ -1,6 +1,6 @@
 @extends('frontend.layouts.master')
 
-@section('title', 'Vizu || PRODUCT PAGE')
+@section('title', 'Vizu || PRODUCT GRID')
 
 @section('main-content')
 
@@ -33,7 +33,8 @@
                             <h1 id="banner-title">{{$categories->title}}</h1>
                             <div class="button-holder wow fadeInLeft" data-wow-delay="0.4s"
                                 style="visibility: hidden;animation-delay: 0.4s;animation-name: fadeInLeft;">
-                                <a class="banner-button " id="browse-button" href="#productsGrid">Browse Designs</a>
+                                <span class="banner-button"><a href="#productsGrid" id="browse-button">Browse
+                                        Designs</a></span>
                                 <span class="banner-button" id="uplaod-button">Uplaod Design</span>
                                 <span class="banner-button" id="reorder-button">Reorder</span>
                             </div>
@@ -50,17 +51,30 @@
                             <h2>FILTER</h2>
                             <div class="sub-filter">
                                 @foreach ($filterArray as $filter )
-                                    <div class="filterName"><p>{{$filter['filter_name']}}</p></div>
-                                    
-                                    @foreach ($filter['parameters'] as $key => $filterParam)
-                                        <ul>
-                                            <li class="d-flex justify-content-between align-items-center">
-                                                <p>{{$filterParam}}</p>
-                                                <input  data-param-id="{{$key}}"  data-filter-id="{{$filter['filter_id']}}"  class="filterPara" type="checkbox">
-                                            </li>
-                                        </ul>
+                                <div class="filterName">
+                                    <p>{{$filter['filter_name']}}</p>
+                                </div>
+           
+                                @foreach ($filter['parameters'] as $key => $filterParam)
+                                @if($filter['filter_name'] == "Color")
+                                <ul>
+                                    <li class="d-flex justify-content-between align-items-center color">
                                         
-                                    @endforeach
+                                        <label for="{{ $filterParam }}" class="mr-2" style="background-color:{{ $filterParam }};"><p>{{$filterParam}}</p></label>
+                                        <input data-param-id="{{$key}}" data-filter-id="{{$filter['filter_id']}}"
+                                            class="filterPara color" type="checkbox">
+                                    </li>
+                                </ul>
+                                @else
+                                <ul>
+                                    <li class="d-flex justify-content-between align-items-center">
+                                        <p>{{$filterParam}}</p>
+                                        <input data-param-id="{{$key}}" data-filter-id="{{$filter['filter_id']}}"
+                                            class="filterPara" type="checkbox">
+                                    </li>
+                                </ul>
+                                @endif
+                                @endforeach
                                 @endforeach
                             </div>
 
@@ -134,7 +148,7 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="productDetailModal" tabindex="-1" aria-hidden="true">
+{{-- <div class="modal fade" id="productDetailModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
@@ -169,9 +183,9 @@
                         <div class="d-flex align-items-center justify-content-center mt-5">
                             <span class="modal-button"><a class="order-link" href="/" style="color: white;">Order
                                     Now</a></span>
-                            <span class="modal-button"><a class="visualize-link" href="/"
-                                    style="color: white;">Visualize</a></span>
-
+                            <span class="modal-button">
+                                <a class="visualize-link" data-auth={{auth()->check() ? 1 : 0 }} style="color:
+                                    white;">Visualize</a></span>
                         </div>
 
                     </div>
@@ -182,7 +196,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> --}}
 <div class="modal fade" id="uploadDesignModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
@@ -229,6 +243,22 @@
 @endsection
 @push('styles')
 <style>
+
+    .color label {
+        border-radius: 8px;
+        cursor: pointer;
+        content: '';
+        width: auto;
+        height: auto;
+        padding:5px;
+        display: inline-block;
+        border: 2px solid #c1c1c1;  
+    }
+
+
+
+
+
     article,
     aside,
     details,
@@ -245,13 +275,14 @@
         display: block;
     }
 
-    .filterName{
+    .filterName {
         font-family: inherit;
         font-size: 16px;
         font-weight: 600;
         color: #454545;
     }
-    .filterPara{
+
+    .filterPara {
         margin: -17px;
     }
 
@@ -262,13 +293,17 @@
         padding: 5px 17px;
         margin: 30px;
         font-weight: 500;
-        color: #868686;
+        color: #000;
         margin-top: 70px;
     }
 
     .banner-button:hover {
         color: #ff6060;
         border-color: #ff6060 !important;
+    }
+
+    #browse-button:hover {
+        color: #ff6060;
     }
 
     .button-holder {
@@ -312,175 +347,194 @@
 @push('scripts')
 <script>
     $(document).ready(function() {
-            // Variable declarations
-            var categoryId ={!! json_encode($cat_id) !!};
-            console.log(categoryId);
-            var products = {!! json_encode($products) !!};
-            var categoriesData = {!! json_encode($categories) !!};
-            console.log(categoriesData.id);
-            // Create products elements
-            createProductsGrid(products,categoriesData.id);
+      
+        // Variable declarations
+        var categoryId ={!! json_encode($cat_id) !!};
+        var productId ={!! json_encode($product_id) !!};
+        var products = {!! json_encode($products) !!};
+        var categoriesData = {!! json_encode($categories) !!};
+        // Create products elements
+        createProductsGrid(products,categoriesData.id);
 
-            function getProducts(categoryId,search1,page,filterId,paramId) {
+        function getProducts(categoryId,search1,page,filterId,paramId) {
+            $.ajax({
+                type: 'POST',
+                url: '/product/search',
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    
+                    page: page,
+                    categoryId: categoryId,
+                    filterId: filterId,
+                    paramId: paramId,
+                    productId: productId,
                 
-                console.log(categoryId,search1,page,filterId);
-                $.ajax({
-                    type: 'POST',
-                    url: '/product/search',
-                    data: {
-                        "_token": "{{ csrf_token() }}",
-                        
-                        page: page,
-                        categoryId: categoryId,
-                        filterId: filterId,
-                        paramId: paramId,
-                    
-                     },
-                     
-                    success: function (response) {
-                        // Handle success response
-                        $('.mt-productlisthold').empty();
-                        createProductsGrid(response,categoryId);
-                    
                     },
-                    error: function (xhr, status, error) {
-                        // Handle error response
-                        console.error(xhr.responseText);
-                        // You can show an error message to the user
-                    }
-            });        
-            }
-            // Function to create products
-            function createProductsGrid(values,categoryId) {
-                //create products
-                var $ul = $('.mt-productlisthold ');
-                $.each(values.data, function(index, value) {
-                    // Check if product.photo exists
-                    if (value.photo) {
-                        var $li = $(`
-                        <div class="list-inline-item col-lg-3 col-sm-6 m-0">
-                            <div class="mt-product1 large">
-                                <div class="box">
-                                    <div class="b1">
-                                        <div class="b2">
-                                            <div>
-                                                <img src="${value.photo}" alt="image description loading="lazy">
-                                            </div>
-                                            <ul class="mt-stars">
-                                                <li><i class="fa fa-star"></i></li>
-                                                <li><i class="fa fa-star"></i></li>
-                                                <li><i class="fa fa-star"></i></li>
-                                                <li><i class="fa fa-star-o"></i></li>
-                                            </ul>
-                                            <ul class="links">
-                                                <li>
-                                                    <div class="productImage add-button" data-id="${value.id}" data-photo ="${value.photo}" data-title ="${value.title}">
-                                                        <i class="icon-handbag"></i>
-                                                        <span ">Add to Cart</span>
-                                                    </div>
-                                                </li>
-                                                
-                                            </ul>
+                    
+                success: function (response) {
+                    // Handle success response
+                    $('.mt-productlisthold').empty();
+                    createProductsGrid(response,categoryId);
+                
+                },
+                error: function (xhr, status, error) {
+                    // Handle error response
+                    console.error(xhr.responseText);
+                    // You can show an error message to the user
+                }
+        });        
+        }
+        
+        function createProductsGrid(values,categoryId) {
+            //create products
+            var $ul = $('.mt-productlisthold ');
+            $.each(values.data, function(index, value) {
+                // Check if product.photo exists
+                if (value.photo) {
+                    var $li = $(`
+                    <div class="list-inline-item col-lg-3 col-sm-6 m-0">
+                        <div class="mt-product1 large">
+                            <div class="box">
+                                <div class="b1">
+                                    <div class="b2">
+                                        <div>
+                                            <img src="${value.photo}" alt="image description loading="lazy">
                                         </div>
+                                        <ul class="mt-stars">
+                                            <li><i class="fa fa-star"></i></li>
+                                            <li><i class="fa fa-star"></i></li>
+                                            <li><i class="fa fa-star"></i></li>
+                                            <li><i class="fa fa-star-o"></i></li>
+                                        </ul>
+                                        <ul class="links">
+                                            <li>
+                                                <a href="/product-detail/${value.id}" target="_blank">
+                                                    <div class="productImage add-button" data-id="${value.id}" data-photo ="${value.photo}" data-title ="${value.title}">
+                                                       
+                                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                                    View More
+                                                    </div>
+                                                </a>
+
+                                            </li>
+                                            
+                                        </ul>
                                     </div>
                                 </div>
-                                <div class="txt">
-                                    <strong class="title">${value.title}</strong>
-                                    <span class="price">Rs <span>${value.price}</span></span>
-                                </div>
+                            </div>
+                            <div class="txt">
+                                <strong class="title">${value.title}</strong>
+                                <span class="price">Rs <span>${value.price}</span></span>
                             </div>
                         </div>
-                    `);
-                        $ul.append($li);
-                    } else {
-                        console.error(`Product at index ${index} is missing photo`);
-                    }
-                });
-                //create pagination
-                var $paginationUl = $('.mt-pagination .list-inline');
-                $('.mt-pagination .list-inline').empty();
-                for (var i = 1; i <= values.last_page; i++) {
-                    var $li = $(`
-                        <li class="list-inline-item ${i === values.current_page ? 'active' : ''}">
-                            <span class="page-button" data-page="${i}" data-category="${categoryId}">${i}</span>
-                        </li>
-                    `);
-                    $paginationUl.append($li);
+                    </div>
+                `);
+                    $ul.append($li);
+                } else {
+                    console.error(`Product at index ${index} is missing photo`);
                 }
-                // Update product count information
-                $('.mt-textbox p strong').eq(0).text(`${values.from}–${values.to}`);
-                $('.mt-textbox p strong').eq(1).text(values.total);
+            });
+            //create pagination
+            var $paginationUl = $('.mt-pagination .list-inline');
+            $('.mt-pagination .list-inline').empty();
+            for (var i = 1; i <= values.last_page; i++) {
+                var $li = $(`
+                    <li class="list-inline-item ${i === values.current_page ? 'active' : ''}">
+                        <span class="page-button" data-page="${i}" data-category="${categoryId}">${i}</span>
+                    </li>
+                `);
+                $paginationUl.append($li);
             }
+            // Update product count information
+            $('.mt-textbox p strong').eq(0).text(`${values.from}–${values.to}`);
+            $('.mt-textbox p strong').eq(1).text(values.total);
+        }
 
-            $(document).on('click', '.page-button', function() {
-                var page = $(this).data('page');
-                var category=$(this).data('category');
-                var search=null;
-                var filterId=null;
-                var paramId=null;
-                getProducts(category,search,page,filterId,paramId)
-            });
-            
-            $(document).on('click', '.productImage', function() {
-                var photo = $(this).data('photo');
-                var title = $(this).data('title');
-                var visualizerLink = '/editor-vue/'+$(this).data('id');
-                
-                $('.modal-img').attr('src', photo);
-                $('.visualize-link').attr('href', visualizerLink);
-                $('.modal-title').text(title);
-                $('#productDetailModal').modal('show');
-            });
-            $(document).on('click', '#uplaod-button', function() {
-                var photo = $(this).data('photo');
-                var title = $(this).data('title');
-                var visualizerLink = '/editor-vue/'+$(this).data('id');
-                
-                $('.modal-img').attr('src', photo);
-                $('.visualize-link').attr('href', visualizerLink);
-                $('.modal-title').text(title);
-                $('#uploadDesignModal').modal('show');
-            });
-
-            $(document).on('click', '.filterPara', function() {
-                // Initialize an array to store selected filter IDs
-                var filterIds=[];
-                var paramId = [];
-                
-                // Iterate through all checkboxes with the class 'filterPara' that are checked
-                $('.filterPara:checked').each(function() {
-                    paramId.push($(this).data('param-id'));
-                    filterIds.push($(this).data('filter-id'));
-                });
-                // Example values for other parameters
-                
-                var search1 = null;
-                var page = null;
-                
-                // Call the getProducts function with the collected filter IDs
-                getProducts(categoryId, search1, page, filterIds,paramId);
-            });
-
-            //observer for side bar so that it dont touch footer 
-            var sidebar = $('#sidebar');
-            var observer = new IntersectionObserver(function(entries) {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        sidebar.css('position', 'absolute');
-                    } else {
-                        sidebar.css('position', 'fixed');
-                    }
-                });
-            }, { threshold: [0] });
-            observer.observe(document.getElementById('mt-footer'));
-            // Observe end
-
-
-
-
-
-
+        $(document).on('click', '.page-button', function() {
+            var page = $(this).data('page');
+            var category=$(this).data('category');
+            var search=null;
+            var filterId=null;
+            var paramId=null;
+            getProducts(category,search,page,filterId,paramId)
         });
+        
+        $(document).on('click', '.productImage', function() {
+            var photo = $(this).data('photo');
+            var title = $(this).data('title');
+            var visualizerLink = '/editor-vue/'+$(this).data('id');
+            
+            $('.modal-img').attr('src', photo);
+            $('.visualize-link').attr('data-link', visualizerLink);
+            $('.modal-title').text(title);
+            //$('#productDetailModal').modal('show');
+        });
+        $(document).on('click', '#uplaod-button', function() {
+            var photo = $(this).data('photo');
+            var title = $(this).data('title');
+            var visualizerLink = '/editor-vue/'+$(this).data('id');
+            
+            $('.modal-img').attr('src', photo);
+            $('.visualize-link').attr('data-link', visualizerLink);
+            $('.modal-title').text(title);
+            $('#uploadDesignModal').modal('show');
+        });
+        $(document).on('click', '.visualize-link', function() {
+            var auth = $(this).data('auth');
+            var link = $(this).data('link');
+            if(auth==1){
+                console.log(link);
+                window.location.href = link;
+            }else{
+                $(".btn-close").click();
+                $("body").toggleClass("side-col-active");
+                $(".side-opener").toggleClass("active");
+                $(".mt-side-over").toggleClass("active");
+                return false;
+                
+            }
+            
+        });
+
+        $(document).on('click', '.filterPara', function() {
+            // Initialize an array to store selected filter IDs
+            var filterIds=[];
+            var paramId = [];
+            
+            // Iterate through all checkboxes with the class 'filterPara' that are checked
+            $('.filterPara:checked').each(function() {
+                paramId.push($(this).data('param-id'));
+                filterIds.push($(this).data('filter-id'));
+            });
+            // Example values for other parameters
+            
+            var search1 = null;
+            var page = null;
+            
+            // Call the getProducts function with the collected filter IDs
+            getProducts(categoryId, search1, page, filterIds,paramId);
+        });
+
+        //observer for side bar so that it dont touch footer 
+        var sidebar = $('#sidebar');
+        var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    sidebar.css('position', 'absolute');
+                } else {
+                    sidebar.css('position', 'fixed');
+                }
+            });
+        }, { threshold: [0] });
+        observer.observe(document.getElementById('mt-footer'));
+        // Observe end
+
+
+
+
+
+
+    });
 
 </script>
 @endpush

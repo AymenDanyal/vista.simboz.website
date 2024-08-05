@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Message;
 use App\Events\MessageSent;
@@ -38,32 +38,32 @@ class MessageController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        $this->validate($request,[
-            'name'=>'string|required|min:2',
-            'email'=>'email|required',
-            'message'=>'required|min:20|max:200',
-            'subject'=>'string|required',
-            'phone'=>'numeric|required'
-        ]);
-        // return $request->all();
+    // public function store(Request $request)
+    // {
+    //     $this->validate($request,[
+    //         'name'=>'string|required|min:2',
+    //         'email'=>'email|required',
+    //         'message'=>'required|min:20|max:200',
+    //         'subject'=>'string|required',
+    //         'phone'=>'numeric|required'
+    //     ]);
+    //     // return $request->all();
 
-        $message=Message::create($request->all());
-            // return $message;
-        $data=array();
-        $data['url']=route('message.show',$message->id);
-        $data['date']=$message->created_at->format('F d, Y h:i A');
-        $data['name']=$message->name;
-        $data['email']=$message->email;
-        $data['phone']=$message->phone;
-        $data['message']=$message->message;
-        $data['subject']=$message->subject;
-        $data['photo']=()->user()->photo;
-        // return $data;    
-        event(new MessageSent($data));
-        exit();
-    }
+    //     $message=Message::create($request->all());
+    //         // return $message;
+    //     $data=array();
+    //     $data['url']=route('message.show',$message->id);
+    //     $data['date']=$message->created_at->format('F d, Y h:i A');
+    //     $data['name']=$message->name;
+    //     $data['email']=$message->email;
+    //     $data['phone']=$message->phone;
+    //     $data['message']=$message->message;
+    //     $data['subject']=$message->subject;
+    //     $data['photo']=()->user()->photo;
+    //     // return $data;    
+    //     event(new MessageSent($data));
+    //     exit();
+    // }
 
     /**
      * Display the specified resource.

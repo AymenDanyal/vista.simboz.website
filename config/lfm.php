@@ -48,28 +48,41 @@ return [
     'folder_categories'        => [
         'file'  => [
             'folder_name'  => 'files',
-            'startup_view' => 'grid',
+            'startup_view' => 'list',
             'max_size'     => 50000, // size in KB
+            'thumb' => true,
+            'thumb_width' => 80,
+            'thumb_height' => 80,
             'valid_mime'   => [
                 'image/jpeg',
+                'image/jpe',
                 'image/pjpeg',
                 'image/png',
                 'image/gif',
-                'image/svg+xml',
+                'application/pdf',
+                'text/plain',
+                'image/vnd.adobe.photoshop', 
+                'application/x-photoshop',   
+                'application/photoshop',     
+                'image/psd' 
             ],
         ],
         'image' => [
             'folder_name'  => 'photos',
-            'startup_view' => 'list',
+            'startup_view' => 'grid',
             'max_size'     => 50000, // size in KB
+            'thumb' => true,
+            'thumb_width' => 80,
+            'thumb_height' => 80,
             'valid_mime'   => [
                 'image/jpeg',
                 'image/pjpeg',
                 'image/png',
                 'image/gif',
-                'image/svg+xml',
-                'application/pdf',
-                'text/plain',
+                'image/vnd.adobe.photoshop', 
+                'application/x-photoshop',   
+                'application/photoshop',     
+                'image/psd' 
             ],
         ],
     ],
@@ -94,18 +107,29 @@ return [
 
     'rename_file'              => false,
 
+    'rename_duplicates'        => false,
+
     'alphanumeric_filename'    => false,
 
     'alphanumeric_directory'   => false,
 
     'should_validate_size'     => false,
 
-    'should_validate_mime'     => false,
+    'should_validate_mime'     => true,
 
     // behavior on files with identical name
     // setting it to true cause old file replace with new one
     // setting it to false show `error-file-exist` error and stop upload
     'over_write_on_duplicate'  => false,
+
+    // mimetypes of executables to prevent from uploading
+    'disallowed_mimetypes' => ['text/x-php', 'text/html', 'text/plain'],
+
+    // extensions of executables to prevent from uploading
+    'disallowed_extensions' => ['php', 'html'],
+
+    // Item Columns
+    'item_columns' => ['name', 'url', 'time', 'icon', 'is_file', 'is_image', 'thumb_url'],
 
     /*
     |--------------------------------------------------------------------------
@@ -148,6 +172,7 @@ return [
         'png'  => 'PNG Image',
         'ppt'  => 'Microsoft PowerPoint',
         'pptx' => 'Microsoft PowerPoint',
+        'psd'  => 'Adobe Photoshop',    
     ],
 
     /*

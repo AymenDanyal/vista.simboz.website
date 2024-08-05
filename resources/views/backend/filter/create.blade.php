@@ -33,11 +33,22 @@
           <label for="filterParameter" class="col-form-label">Filter Parameter</label>
           <input id="filterParameter" type="text" name="parameters[]" placeholder="Enter parameter 1" class="form-control mt-2">
         </div>
+        @error('parameters[]')
+        <span class="text-danger">{{ $message }}</span>
+        @enderror
+
+        
        
         
-        <button type="button" class="btn btn-primary mt-3 mb-5"  onclick="addInputField()">Add More Parameter</button>
-        
-        <div class="form-group mb-3">
+        <button type="button" class="btn btn-primary mt-3 mb-3"  onclick="addInputField()">Add More Parameter</button>
+        <div class="form-group">
+            <label for="paramPrice" class="col-form-label">Parameter Price</label>
+            <input id="paramPrice" type="number" name="param_price" placeholder="0" value="{{ old('param_price') }}" class="form-control">
+            @error('param_price')
+            <span class="text-danger">{{ $message }}</span>
+            @enderror
+        </div>
+        <div class="form-group mb-5">
             <button type="reset" class="btn btn-warning">Reset</button>
             <button class="btn btn-success" type="submit">Submit</button>
         </div>

@@ -1,8 +1,8 @@
 <div class="news-bar" style="background-color: #F4F4FB;height: 18px;width: 100%;"></div>
-   
+
 <header id="mt-header">
     <!-- mt bottom bar start here -->
-     <div class="mt-bottom-bar">
+    <div class="mt-bottom-bar">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-xs-12">
@@ -20,257 +20,246 @@
                                     <search>
                                         <div class="site-header-search-form">
                                             <div class="search-input">
-                                                <input type="search" value="" required="" aria-required="true"
-                                                    aria-autocomplete="list" placeholder="Search" autocomplete="off"
-                                                    class="swan-polyfill-empty search-bar-input site-header-search swan-input">
+                                                <input type="search" value="" required="" aria-required="true" aria-autocomplete="list" placeholder="Search" autocomplete="off" class="swan-polyfill-empty search-bar-input site-header-search swan-input">
                                                 <div class="search-box">
                                                     <ul class="search-results d-none">
-
                                                         <span>See all results</span>
                                                     </ul>
-
-
                                                 </div>
-                                                <button type="submit" aria-label="Search"
-                                                    class="search-input-submit swan-button swan-button-skin-secondary">
-                                                    <img src="https://swan.prod.merch.vpsvc.com/v2/icons/search.3594f845fd4e26d76fd4cf3b291a9e7e.svg"
-                                                        alt=""
-                                                        class="search-submit-icon swan-icon swan-icon-skin-standard swan-icon-type-search"
-                                                        style="width: 58%;">
+                                                <button type="submit" aria-label="Search" class="search-input-submit swan-button swan-button-skin-secondary">
+                                                    <img src="https://swan.prod.merch.vpsvc.com/v2/icons/search.3594f845fd4e26d76fd4cf3b291a9e7e.svg" alt="" class="search-submit-icon swan-icon swan-icon-skin-standard swan-icon-type-search" style="width: 58%;">
                                                 </button>
                                             </div>
                                         </div>
-
                                     </search>
-
-
                                 </div>
                             </div>
                         </div>
                     </div>
+
                     <!-- mt icon list start here -->
-                    <ul class="mt-icon-list">
-                        <li class="hidden-lg hidden-md">
+                    <ul class="mt-icon-list d-flex">
+                        <li class="mt-icon hidden-lg hidden-md">
                             <a href="#" class="bar-opener mobile-toggle">
                                 <span class="bar"></span>
                                 <span class="bar small"></span>
                                 <span class="bar"></span>
                             </a>
+                        </li>   
+
+                        @auth
+                        <li class="mt-icon d-flex">
+                           
+                            <div>
+                                <a href="{{ route('projectsIndex') }}">
+                                    <i class="fa-regular fa-user "></i>
+                                </a>    
+                            </div>
+                            <div>
+                                <a href="{{ route('projectsIndex') }}">
+                                <p> My Projects</p>
+                                </a>
+                            </div>
+                            
                         </li>
-
-                        <li class="drop">
-                            <a href="{{ route('wishlist') }}" class="icon-heart cart-opener">
-                                <span style="margin-bottom: -3px;" class="num">{{ Helper::wishlistCount() }}</span>
-                            </a>
-                            <!-- mt drop start here -->
-
-                            <div class="mt-drop">
-                                <!-- mt drop sub start here -->
-                                <div class="mt-drop-sub">
-                                    <!-- mt side widget start here -->
-                                    <div class="mt-side-widget">
-                                        <!-- cart row start here -->
-                                        @auth
-                                            @foreach (Helper::getAllProductFromWishlist() as $data)
+                        
+                        {{-- <li class="mt-icon d-flex drop">
+                                <div>
+                                    <a href="{{ route('wishlist') }}" class="icon-heart cart-opener">
+                                        <span style="margin-bottom: -3px;" class="num">{{ Helper::wishlistCount() }}</span>
+                                    </a>
+                                    <!-- mt drop start here -->
+                                    <div class="mt-drop">
+                                        <!-- mt drop sub start here -->
+                                        <div class="mt-drop-sub">
+                                            <!-- mt side widget start here -->
+                                            <div class="mt-side-widget">
+                                                <!-- cart row start here -->
+                                                @auth
+                                                @foreach (Helper::getAllProductFromWishlist() as $data)
                                                 @php
-                                                    $photo = explode(',', $data->product['photo']);
+                                                $photo = explode(',', $data->product['photo']);
                                                 @endphp
                                                 <div class="cart-row">
-                                                    <a href="#" class="img"><img src="{{ $photo[0] }}"
-                                                            alt="{{ $photo[0] }}" class="img-responsive"></a>
+                                                    <a href="#" class="img"><img src="{{ $photo[0] }}" alt="{{ $photo[0] }}" class="img-responsive"></a>
                                                     <div class="mt-h">
-                                                        <span class="mt-h-title"><a
-                                                                href="#">{{ $data->product['title'] }}</a></span>
-                                                        <span class="price"><i class="fa fa-eur" aria-hidden="true"></i>
-                                                            599,00</span>
+                                                        <span class="mt-h-title"><a href="#">{{ $data->product['title'] }}</a></span>
+                                                        <span class="price"><i class="fa fa-eur" aria-hidden="true"></i> 599,00</span>
                                                     </div>
                                                     <a href="#" class="close fa fa-times"></a>
                                                 </div><!-- cart row end here -->
+                                                <li class="mt-icon">
+                                                    <a href="{{ route('wishlist-delete', $data->id) }}" class="remove" title="Remove this item"><i class="fa fa-remove"></i></a>
+                                                    <a class="cart-img" href="#"><img src="{{ $photo[0] }}" alt="{{ $photo[0] }}"></a>
+                                                    <h4><a href="{{ route('product-detail', $data->product['slug']) }}" target="_blank">{{ $data->product['title'] }}</a></h4>
+                                                    <p class="quantity">{{ $data->quantity }} x - <span class="amount">${{ number_format($data->price, 2) }}</span></p>
+                                                </li>
+                                                @endforeach
+                                                @endauth
+        
+                                                <!-- cart row total start here -->
+                                                <div class="mt-icon cart-row-total">
+                                                    <span class="mt-total">Add them all</span>
+                                                    <span class="mt-total-txt"><a href="{{ route('cart') }}" class="btn-type2">CART</a></span>
+                                                </div>
+                                                <!-- cart row total end here -->
+                                            </div><!-- mt side widget end here -->
+                                        </div><!-- mt drop sub end here -->
+                                    </div><!-- mt drop end here -->
+                                    <span class="mt-mdropover"></span>
+            
+                                </div>
+                            </li> --}}
+                      
 
-                            <li>
-                                <a href="{{ route('wishlist-delete', $data->id) }}" class="remove"
-                                    title="Remove this item"><i class="fa fa-remove"></i>
+                        
+                        <li class="mt-icon d-flex">
+
+                            <div>
+                                <a href="{{ route('cart') }}" class="cart-opener">
+                                    <span class="icon-handbag"></span>
+                                    <span class="cart-quantity">{{ Helper::cartCount() }}</span>
                                 </a>
-                                <a class="cart-img" href="#"><img src="{{ $photo[0] }}"
-                                        alt="{{ $photo[0] }}"></a>
-                                <h4>
-                                    <a
-                                        href="{{ route('product-detail', $data->product['slug']) }}"target="_blank">{{ $data->product['title'] }}</a>
-                                </h4>
-                                <p class="quantity">{{ $data->quantity }} x -
-                                    <span class="amount">${{ number_format($data->price, 2) }}</span>
-                                </p>
-                            </li>
-                            @endforeach
+                            </div>
+                            <div>
+                                <a href="{{ route('cart') }}" class="cart-opener">
+                                    <p>Cart</p>
+                                </a>
+                            </div>
+                            
 
+                            
+                        </li>
                         @endauth
-
-                        <!-- cart row total start here -->
-                        <div class="cart-row-total">
-                            <span class="mt-total">Add them all</span>
-                            <span class="mt-total-txt">
-                                <a href="{{ route('cart') }}" class="btn-type2">CART</a>
-                            </span>
-                        </div>
-                        <!-- cart row total end here -->
-                </div><!-- mt side widget end here -->
-            </div>
-            <!-- mt drop sub end here -->
-        </div><!-- mt drop end here -->
-
-        <span class="mt-mdropover"></span>
-        </li>
-        <li class="drop">
-            <a href="{{ route('cart') }}" class="cart-opener">
-                <span class="icon-handbag"></span>
-                <span class="num">{{ Helper::cartCount() }}</span>
-            </a>
-            <!-- mt drop start here -->
-            <div class="mt-drop">
-                <!-- mt drop sub start here -->
-                <div class="mt-drop-sub">
-                    <!-- mt side widget start here -->
-                    <div class="mt-side-widget">
-                        <!-- cart row start here -->
-                        <div class="cart-row">
-                            <a href="#" class="img">
-                                <img src="https://htmlbeans.com/html/schon/images/products/img36.jpg"
-                                    alt="image"class="img-responsive">
-                            </a>
-                            <div class="mt-h">
-                                <span class="mt-h-title">
-                                    <a href="#">Marvelous Modern 3 Seater</a>
-                                </span>
-                                <span class="price">
-                                    <i class="fa fa-eur" aria-hidden="true"></i>599,00
-                                </span>
-                                <span class="mt-h-title">
-                                    Qty: 1
-                                </span>
+                        <li class="mt-icon d-flex side-opener">
+                            <div>
+                                <a href="#" class="mt-icon bar-opener ">
+                                    <span class="bar"></span>
+                                    <span class="bar small"></span>
+                                    <span class="bar"></span>
+                                </a>
                             </div>
-                            <a href="#" class="close fa fa-times"></a>
-                        </div><!-- cart row end here -->
-                        <!-- cart row start here -->
-                        <div class="cart-row">
-                            <a href="#" class="img">
-                                <img src="https://htmlbeans.com/html/schon/images/products/img37.jpg" alt="image"
-                                    class="img-responsive">
-                            </a>
-                            <div class="mt-h">
-                                <span class="mt-h-title"><a href="#">
-                                        Marvelous Modern 3 Seater</a>
-                                </span>
-                                <span class="price">
-                                    <i class="fa fa-eur" aria-hidden="true"></i>599,00
-                                </span>
-                                <span class="mt-h-title">Qty: 1
-
-                                </span>
+                            <div>
+                                @auth
+                                <p>Account </p>    
+                                @endauth
+                                @guest
+                                <p>Login</p>
+                                @endguest
+                                
                             </div>
-                            <a href="#" class="close fa fa-times"></a>
-                        </div><!-- cart row end here -->
-                        <!-- cart row start here -->
-                        <div class="cart-row">
-                            <a href="#" class="img">
-                                <img src="https://htmlbeans.com/html/schon/images/products/img38.jpg"
-                                    alt="image"class="img-responsive">
-                            </a>
-                            <div class="mt-h">
-                                <span class="mt-h-title">
-                                    <a href="#">Marvelous Modern 3 Seater</a>
-                                </span>
-                                <span class="price">
-                                    <i class="fa fa-eur" aria-hidden="true"></i>599,00
-                                </span>
-                                <span class="mt-h-title">Qty: 1</span>
-                            </div>
-                            <a href="#" class="close fa fa-times"></a>
-                        </div><!-- cart row end here -->
-                        <!-- cart row total start here -->
-                        <div class="cart-row-total">
-                            <span class="mt-total">Sub Total</span>
-                            <span class="mt-total-txt">
-                                <i class="fa fa-eur" aria-hidden="true"></i>799,00
-                            </span>
-                        </div>
-                        <!-- cart row total end here -->
-                        <div class="cart-btn-row">
-                            <a href="{{ route('cart') }}" class="btn-type2">VIEW CART</a>
-                            <a href="{{ route('checkout') }}" class="btn-type3">CHECKOUT</a>
-                        </div>
-                    </div><!-- mt side widget end here -->
+                        </li> 
+                    </ul>
+                    <!-- mt icon list end here -->
+                    <!-- navigation start here -->
+                    <!-- mt icon list end here -->
                 </div>
-                <!-- mt drop sub end here -->
-            </div><!-- mt drop end here -->
-            <span class="mt-mdropover"></span>
-        </li>
-        {{-- <li>
-            <a href="#" class="bar-opener side-opener">
-                <span class="bar"></span>
-                <span class="bar small"></span>
-                <span class="bar"></span>
-            </a>
-        </li> --}}
-        </ul><!-- mt icon list end here -->
-        <!-- navigation start here -->
-
-        <!-- mt icon list end here -->
-    </div>
-    </div>
-    </div>
-
+            </div>
+        </div>
     </div>
     <!-- mt bottom bar end here -->
     <span class="mt-side-over"></span>
 
-    <div class="container-fluid">
+    <div class="container-fluid header-category">
         {{ Helper::getHeaderCategory() }}
     </div>
-
 </header>
+
 <!-- mt side menu start here -->
-{{-- <div class="mt-side-menu" bis_skin_checked="1">
-    <!-- mt holder start here -->
-    <div class="mt-holder" bis_skin_checked="1">
-        <a href="#" class="side-close"><span></span><span></span></a>
-        <strong class="mt-side-title">MY ACCOUNT</strong>
-        <!-- mt side widget start here -->
-        <div class="mt-side-widget" bis_skin_checked="1">
-            <header>
-                <span class="mt-side-subtitle">SIGN IN</span>
-                <p>Welcome back! Sign in to Your Account</p>
-            </header>
-            <form action="#">
-                <fieldset>
-                    <input type="text" placeholder="Username or email address" class="input">
-                    <input type="password" placeholder="Password" class="input">
-                    <div class="box" bis_skin_checked="1">
-                        <span class="left"><input class="checkbox" type="checkbox" id="check1"><label for="check1">Remember Me</label></span>
-                        <a href="#" class="help">Help?</a>
-                    </div>
-                    <button type="submit" class="btn-type1">Login</button>
-                </fieldset>
-            </form>
+<div class="mt-side-menu" >
+    @guest
+        <!-- mt holder start here -->
+        <div class="mt-holder" >
+            <a href="#" class="side-close"><span></span><span></span></a>
+            <strong class="mt-side-title">MY ACCOUNT</strong>
+            <!-- mt side widget start here -->
+            <div class="mt-side-widget" >
+                <header>
+                    <span class="mt-side-subtitle">SIGN IN</span>
+                    <p>Welcome back! Sign in to Your Account</p>
+                </header>
+                <form class="form" method="post" action="{{route('login.submit')}}">
+                    @csrf
+                    <fieldset>
+                        <input class="input" type="email" name="email" placeholder="Email address" required="required" value="{{old('email')}}">
+                        @error('email')
+                            <span class="text-danger">{{$message}}</span>
+                        @enderror
+                        <input class="input" type="password" name="password" placeholder="Password" required="required" value="{{old('password')}}">
+                        @error('password')
+                            <span class="text-danger">{{$message}}</span>
+                        @enderror
+                        <div class="box" >
+                            <span class="left">
+                                <input class="checkbox"  type="checkbox" name="news" id="2">
+                                <label for="check1">Remember Me</label>
+                            </span>
+                            <a href="#" class="help">Help?</a>
+                        </div>
+                        <button type="submit" class="btn-type1">Login</button>
+                    </fieldset>
+                </form>
+
+            </div>
+            <!-- mt side widget end here -->
+            <div class="or-divider" ><span class="txt">or</span></div>
+            <!-- mt side widget start here -->
+            <div class="mt-side-widget" >
+                <header>
+                    <span class="mt-side-subtitle">CREATE NEW ACCOUNT</span>
+                    <p>Create your very own account</p>
+                </header>
+                <form class="form" method="post" action="{{route('register.submit')}}">
+                    @csrf
+                    <fieldset>
+
+                        <input class="input" type="text" name="name" placeholder="Username " required="required" value="{{old('name')}}">
+                        @error('name')
+                            <span class="text-danger">{{$message}}</span>
+                        @enderror
+
+                        <input class="input" type="text" name="email" placeholder="Email address" required="required" value="{{old('email')}}">
+                        @error('email')
+                            <span class="text-danger">{{$message}}</span>
+                        @enderror
+                    
+                        <input class="input" type="password" name="password" placeholder="Password" required="required" value="{{old('password')}}">
+                        @error('password')
+                            <span class="text-danger">{{$message}}</span>
+                        @enderror
+                        <input class="input" type="password" name="password_confirmation" placeholder="Confirm password" required="required" value="{{old('password_confirmation')}}">
+                        @error('password_confirmation')
+                            <span class="text-danger">{{$message}}</span>
+                        @enderror
+
+                        <button type="submit" class="btn-type1">Register</button>
+                    </fieldset>
+
+                </form>
+            </div>
+            <!-- mt side widget end here -->
         </div>
-        <!-- mt side widget end here -->
-        <div class="or-divider" bis_skin_checked="1"><span class="txt">or</span></div>
-        <!-- mt side widget start here -->
-        <div class="mt-side-widget" bis_skin_checked="1">
-            <header>
-                <span class="mt-side-subtitle">CREATE NEW ACCOUNT</span>
-                <p>Create your very own account</p>
-            </header>
-            <form action="#">
-                <fieldset>
-                    <input type="text" placeholder="Username or email address" class="input">
-                    <button type="submit" class="btn-type1">Register</button>
-                </fieldset>
-            </form>
-        </div>
-        <!-- mt side widget end here -->
-    </div>
-    <!-- mt holder end here -->
-</div> --}}
+        <!-- mt holder end here -->
+    @endguest
+        
+    @auth
+        <div class="mt-holder" >
+            <a href="#" class="side-close"><span></span><span></span></a>
+            <!-- mt side widget start here -->
+            <div class="mt-side-widget" >
+                <header>
+                    <span class="mt-side-subtitle">Hello {{ Auth::user()->name }}</span>
+                    <p>Welcome back! Sign in to Your Account</p>
+                </header>
+                <header>
+                    <p>{{ Auth::user()->email }}</p>
+                </header>
+                <a href="{{route('user.logout')}}" type="submit" class="btn-type1">Logout</a>
+            </div>
+           
+         </div>
+    @endauth
+</div>
 <!-- mt side menu end here -->
 
 
@@ -310,7 +299,8 @@
         margin: 12px 0px;
         background-color: #fff;
     }
-    .news-bar{
+
+    .news-bar {
         background-color: #F4F4F4;
         height: 26px;
         width: 100%;

@@ -23,8 +23,8 @@ class Product extends Model
     public function getReview(){
         return $this->hasMany('App\Models\ProductReview','product_id','id')->with('user_info')->where('status','active')->orderBy('id','DESC');
     }
-    public static function getProductBySlug($slug){
-        return Product::with(['cat_info','rel_prods','getReview'])->where('slug',$slug)->first();
+    public static function getProductById($id){
+        return Product::with(['cat_info'])->where('id',$id)->first();
     }
     public static function countActiveProduct(){
         $data=Product::where('status','active')->count();
@@ -59,43 +59,75 @@ class Product extends Model
         return $this->belongsTo(Category::class, 'cat_id');
     }
 
-    public function filters()
-    {
-        return $this->hasManyThrough(
-            Filter::class,
-            FilterValue::class,
-            'product_id', // Foreign key on FilterValue table
-            'filter_id',  // Foreign key on Filter table
-            'id',         // Local key on Products table
-            'filter_id'   // Local key on FilterValue table
-        );
-    }
+
     public function getProductDetails()
     {
         $product=($this)->toArray();
-        $category = ($this->category)->toArray();
-        $filters = $this->filters()->with('parameters')->get()->toArray();
-
-        // Get filter values
-        $filterValues = $this->filterValues()->with('parameters')->get()->toArray();
+        $category = ($this->category)->get()->toArray();
         
-        // Combine the data into a structured array
+        $filterValues = $this->filterValues()->get()->toArray();
+        $template = $this->template()->get()->toArray();
+        
         $details = [
             'product' => $product,
             'category' => $category,
-            'filters' => $filters,
+            'template' => $template,
             'filter_values' => $filterValues,
         ];
 
         return $details;
     }
+
+    public function getProductDetailsWithParam($id)
+    {
+        $product_detail = self::find($id);
+        if (!$product_detail) {
+            return null;
+        }
+
+        $product_filters = FilterValue::where('product_id', $id)->get();
+        $param_ids = $product_filters->pluck('param_id')->unique();
+        $product_param = FilterParameter::whereIn('param_id', $param_ids)->with('filter')->get();
+        $reviews = ProductReview::where('product_id', $id)->get();
+        $reviewCount = $reviews->count();
+        $averageRating = number_format(($reviewCount > 0 ? $reviews->avg('rate') : 0), 1);
+
+        // Store the count and average rating in an array
+
+
+        $filtersWithParameters = [];
+
+        foreach ($product_param as $param) {
+            $filterName = $param->filter->filter_name;
+            $paramValue = $param->param_value;
+
+            if (!isset($filtersWithParameters[$filterName])) {
+                $filtersWithParameters[$filterName] = [];
+            }
+
+            $filtersWithParameters[$filterName][] = $paramValue;
+        }
+
+        $reviewData = [
+            'review_count' => $reviewCount,
+            'average_rating' => number_format($averageRating, 1), // Format to 1 decimal place if needed
+        ];
+
+        return [
+            'product_detail' => $product_detail,
+            'product_param' => $filtersWithParameters,
+            'reviews'=>$reviewData
+        ];
+    }
+    
     public function filterValues()
     {
         return $this->hasMany(FilterValue::class, 'product_id', 'id');
     }
     public function template()
-    {
-        return $this->belongsTo(Template::class, 'product_id');
+    {   
+        return $this->hasOne (Template::class, 'product_id');
     }
+
 
 }

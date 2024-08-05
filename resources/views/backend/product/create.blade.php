@@ -52,33 +52,6 @@
             </div>
 
             <div class="categoriesContainer"></div>
-
-            {{-- <div class="form-group">
-                <label for="filterCategory" class="col-form-label">Product Filters</label>
-
-
-                <select id="filterCategory" name="filter_cat" class="form-control mt-2">
-                    <option value="null">-- Select Filters --</option>
-                    @foreach ($filters as $filter)
-                    <option data-filter_id="{{ $filter['filter_id'] }}" id="option{{ $filter['filter_id'] }}"
-                        value="{{ $filter['filter_name'] }}">
-                        {{ $filter['filter_name'] }}:
-                        @foreach ($filter['parameters'] as $param)
-                        {{ $param['param_value'] }},
-                        @endforeach
-                    </option>
-                    @endforeach
-                </select>
-                <div class="filterContainer row p-2">
-
-                </div>
-                @error('filter_cat')
-                <span class="text-danger">{{ $message }}</span>
-                @enderror
-            </div> --}}
-
-
-
             <div class="form-group d-none" id="child_cat_div">
                 <label for="child_cat_id">Sub Category</label>
                 <select name="child_cat_id" id="child_cat_id" class="form-control">
@@ -269,7 +242,7 @@
     </script>
 
     <script>
-        $('#lfm').filemanager('image');
+        $('#lfm').filemanager();
         $('#tempButton').filemanager('image');
         $('#cat_id').change(function(){
         var cat_id=$(this).val();

@@ -89,7 +89,7 @@
 				
 								</li>
 								<li>
-									<a href="{{ route('product-grids', ['cat_id' => 0]) }}">PRODUCTS
+									<a href="{{ route('product-grids', ['cat_id' => 0,'product_id' => 0]) }}">PRODUCTS
 										<i class="fa fa-angle-down hidden-lg hidden-md" aria-hidden="true"></i>
 									</a>
 				
@@ -97,8 +97,7 @@
 								<li>
 									<a class="drop-link" href="{{ route('blog') }}">Blog
 										<i class="fa fa-angle-down hidden-lg hidden-md" aria-hidden="true"></i>
-									</a>
-				
+                                    </a>
 								</li>
 							
 				
@@ -130,9 +129,20 @@
 	<script src="{{asset('frontend/js/jquery.main.js')}}"></script>
 	<!-- include jQuery --> 	
 	<script  src="{{asset('frontend/js/plugins.js')}}" ></script>
-	<script src='https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.8/slick.min.js'></script><script  src="./script.js"></script>
+	<script src='https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.8/slick.min.js'></script>
 
-	
+    @if(session('auth_failed'))
+        <script>
+            $(document).ready(function() {
+                $(".side-close, .side-opener, .mt-side-over").click(function(){
+                    $("body").toggleClass("side-col-active");
+                    $(".side-opener").toggleClass("active");
+                    $(".mt-side-over").toggleClass("active");
+                    return false;
+                }).trigger('click'); // Trigger the click event immediately
+            });
+        </script>
+    @endif	
 	
 	@stack('scripts')
 	<script>
@@ -143,22 +153,23 @@
 		// ------------------------------------------------------- //
 		// Multi Level dropdowns
 		// ------------------------------------------------------ //
-			$("ul.dropdown-menu [data-toggle='dropdown']").on("click", function(event) {
-				event.preventDefault();
-				event.stopPropagation();
+        $("ul.dropdown-menu [data-toggle='dropdown']").on("click", function(event) {
+            event.preventDefault();
+            event.stopPropagation();
 
-				$(this).siblings().toggleClass("show");
+            $(this).siblings().toggleClass("show");
 
 
-				if (!$(this).next().hasClass('show')) {
-				$(this).parents('.dropdown-menu').first().find('.show').removeClass("show");
-				}
-				$(this).parents('li.nav-item.dropdown.show').on('hidden.bs.dropdown', function(e) {
-				$('.dropdown-submenu .show').removeClass("show");
-				});
+            if (!$(this).next().hasClass('show')) {
+            $(this).parents('.dropdown-menu').first().find('.show').removeClass("show");
+            }
+            $(this).parents('li.nav-item.dropdown.show').on('hidden.bs.dropdown', function(e) {
+            $('.dropdown-submenu .show').removeClass("show");
+            });
 
-			});
+        });
 		});
+        
 	</script>
 
 

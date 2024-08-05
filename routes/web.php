@@ -18,21 +18,11 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\FilterController;
 use App\Http\Controllers\EditorController;
 
-Route::get('/editor-vue/{productId}', [EditorController::class, 'index'])->name('editor-vue')->middleware('user');
 
 
 use \UniSharp\LaravelFilemanager\Lfm;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+
 
 // CACHE CLEAR ROUTE
 Route::get('cache-clear', function () {
@@ -41,8 +31,6 @@ Route::get('cache-clear', function () {
     return redirect()->back();
 })->name('cache.clear');
 
-
-// STORAGE LINKED ROUTE
 Route::get('storage-link', [AdminController::class, 'storageLink'])->name('storage.link');
 
 
@@ -67,21 +55,25 @@ Route::get('/home', [FrontendController::class, 'index']);
 Route::get('/about-us', [FrontendController::class, 'aboutUs'])->name('about-us');
 Route::get('/contact', [FrontendController::class, 'contact'])->name('contact');
 Route::post('/contact/message', [MessageController::class, 'store'])->name('contact.store');
-Route::get('product-detail/{slug}', [FrontendController::class, 'productDetail'])->name('product-detail');
+Route::get('product-detail/{id}', [FrontendController::class, 'productDetail'])->name('product-detail');
 Route::post('/product/search', [FrontendController::class, 'productSearch'])->name('product.search');
 Route::get('/product-cat/{slug}', [FrontendController::class, 'productCat'])->name('product-cat');
 Route::get('/product-sub-cat/{slug}/{sub_slug}', [FrontendController::class, 'productSubCat'])->name('product-sub-cat');
 Route::get('/product-brand/{slug}', [FrontendController::class, 'productBrand'])->name('product-brand');
 // Cart section
+
+Route::get('/cart', [CartController::class, 'index'])->name('cart');
 Route::post('/add-to-cart}', [CartController::class, 'addToCart'])->name('add-to-cart')->middleware('auth');
 Route::post('/add-to-cart', [CartController::class, 'singleAddToCart'])->name('single-add-to-cart')->middleware('auth');
-Route::get('cart-delete/{id}', [CartController::class, 'cartDelete'])->name('cart-delete');
+Route::delete('cart-delete/{id}', [CartController::class, 'cartDelete'])->name('cart-delete');
 Route::post('cart-update', [CartController::class, 'cartUpdate'])->name('cart.update');
-
-Route::get('/cart', function () {
-    return view('frontend.pages.cart');
-})->name('cart');
 Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout')->middleware('user');
+
+//Editor
+Route::group(['prefix' => '/editor-vue', 'middleware' => ['user']], function () {
+    Route::get('/{productId}', [EditorController::class, 'index'])->name('editor-vue');
+});
+
 // Wishlist
 Route::get('/wishlist', function () {
     return view('frontend.pages.wishlist');
@@ -92,7 +84,7 @@ Route::post('cart/order', [OrderController::class, 'store'])->name('cart.order')
 Route::get('order/pdf/{id}', [OrderController::class, 'pdf'])->name('order.pdf');
 Route::get('/income', [OrderController::class, 'incomeChart'])->name('product.order.income');
 // Route::get('/user/chart',[AdminController::class, 'userPieChart'])->name('user.piechart');
-Route::get('/product-grids/{cat_id}', [FrontendController::class, 'productGrids'])->name('product-grids');
+Route::get('/product-grids/{cat_id}/{product_id}', [FrontendController::class, 'productGrids'])->name('product-grids');
 Route::get('/product-lists', [FrontendController::class, 'productLists'])->name('product-lists');
 Route::match(['get', 'post'], '/filter', [FrontendController::class, 'productFilter'])->name('shop.filter');
 // Order Track
@@ -106,12 +98,20 @@ Route::post('/blog/filter', [FrontendController::class, 'blogFilter'])->name('bl
 Route::get('blog-cat/{slug}', [FrontendController::class, 'blogByCategory'])->name('blog.category');
 Route::get('blog-tag/{slug}', [FrontendController::class, 'blogByTag'])->name('blog.tag');
 
+
 // NewsLetter
 Route::post('/subscribe', [FrontendController::class, 'subscribe'])->name('subscribe');
 
 // Product Review
 Route::resource('/review', 'ProductReviewController');
 Route::post('product/{slug}/review', [ProductReviewController::class, 'store'])->name('review.store');
+
+//My Projects
+Route::get('projectsIndex}', [FrontendController::class, 'projectsIndex'])->name('projectsIndex');
+Route::get('/copyTemp/{productId}', [FrontendController::class, 'copyTemp'])->name('copyTemp');
+Route::delete('/deleteTemp/{productId}', [FrontendController::class, 'deleteTemp'])->name('deleteTemp');
+Route::post('/project/search', [FrontendController::class, 'projectSearch'])->name('project.search');
+
 
 // Post Comment
 Route::post('post/{slug}/comment', [PostCommentController::class, 'store'])->name('post-comment.store');
@@ -145,15 +145,15 @@ Route::group(['prefix' => '/admin', 'middleware' => ['auth', 'admin']], function
 
     // Filter Route
     Route::group(['prefix' => '/filter'], function () {
-        Route::get('/', [FilterController::class, 'index'])->name('filter.index');
-        Route::get('/create', [FilterController::class, 'create'])->name('filter.create');
-        Route::post('/', [FilterController::class, 'store'])->name('filter.store');
-        Route::get('/{filter_id}', [FilterController::class, 'show'])->name('filter.show');
-        Route::get('/{filter_id}/edit', [FilterController::class, 'edit'])->name('filter.edit');
-        Route::patch('/update', [FilterController::class, 'update'])->name('filter.update');
-        Route::delete('/{filter_id}', [FilterController::class, 'destroy'])->name('filter.destroy');
-        Route::delete('/filter/{id}', [FilterController::class, 'destroy'])->name('filter.destroy');
-        Route::post('/deleteParam', [FilterController::class, 'deleteParam'])->name('filter.deleteParam');
+    Route::get('/', [FilterController::class, 'index'])->name('filter.index');
+    Route::get('/create', [FilterController::class, 'create'])->name('filter.create');
+    Route::post('/', [FilterController::class, 'store'])->name('filter.store');
+    Route::get('/{filter_id}', [FilterController::class, 'show'])->name('filter.show');
+    Route::get('/{filter_id}/edit', [FilterController::class, 'edit'])->name('filter.edit');
+    Route::patch('/update', [FilterController::class, 'update'])->name('filter.update');
+    Route::delete('/{filter_id}', [FilterController::class, 'destroy'])->name('filter.destroy');
+    Route::delete('/filter/{id}', [FilterController::class, 'destroy'])->name('filter.destroy');
+    Route::post('/deleteParam', [FilterController::class, 'deleteParam'])->name('filter.deleteParam');
 
     });
 

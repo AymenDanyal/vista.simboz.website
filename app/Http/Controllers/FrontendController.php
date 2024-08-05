@@ -8,17 +8,18 @@ use App\Models\PostTag;
 use App\Models\PostCategory;
 use App\Models\Wishlist;
 use App\Models\Post;
-use App\Models\Filter;
 use App\Models\Brand;
+use App\Models\Filter;
 use App\Models\FilterCategory;
-use App\Models\FilterValue;
 use App\Models\FilterParameter;
+use App\Models\FilterValue;
+use App\Models\UserTemplate;
 use App\User;
-use Auth;
-use Session;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Newsletter;
-use DB;
-use Hash;
+use Illuminate\Support\Facades\Hash;
+
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 class FrontendController extends Controller
@@ -28,12 +29,10 @@ class FrontendController extends Controller
         return redirect()->route($request->user()->role);
     }
     public function home(){
-
-
-        //for($i=50;$i<60;$i++) {
+        // for($i=0;$i<3;$i++) {
     
-        //         Product::create([
-        //             'title' => "Product Title",
+        //      $product=   Product::create([
+        //             'title' => "Product".$i,
         //             'summary' => "Product Summary",
         //             'slug' => Str::slug("Product title".$i), 
         //             'photo' =>'https://htmlbeans.com/html/schon/images/products/img22.jpg' , 
@@ -42,8 +41,16 @@ class FrontendController extends Controller
         //             'discount' => $i,
         //             'status' => 'inactive', 
         //             'description' => "Product Description that will be uploaded",  
-        //             'cat_id'=>'12',
+        //             'cat_id'=>'8',
         //             'is_featured' => false,  
+                    
+        //         ]);
+
+        //         $product->save();
+        //         $filterValue=   FilterValue::create([
+        //             'product_id' => $product->id,
+        //             'filter_id' => 49,
+        //             'param_id' => 73+$i,
                     
         //         ]);
 
@@ -51,10 +58,6 @@ class FrontendController extends Controller
         //     }
         //     return 'Images processed successfully.';  
         // }
-
-        
-    
-
 
         $featured=Product::where('status','active')->where('is_featured',1)->limit(8)->get();
         $bestSellers=Product::where('status','active')->orderBy('stock','desc')->limit(8)->get();
@@ -82,144 +85,156 @@ class FrontendController extends Controller
     public function contact(){
         return view('frontend.pages.contact');
     }
+    public function productGrids($cat_id, $product_id)
+    { 
+        // Initialize variables
+        $products = null;
+        $categories = null;
+        $filterArray = [];
 
-    public function productGrids($cat_id) {
-    
-        if ($cat_id == 0) {
-            // Get all products and paginate the results with 16 per page
+        // Retrieve products based on conditions
+        if ($product_id != 0) {
+            $products = Product::where('id', $product_id)->paginate(16);
+        } elseif ($cat_id == 0) {
             $products = Product::paginate(16);
         } else {
-            // Get products where 'cat_id' matches $cat_id and paginate the results with 16 per page
             $products = Product::where('cat_id', $cat_id)->paginate(16);
-         
         }
-    
-        // Fetch all parent categories with their child categories
+
+        // Fetch categories
         $categories = Category::where('id', $cat_id)->first();
-        
-        // Pass the total number of products, the number currently being shown, and the total number of pages to the view
+
+        // Fetch filter categories with their filters and parameters
+        $filterCategories = FilterCategory::where('cat_id', $cat_id)
+            ->with(['filter' => function($query) {
+                $query->with('parameters');
+            }])
+            ->get();
+
+        // Build filterArray with necessary data
+        foreach ($filterCategories as $filterCategory) {
+            $filters = $filterCategory->filter;
+            foreach ($filters as $filter) {
+                $filterArray[] = [
+                    'filter_id' => $filter->filter_id,
+                    'filter_name' => $filter->filter_name,
+                    'parameters' => $filter->parameters->pluck('param_value', 'param_id')
+                ];
+            }
+        }
+
+        // Extract necessary pagination and count information
         $totalProducts = $products->total();
         $currentShowing = $products->count();
         $totalPages = $products->lastPage();
-        
-         //  dd($tags);
-      
 
-        $filterCategories = FilterCategory::where('cat_id', $cat_id)
-        ->with(['filter' => function($query) {
-            $query->with('parameters');
-        }])
-        ->get();
-
-    
-       
-        $filterArray = [];
-        foreach ($filterCategories as $filterCategory) {
-            $filter = $filterCategory->filter;
-            foreach ($filter as $f) {
-                if ($filter) {
-                    $filterArray[] = [
-                        'filter_id' => $f->filter_id,
-                        'filter_name' => $f->filter_name,
-                        'parameters' => $f->parameters->pluck('param_value','param_id')
-                    ];
-                }
-            }
-        }
-        //dd($filterArray);
-        return view('frontend.pages.product-grids', compact('products', 'categories', 'totalProducts', 'currentShowing', 'totalPages','filterArray','cat_id'));
+        // Return view with necessary data
+        return view('frontend.pages.product-grids', compact(
+            'products',
+            'categories',
+            'totalProducts',
+            'currentShowing',
+            'totalPages',
+            'filterArray',
+            'cat_id',
+            'product_id'
+        ));
     }
     public function productSearch(Request $request)
-{
-    try {
-        $filterId = $request->input('filterId', []);
-        $paramId = $request->input('paramId', []);
-        $categoryId = $request->input('categoryId');
-        $search = $request->input('search');
+    {
+        try {
+            $filterId = $request->input('filterId', []);
+            $paramId = $request->input('paramId', []);
+            $categoryId = $request->input('categoryId');
+            $search = $request->input('search');
 
-        // Record the start time
-        $startTime = microtime(true);
+            // Record the start time
+            $startTime = microtime(true);
 
-        // Initialize the query
-        $query = Product::query();
+            // Initialize the query
+            $query = Product::query();
 
-        // Scenario 1: Filter by categoryId only
-        if (!empty($categoryId) && empty($paramId) && empty($search)) {
-            $query->where('cat_id', $categoryId);
+            // Scenario 1: Filter by categoryId only
+            if (!empty($categoryId) && empty($paramId) && empty($search)) {
+                $query->where('cat_id', $categoryId);
+            }
+            // Scenario 2: Filter by categoryId and paramId
+            elseif (!empty($categoryId) && !empty($paramId) && empty($search)) {
+                $query->where('cat_id', $categoryId)
+                    ->whereHas('filterValues', function ($q) use ($filterId, $paramId) {
+                        $q->whereIn('filter_id', $filterId)
+                            ->whereIn('param_id', $paramId);
+                    });
+            }
+            // Scenario 3: Search by term
+            elseif (!empty($search) && empty($categoryId) && empty($paramId)) {
+                // Search for matching categories
+                $categoryIds = Category::where('title', 'like', '%' . $search . '%')
+                                    ->pluck('id')
+                                    ->toArray();
+
+                // Search for products matching the search term or category IDs
+                $query->where(function ($q) use ($search, $categoryIds) {
+                    $q->where('title', 'like', '%' . $search . '%')
+                    ->orWhere('slug', 'like', '%' . $search . '%')
+                    ->orWhere('description', 'like', '%' . $search . '%')
+                    ->orWhere('summary', 'like', '%' . $search . '%')
+                    ->orWhere('price', 'like', '%' . $search . '%');
+
+                    // Include products with matching category IDs
+                    if (!empty($categoryIds)) {
+                        $q->orWhereIn('cat_id', $categoryIds);
+                    }
+                });
+            }
+
+        
+            // Paginate the results
+            $products = $query->orderBy('id', 'DESC')->paginate(16);
+
+            // Record the end time
+            $endTime = microtime(true);
+
+            // Calculate the response time in milliseconds
+            $responseTime = ($endTime - $startTime) * 1000;
+
+            return response()->json([
+                'current_page' => $products->currentPage(),
+                'data' => $products->items(),
+                'length' => count($products->items()),
+                'from' => $products->firstItem(),
+                'last_page' => $products->lastPage(),
+                'per_page' => $products->perPage(),
+                'to' => $products->lastItem(),
+                'total' => $products->total(),
+                'response_time_ms' => $responseTime,
+            ], 200); // HTTP status code 200 for success
+
+        } catch (\Exception $e) {
+            // Log the error
+            Log::error('Product search error: ' . $e->getMessage());
+
+            return response()->json([
+                'message' => 'An error occurred while processing your request.',
+                'error' => $e->getMessage(),
+            ], 500); // HTTP status code 500 for internal server error
         }
-        // Scenario 2: Filter by categoryId and paramId
-        elseif (!empty($categoryId) && !empty($paramId) && empty($search)) {
-            $query->where('cat_id', $categoryId)
-                  ->whereHas('filterValues', function ($q) use ($filterId, $paramId) {
-                      $q->whereIn('filter_id', $filterId)
-                        ->whereIn('param_id', $paramId);
-                  });
-        }
-        // Scenario 3: Search by term
-        elseif (!empty($search) && empty($categoryId) && empty($paramId)) {
-            // Search for matching categories
-            $categoryIds = Category::where('title', 'like', '%' . $search . '%')
-                                   ->pluck('id')
-                                   ->toArray();
-
-            // Search for products matching the search term or category IDs
-            $query->where(function ($q) use ($search, $categoryIds) {
-                $q->where('title', 'like', '%' . $search . '%')
-                  ->orWhere('slug', 'like', '%' . $search . '%')
-                  ->orWhere('description', 'like', '%' . $search . '%')
-                  ->orWhere('summary', 'like', '%' . $search . '%')
-                  ->orWhere('price', 'like', '%' . $search . '%');
-
-                // Include products with matching category IDs
-                if (!empty($categoryIds)) {
-                    $q->orWhereIn('cat_id', $categoryIds);
-                }
-            });
-        }
-
-        // Paginate the results
-        $products = $query->orderBy('id', 'DESC')->paginate(16);
-
-        // Record the end time
-        $endTime = microtime(true);
-
-        // Calculate the response time in milliseconds
-        $responseTime = ($endTime - $startTime) * 1000;
-
-        return response()->json([
-            'current_page' => $products->currentPage(),
-            'data' => $products->items(),
-            'length' => count($products->items()),
-            'from' => $products->firstItem(),
-            'last_page' => $products->lastPage(),
-            'per_page' => $products->perPage(),
-            'to' => $products->lastItem(),
-            'total' => $products->total(),
-            'response_time_ms' => $responseTime,
-        ], 200); // HTTP status code 200 for success
-
-    } catch (\Exception $e) {
-        // Log the error
-        Log::error('Product search error: ' . $e->getMessage());
-
-        return response()->json([
-            'message' => 'An error occurred while processing your request.',
-            'error' => $e->getMessage(),
-        ], 500); // HTTP status code 500 for internal server error
     }
-}
-    public function productDetail($slug){
+    public function productDetail($id)
+    {
+        $product =Product::find($id);
+       
         
-        $product_detail = Product::getProductBySlug($slug);
-        if(Auth()->user()){
-            $wishList = Wishlist::where(['product_id' => $product_detail->id, 'user_id' => Auth()->user()->id])->first();
-    
-            // Initialize $inWishList
-            $inWishList = ($wishList) ? true : false;
-        
-            return view('frontend.pages.product_detail')->with(['product_detail' => $product_detail, 'inWishList' => $inWishList]);    
+        if (!$product) {
+            return redirect()->back()->with('error', 'Product not found.');
         }
-        return view('frontend.pages.product_detail')->with(['product_detail' => $product_detail, 'inWishList' => false]);
+        $productDetails = $product->getProductDetailsWithParam($id);
+        //dd($productDetails,$productDetails['product_detail'],$productDetails['product_param'],$productDetails['reviews']);
+        return view('frontend.pages.product_detail')->with([
+            'product_detail' => $productDetails['product_detail'],
+            'product_param' => $productDetails['product_param'],
+            'reviews' => $productDetails['reviews'],
+        ]);
     }
     public function productLists(){
         $products=Product::query();
@@ -356,6 +371,107 @@ class FrontendController extends Controller
 
     }
 
+    //My project page
+    public function projectsIndex(){
+       
+        $userTemplates = UserTemplate::where('user_id', Auth()->user()->id)
+        ->with('product')
+        ->paginate(10);
+        //dd($userTemplates);
+        return view('frontend.pages.projects',compact('userTemplates'));
+    }
+    public function projectsEdit($product_id){
+       
+        $userTemplates = UserTemplate::where('product_id', $product_id)
+        ->where('user_id', Auth::id())
+        ->firstOrFail();
+        
+
+        return view('frontend.pages.projects',compact('userTemplates'));
+    }
+    public function projectsDelete(){
+       
+        $userTemplates = UserTemplate::where('user_id', Auth()->user()->id)
+        ->with('product')
+        ->paginate(10);
+        return view('frontend.pages.projects',compact('userTemplates'));
+    }
+    public function copyTemp($productId)
+    {
+        $authenticatedUserId = Auth::id();
+        // $api_token = Auth::user()->api_token;
+        $existingTemplate = UserTemplate::where('user_id', $authenticatedUserId)
+            ->where('product_id', $productId)
+            ->firstOrFail();
+
+        $newTemplate = $existingTemplate->replicate();
+        $newTemplate->title = $existingTemplate->title . ' copy';
+        $newTemplate->save();
+
+        $userTemplate = UserTemplate::where('id',$newTemplate->id)->with('product')->firstOrFail();
+        //dd($userTemplates);
+       
+        return response()->json([
+            'userTemplate' => $userTemplate,
+        ], 200);
+    }
+    public function projectSearch(Request $request)
+    {
+        try {
+            // Get the search input from the request
+            $search = $request->input('search');
+    
+            // Record the start time
+            $startTime = microtime(true);
+    
+            // Perform the search query
+            $templates = UserTemplate::query()
+                ->where('title', 'LIKE', "%{$search}%")
+                ->with('product')
+                ->paginate(10); // Paginate results, change the number as needed
+    
+            // Record the end time
+            $endTime = microtime(true);
+    
+            // Calculate the response time in milliseconds
+            $responseTime = ($endTime - $startTime) * 1000;
+    
+            return response()->json([
+                'templates' => $templates,
+
+            ], 200);
+    
+        } catch (\Exception $e) {
+            // Log the error
+            Log::error('User template search error: ' . $e->getMessage());
+    
+            return response()->json([
+                'message' => 'An error occurred while processing your request.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+    public function deleteTemp($productId)
+    {
+        $authenticatedUserId = Auth::id();
+
+        // Find the template by user_id and product_id
+        $template = UserTemplate::where('user_id', $authenticatedUserId)
+            ->where('product_id', $productId)
+            ->firstOrFail();
+
+        // Delete the template
+        $template->delete();
+
+        // Return a JSON response indicating success
+        return response()->json([
+            'message' => 'Template Deleted',
+        ], 200);
+    }    
+    
+
+    //Blog page 
+
     public function blog(){
         $post=Post::query();
         
@@ -386,7 +502,6 @@ class FrontendController extends Controller
         $rcnt_post=Post::where('status','active')->orderBy('id','DESC')->limit(3)->get();
         return view('frontend.pages.blog')->with('posts',$post)->with('recent_posts',$rcnt_post);
     }
-
     public function blogDetail($slug){
         $post=Post::getPostBySlug($slug);
         $rcnt_post=Post::where('status','active')->orderBy('id','DESC')->limit(3)->get();
@@ -435,7 +550,6 @@ class FrontendController extends Controller
             // return $catURL;
         return redirect()->route('blog',$catURL.$tagURL);
     }
-
     public function blogByCategory(Request $request){
         $post=PostCategory::getBlogByCategory($request->slug);
         $rcnt_post=Post::where('status','active')->orderBy('id','DESC')->limit(3)->get();
@@ -448,6 +562,8 @@ class FrontendController extends Controller
         $rcnt_post=Post::where('status','active')->orderBy('id','DESC')->limit(3)->get();
         return view('frontend.pages.blog')->with('posts',$post)->with('recent_posts',$rcnt_post);
     }
+
+
     public function login(){
         return view('frontend.pages.login');
     }
@@ -456,7 +572,7 @@ class FrontendController extends Controller
         if(Auth::attempt(['email' => $data['email'], 'password' => $data['password'],'status'=>'active'])){
             Session::put('user',$data['email']);
             request()->session()->flash('success','Successfully login');
-            return redirect()->route('home');
+            return redirect()->back();
         }
         else{
             request()->session()->flash('error','Invalid email and password pleas try again!');
@@ -466,39 +582,48 @@ class FrontendController extends Controller
     public function logout(){
         Session::forget('user');
         Auth::logout();
-        request()->session()->flash('success','Logout successfully');
-        return back();
+        request()->session()->flash('success', 'Logout successfully');
+        return redirect('/');
     }
 
     public function register(){
         return view('frontend.pages.register');
     }
-    public function registerSubmit(Request $request){
-        // return $request->all();
-        $this->validate($request,[
-            'name'=>'string|required|min:2',
-            'email'=>'string|required|unique:users,email',
-            'password'=>'required|min:6|confirmed',
+    public function registerSubmit(Request $request)
+    {
+        // Validate the request
+        $this->validate($request, [
+            'name' => 'string|required|min:2',
+            'email' => 'string|required|unique:users,email',
+            'password' => 'required|min:6|confirmed',
         ]);
-        $data=$request->all();
-        // dd($data);
-        $check=$this->create($data);
-        Session::put('user',$data['email']);
-        if($check){
-            request()->session()->flash('success','Successfully registered');
-            return redirect()->route('home');
-        }
-        else{
-            request()->session()->flash('error','Please try again!');
-            return back();
-        }
+
+        // Create the user
+        $token = Str::random(60);
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+            'api_token' => hash('sha256', $token),
+        ]);
+
+        // Log the user in
+        Auth::login($user);
+
+        // Flash success message
+        request()->session()->flash('success', 'Successfully registered and logged in');
+
+        // Redirect to home
+        return redirect()->route('home');
     }
     public function create(array $data){
+        $token = Str::random(60);
         return User::create([
             'name'=>$data['name'],
             'email'=>$data['email'],
             'password'=>Hash::make($data['password']),
-            'status'=>'active'
+            'status'=>'active',
+            'api_token' => hash('sha256', $token),
             ]);
     }
     // Reset password
@@ -525,3 +650,4 @@ class FrontendController extends Controller
     }
     
 }
+

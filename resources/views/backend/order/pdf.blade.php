@@ -21,7 +21,7 @@
     margin-top: 20px;
     color: green;
     font-size: 30px!important;
-    font-family: serif;
+    font-family: "Montserrat", sans-serif;
   }
   .invoice-left-top {
     border-left: 4px solid green;
@@ -46,7 +46,7 @@
     color: green;
     font-size: 25px;
     font-weight: normal;
-    font-family: serif;
+    font-family: "Montserrat", sans-serif;
     margin-top: 20px;
   }
   .site-address p {

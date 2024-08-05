@@ -1353,6 +1353,18 @@
 }
 
 @media only screen and (max-width: 767px) {
+    .filter-widget {
+       display: none; 
+    }
+    #productsGrid{
+        margin-left:0px !important;
+    }
+    .button-holder{
+        display: none;
+    }
+    .header-category{
+        display: none;
+    }
 	.mt-paddingbottomxs {
 		padding-bottom: 30px;
 	}

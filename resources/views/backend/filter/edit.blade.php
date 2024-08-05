@@ -53,6 +53,15 @@
 
             <button type="button" class="btn btn-primary mt-3 mb-3 addParam">Add More Parameter</button>
 
+            <div class="form-group">
+                <label for="filterCat" class="col-form-label">Parameter Price</label>
+                <input id="filterCat" type="text" name="param_price" placeholder="Enter title"
+                    value="{{ $parameter->param_id }}" class="form-control">
+               
+                @error('param_price')
+                <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>
             <div class="form-group mb-3">
                 <button type="reset" class="btn btn-warning">Reset</button>
                 <button class="btn btn-success" type="submit">Update</button>
@@ -66,46 +75,44 @@
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
     $(document).ready(function(){
-    var counter = $('#dynamic-fields input').length + 1;
+        var counter = $('#dynamic-fields input').length + 1;
 
-    $('.addParam').on('click', function() {
-        var container = $('#dynamic-fields');
-        var input = $('<input>')
-            .attr('type', 'text')
-            .attr('name', 'parameters[new_' + counter + ']')
-            .attr('placeholder', 'Enter parameter ' + counter)
-            .addClass('form-control mt-2');
-        container.append(input);
-        counter++;
-    });
-    
-    
- 
-    $('.delete').on('click', function() {
-        var id = $(this).data('id');
-        var element = $(this);
-        $.ajax({
-            type: 'POST',
-            url: '{{ route('filter.deleteParam') }}',
-            data: {
-                "_token": "{{ csrf_token() }}",
-                paramId: id,                    
-                },
-                success: function(response) {
-                if (response.success) {
-                    element.closest('.paramDiv').remove();
-                } else {
-                    alert(response.error);
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('AJAX request failed:', error);
-                alert('An error occurred while deleting the parameter');
-            }
-            });     
+        $('.addParam').on('click', function() {
+            var container = $('#dynamic-fields');
+            var input = $('<input>')
+                .attr('type', 'text')
+                .attr('name', 'parameters[new_' + counter + ']')
+                .attr('placeholder', 'Enter parameter ' + counter)
+                .addClass('form-control mt-2');
+            container.append(input);
+            counter++;
+        });
         
-    });
+        $('.delete').on('click', function() {
+            var id = $(this).data('id');
+            var element = $(this);
+            $.ajax({
+                type: 'POST',
+                url: '{{ route('filter.deleteParam') }}',
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    paramId: id,                    
+                    },
+                    success: function(response) {
+                    if (response.success) {
+                        element.closest('.paramDiv').remove();
+                    } else {
+                        alert(response.error);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX request failed:', error);
+                    alert('An error occurred while deleting the parameter');
+                }
+                });     
+            
+        });
        
-});
+    });
 </script>
 @endsection
