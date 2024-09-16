@@ -78,6 +78,7 @@
                                                     </div>
                                                     <div>
                                                         <input type="number" value="{{$cart->quantity}}" min="0"
+                                                            max="{{ isset($cart->stock) ? $cart->stock : 0 }}"
                                                             data-cart-id="{{$cart->id}}"
                                                             data-previous-quantity="{{$cart->quantity}}"
                                                             class="form-control product-quantity" style="max-width: 70px;">
@@ -92,7 +93,7 @@
                                                         <span>Price ( per piece )</span>
                                                     </div>
                                                     <div>
-                                                        <span>Rs {{$cart->product->price}}</span>
+                                                        <span>Rs {{$cart->amount}}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -122,9 +123,7 @@
                                                         <div class="d-flex flex-column align-items-end">
                                                             <div class="d-flex flex-row align-items-end">
                                                                 <div class="d-flex flex-row">
-                                                                    <span id='grand-total-{{$cart->id}}'>Rs {{
-                                                                        $cart->product->price * $cart->quantity * ((100 -
-                                                                        $cart->product->discount) / 100) }}</span>
+                                                                    <span id='grand-total-{{$cart->id}}'>Rs {{$cart->amount}}</span>
 
                                                                     <div class="cart-spinner-{{$cart->id}} spinner-border d-none"
                                                                         role="status">
@@ -365,6 +364,7 @@
 
 <script>
     $(document).ready(function() {
+            
             $('.shipping select[name=shipping]').change(function() {
                 let cost = parseFloat($(this).find('option:selected').data('price')) || 0;
                 let subtotal = parseFloat($('.order_subtotal').data('price'));
@@ -372,8 +372,6 @@
                 // alert(coupon);
                 $('#order_total_price span').text('$' + (subtotal + cost - coupon).toFixed(2));
             });
-
-            
             // Listen for changes in the input fields
             let debounceTimer;
 
@@ -497,24 +495,31 @@
                                 
                                 $.ajax({
                                     type: 'DELETE',
-                                    url: `cart-delete/${id}`,
+                                    url: `{{ route('cart-delete', ['id' => '__id__']) }}`.replace('__id__', id),
                                     data: {
                                         "_token": "{{ csrf_token() }}",
                                     },
                                     success: function(data) {
-                                        $(`#cart-li-${id}`).remove();
-                                        $('.cart-quantity').text(data.cartTotal);
-                                        $('#subtotal').text('Rs '+response.cartTotal+response.totalSaved);
-                                        $('#savings').text('Rs '+response.totalSaved);
-                                        $('#total').text('Rs '+response.cartTotal);
-                                        $(`.order-amount`).removeClass('d-none');
-                                        Swal.fire("Deleted!", "The item has been removed from the list.", "success");
+                                        if (data.auth === false) {
+                                            window.location.href = data.redirect_url; // Redirect to login page if not authenticated
+                                        } else {
+                                            $(`#cart-li-${id}`).remove();
+                                            $('.cart-quantity').text(data.cartTotal);
+                                            $('#subtotal').text('Rs ' + data.cartTotal + data.totalSaved);
+                                            $('#savings').text('Rs ' + data.totalSaved);
+                                            $('#total').text('Rs ' + data.cartTotal);
+                                            $(`.order-amount`).removeClass('d-none');
+                                            Swal.fire("Deleted!", "The item has been removed from the list.", "success");
+                                        }
                                     },
                                     error: function(data) {
-                                        // Handle errors and display error messages
-                                        var errors = data.responseJSON.errors;
-                                        console.log(errors);
-                                        // Handle errors as needed
+                                        if (data.status === 401) {
+                                            window.location.href = data.responseJSON.redirect_url; // Redirect if auth failed
+                                        } else {
+                                            var errors = data.responseJSON.errors;
+                                            console.log(errors);
+                                            // Handle other errors as needed
+                                        }
                                     }
                                 });
                             }

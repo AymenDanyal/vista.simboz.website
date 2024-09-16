@@ -5,6 +5,7 @@
 <div class="card">
     <h5 class="card-header">Edit Filter</h5>
     <div class="card-body">
+        
         @foreach ($groupedParameters as $key => $parameters)
         <form method="POST" action="{{ route('filter.update') }}">
             @csrf

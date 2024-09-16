@@ -8,6 +8,16 @@
     <h5 class="card-header">Add Product</h5>
     <div class="card-body">
         <form method="post" id="productForm" action="{{route('product.store')}}">
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+        
             {{csrf_field()}}
             <div class="form-group">
                 <label for="inputTitle" class="col-form-label">Title <span class="text-danger">*</span></label>
@@ -62,15 +72,28 @@
                 </select>
             </div>
 
-            <div class="form-group">
-                <label for="price" class="col-form-label">Price(NRS) <span class="text-danger">*</span></label>
-                <input id="price" type="number" name="price" placeholder="Enter price" value="{{old('price')}}"
-                    class="form-control">
-                @error('price')
-                <span class="text-danger">{{$message}}</span>
-                @enderror
+            <div id="price-ranges">
+                <div class="form-group d-flex ">
+                    <div>
+                        <label for="price" class="col-form-label">Price (RS) <span class="text-danger">*</span></label>
+                        <input id="price_0" type="number" name="prices[0]" placeholder="Enter price" class="form-control">    
+                    </div>
+                    <div>
+                        <label for="min-range" class="col-form-label">Min range <span class="text-danger">*</span></label>
+                <input id="min-range_0" type="number" name="min_ranges[0]" placeholder="Enter min range" class="form-control">
+                    </div>
+                    <div>
+                        <label for="max-range" class="col-form-label">Max range <span class="text-danger">*</span></label>
+                        <input id="max-range_0" type="number" name="max_ranges[0]" placeholder="Enter max range" class="form-control">    
+                    </div>
+                    @error('prices')
+                    <span class="text-danger">{{$message}}</span>
+                    @enderror
+                </div>
             </div>
-
+            
+            <button type="button" id="add-price-range" class="btn btn-secondary">Add Price Range</button>
+            
             <div class="form-group">
                 <label for="discount" class="col-form-label">Discount(%)</label>
                 <input id="discount" type="number" name="discount" min="0" max="100" placeholder="Enter discount"
@@ -462,6 +485,32 @@
 
             // Submit the form
             $('#productForm').submit();
+        });
+
+        var i = 1;
+        $('#add-price-range').click(function() {
+            $('#price-ranges').append(`
+                <div class="form-group d-flex">
+                    <div>
+                        <label for="price_${i}" class="col-form-label">Price (RS) <span class="text-danger">*</span></label>
+                        <input id="price_${i}" type="number" name="prices[${i}]" placeholder="Enter price" class="form-control">    
+                    </div>
+                    <div>
+                        <label for="min-range_${i}" class="col-form-label">Min range <span class="text-danger">*</span></label>
+                        <input id="min-range_${i}" type="number" name="min_ranges[${i}]" placeholder="Enter min range" class="form-control">
+                    </div>
+                    <div>
+                        <label for="max-range_${i}" class="col-form-label">Max range <span class="text-danger">*</span></label>
+                        <input id="max-range_${i}" type="number" name="max_ranges[${i}]" placeholder="Enter max range" class="form-control">    
+                    </div>
+                </div>
+            `);
+            i++;
+        });
+
+
+        $(document).on('click', '.remove-price-range', function() {
+            $(this).closest('.form-group').remove();
         });
     </script>
     @endpush

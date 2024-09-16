@@ -230,10 +230,13 @@ class FrontendController extends Controller
         }
         $productDetails = $product->getProductDetailsWithParam($id);
         //dd($productDetails,$productDetails['product_detail'],$productDetails['product_param'],$productDetails['reviews']);
+        //dd($productDetails['priceRange']);
         return view('frontend.pages.product_detail')->with([
             'product_detail' => $productDetails['product_detail'],
             'product_param' => $productDetails['product_param'],
             'reviews' => $productDetails['reviews'],
+            'priceRange' => $productDetails['priceRange'],
+            'count_priceRange' => $productDetails['count_priceRange'],
         ]);
     }
     public function productLists(){

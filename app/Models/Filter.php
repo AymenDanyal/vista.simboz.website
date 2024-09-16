@@ -53,9 +53,11 @@ class Filter extends Model
                 $groupedParameters[$groupName]['categories'][] = $category->title; // Assuming 'title' is the column name in the Category table
             }
 
+            
             $groupedParameters[$groupName]['filter_id'] = $filter->filter_id;
             $groupedParameters[$groupName]['filter_name'] = $filter->filter_name;
             $groupedParameters[$groupName]['filter_cat'] = $filter->filter_cat;
+            
         }
 
         return $groupedParameters;

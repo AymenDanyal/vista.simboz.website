@@ -43,7 +43,7 @@
         <button type="button" class="btn btn-primary mt-3 mb-3"  onclick="addInputField()">Add More Parameter</button>
         <div class="form-group">
             <label for="paramPrice" class="col-form-label">Parameter Price</label>
-            <input id="paramPrice" type="number" name="param_price" placeholder="0" value="{{ old('param_price') }}" class="form-control">
+            <input id="paramPrice" type="number" name="param_price" placeholder="0" value="{{ old('param_price') }}" class="form-control" required>
             @error('param_price')
             <span class="text-danger">{{ $message }}</span>
             @enderror

@@ -398,7 +398,7 @@
                                 <div class="b1">
                                     <div class="b2">
                                         <div>
-                                            <img src="${value.photo}" alt="image description loading="lazy">
+                                            <img src="${value.photo}" alt="image description loading="lazy" style="width:300px;height:250px">
                                         </div>
                                         <ul class="mt-stars">
                                             <li><i class="fa fa-star"></i></li>

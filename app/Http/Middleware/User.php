@@ -15,9 +15,14 @@ class User
      */
     public function handle($request, Closure $next)
     {
+        
         if (!auth()->check()) {
+            
+            if ($request->ajax()) {
+                return response()->json(['auth' => false, 'redirect_url' => route('home')], 401);
+            }
             session()->flash('auth_failed', true);
-            return redirect()->back();
+            return redirect('/');
         }
         else{
             return $next($request);

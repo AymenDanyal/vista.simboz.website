@@ -128,7 +128,7 @@ class FilterController extends Controller
      */
     public function update(Request $request)
     {
-        dd($request->all());
+        //dd($request->all());
         try {
             // Validate the incoming request data
             $this->validate($request, [

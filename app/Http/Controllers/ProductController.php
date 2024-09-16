@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Filter;
 use App\Models\FilterValue;
 use App\Models\Brand;
 use App\Models\FilterParameter;
+use App\Models\PriceRange;
 use App\Models\Template;
 use App\User;
 use Illuminate\Support\Facades\Auth;
@@ -70,201 +72,284 @@ class ProductController extends Controller
     }
     public function store(Request $request)
     {
-
+        // Validate the request data
         //dd($request->all());
-        // $this->validate($request, [
-        //     'title' => 'string|required',
-        //     'summary' => 'string|required',
-        //     'description' => 'string|nullable',
-        //     'photo' => 'string|required',
-        //     'size' => 'nullable',
-        //     'stock' => "required|numeric",
-        //     'cat_id' => 'required|exists:categories,id',
-        //     'brand_id' => 'nullable|exists:brands,id',
-        //     'child_cat_id' => 'nullable|exists:categories,id',
-        //     'is_featured' => 'sometimes|in:1',
-        //     'status' => 'required|in:active,inactive',
-        //     'condition' => 'required|in:default,new,hot',
-        //     'price' => 'required|numeric',
-        //     'discount' => 'nullable|numeric',
-        //     'front' => 'string',
-        //     'template_width' => 'numeric',
-        //     'template_height' => 'numeric',
-        //     'parameters' => 'required|array',
-        //     'parameters.*' => 'array',
-        //     'parameters.*.*' => 'integer',
-        // ]);
-
-        $data = $request->all();
-
-        // Remove the 'template' field from the data array
-
-        $slug = Str::slug($request->title);
+        $validatedData = $request->validate([
+            'title' => 'string|required',
+            'summary' => 'string|required',
+            'description' => 'string|nullable',
+            'photo' => 'string|required',
+            'size' => 'nullable|array',
+            'size.*' => 'string',
+            'stock' => 'required|numeric',
+            'cat_id' => 'required|exists:categories,id',
+            'brand_id' => 'nullable|exists:brands,id',
+            'child_cat_id' => 'nullable|exists:categories,id',
+            'is_featured' => 'sometimes|boolean',
+            'status' => 'required|in:active,inactive',
+            'condition' => 'required|in:default,new,hot',
+            'discount' => 'nullable|numeric',
+            'front' => 'string|nullable',
+            'template_width' => 'numeric|nullable',
+            'template_height' => 'numeric|nullable',
+            'parameters' => 'required|array',
+            'parameters.*' => 'array',
+            'parameters.*.*' => 'integer',
+            'prices' => 'required|array',
+            'prices.*' => 'numeric|min:0',
+            'min_ranges' => 'required|array',
+            'min_ranges.*' => 'numeric|min:0',
+            'max_ranges' => 'required|array',
+            'max_ranges.*' => 'numeric|min:0|gt:min_ranges.*',
+        ]);
+    
+        // Process the data
+        $data = $validatedData;
+        
+        // Generate a unique slug
+        $slug = Str::slug($data['title']);
         $count = Product::where('slug', $slug)->count();
         if ($count > 0) {
             $slug = $slug . '-' . date('ymdis') . '-' . rand(0, 999);
         }
         $data['slug'] = $slug;
-        $data['is_featured'] = $request->input('is_featured', 0);
-        $size = $request->input('size');
-        if ($size) {
-            $data['size'] = implode(',', $size);
-        } else {
-            $data['size'] = '';
-        }
-        // return $size;
-        // return $data;
+        $data['is_featured'] = $data['is_featured'] ?? 0;
+        
+        // Handle size field
+        $data['size'] = isset($data['size']) ? implode(',', $data['size']) : '';
+    
+        // Create the product
         $product = Product::create($data);
-        //dd($product->id);
         $productId = $product->id;
-
-       
-
-        $parameters = $request->parameters;
-
-        foreach ($parameters as $key => $parameterArray) {
-            foreach ($parameterArray as $paramId) {
-                $FilterValue = FilterValue::create([
-                    'product_id' => $product->id,
-                    'filter_id' => $key,
+    
+        // Store parameters
+        $parameters = $data['parameters'];
+        foreach ($parameters as $filterId => $paramIds) {
+            foreach ($paramIds as $paramId) {
+                FilterValue::create([
+                    'product_id' => $productId,
+                    'filter_id' => $filterId,
                     'param_id' => $paramId,
                 ]);
             }
         }
-
-        $template = $request->input('template');
-        $template_height = $request->input('template_height');
-        $template_width = $request->input('template_width');
-        //dd($template, $template_height, $template_width);
-
+    
+        // Store template information
         if ($product) {
-            $status1 = Template::create([
+            Template::create([
                 'product_id' => $productId,
-                'front_psd_url' => $template,
-                'template_height' => $template_height,
-                'template_width' => $template_width,
-
+                'front_psd_url' => $data['front'] ?? null,
+                'template_height' => $data['template_height'] ?? null,
+                'template_width' => $data['template_width'] ?? null,
             ]);
-        //dd($status1);    
+    
+        // Store price ranges
+            $prices = $data['prices'];
+            $minRanges = $data['min_ranges'];
+            $maxRanges = $data['max_ranges'];
+            
+            foreach ($prices as $index => $price) {
+                $minRange = $minRanges[$index] ?? null;
+                $maxRange = $maxRanges[$index] ?? null;
+            
+                if ($price !== null && $minRange !== null && $maxRange !== null) {
+                    
+                    PriceRange::create([
+                        'product_id' => $productId,
+                        'price' => $price,
+                        'min_range' => $minRange,
+                        'max_range' => $maxRange,
+                    ]);
+                }
+            }
 
-            request()->session()->flash('success', 'Product Successfully added');
+    
+            // Flash success message and redirect
+            request()->session()->flash('success', 'Product successfully added');
         } else {
-            request()->session()->flash('error', 'Please try again!!');
+            // Flash error message
+            request()->session()->flash('error', 'Please try again!');
         }
+    
         return redirect()->route('product.index');
     }
+    
 
     public function edit($id)
     {
-        $product =Product::find($id);
+        $product = Product::findOrFail($id);
         $productDetails = $product->getProductDetails();
+        $priceRange = $product->priceRange()->orderBy('min_range', 'asc')->get();
+        
         $categories = Category::with('filters.parameters')->get()->keyBy('id')->toArray();
-
-
-        $filters =Filter::with('parameters')->get()->keyBy('filter_id')->toArray();
-        $brand =Brand::get();
-        $items =Product::where('id', $id)->get();
-
-
+        
+        $filters = Filter::with('parameters')->get()->keyBy('filter_id')->toArray();
+        
+        $brands = Brand::all();
+    
         $rearrangedProductDetails = [];
-
-        foreach ($productDetails['filter_values'] as $filter_value) {
-            $filter = Filter::where('filter_id', $filter_value['filter_id'])->first();
-            $parameter = FilterParameter::where('param_id', $filter_value['param_id'])->first();
-            if (!isset($rearrangedProductDetails[$filter_value['filter_id']])) {
-                $rearrangedProductDetails[$filter_value['filter_id']] = [
+        foreach ($productDetails['filter_values'] as $filterValue) {
+            $filter = Filter::find($filterValue['filter_id']);
+            $parameter = FilterParameter::find($filterValue['param_id']);
+            
+            if (!isset($rearrangedProductDetails[$filterValue['filter_id']])) {
+                $rearrangedProductDetails[$filterValue['filter_id']] = [
                     'filter_name' => $filter->filter_name,
                     'filter_id' => $filter->filter_id,
                     'parameters' => []
                 ];
             }
-
-            $rearrangedProductDetails[$filter_value['filter_id']]['parameters'][] = [
-                'param_id' => $filter_value['param_id'],
+    
+            $rearrangedProductDetails[$filterValue['filter_id']]['parameters'][] = [
+                'param_id' => $filterValue['param_id'],
                 'param_value' => $parameter->param_value 
             ];
         }
         $productDetails['filter_applied'] = $rearrangedProductDetails;
-
-        //dd($productDetails);
-
+        //dd($priceRange->toArray());
+        // Return view with all necessary data
         return view('backend.product.edit')
-            ->with('brands', $brand)
+            ->with('brands', $brands)
             ->with('categories', $categories)
             ->with('filters', $filters)
             ->with('productDetails', $productDetails)
-            ->with('items', $items);
+            ->with('priceRange', $priceRange);
     }
+    
 
 
     public function update(Request $request, $id)
     {
-       
-        $product = Product::findOrFail($id);
-        $this->validate($request, [
+       // dd($request->all());
+        // Validate the request data
+        $validatedData = $request->validate([
             'title' => 'string|required',
             'summary' => 'string|required',
             'description' => 'string|nullable',
             'photo' => 'string|required',
-            'size' => 'nullable',
-            'stock' => "required|numeric",
+            'size' => 'nullable|array',
+            'size.*' => 'string',
+            'stock' => 'required|numeric',
             'cat_id' => 'required|exists:categories,id',
-            'child_cat_id' => 'nullable|exists:categories,id',
-            'is_featured' => 'sometimes|in:1',
             'brand_id' => 'nullable|exists:brands,id',
+            'child_cat_id' => 'nullable|exists:categories,id',
+            'is_featured' => 'sometimes|boolean',
             'status' => 'required|in:active,inactive',
             'condition' => 'required|in:default,new,hot',
-            'price' => 'required|numeric',
             'discount' => 'nullable|numeric',
-            'template' => 'string',
-            'template_width' => 'numeric',
-            'template_height' => 'numeric',
+            'front' => 'string|nullable',
+            'template_width' => 'numeric|nullable',
+            'template_height' => 'numeric|nullable',
             'parameters' => 'required|array',
             'parameters.*' => 'array',
             'parameters.*.*' => 'integer',
+            'prices' => 'required|array',
+            'prices.*' => 'numeric|min:0',
+            'min_ranges' => 'required|array',
+            'min_ranges.*' => 'numeric|min:0',
+            'max_ranges' => 'required|array',
+            'max_ranges.*' => 'numeric|min:0|gt:min_ranges.*',
         ]);
-        
-        $parameters = $request->parameters;
-        foreach ($parameters as $key => $parametersValue) {
-            FilterValue::where('product_id', $product->id)
-                ->where('filter_id', $key)
-                ->delete();
-    
-            foreach ($parametersValue as $paramId) {
-                FilterValue::create([
-                    'product_id' => $product->id,
-                    'filter_id' => $key,
-                    'param_id' => $paramId,
+
+        DB::beginTransaction();
+
+        try {
+            // Retrieve the product
+            $product = Product::findOrFail($id);
+
+            // Update filter values
+            foreach ($request->parameters as $filterId => $paramIds) {
+                FilterValue::where('product_id', $product->id)
+                    ->where('filter_id', $filterId)
+                    ->delete();
+
+                foreach ($paramIds as $paramId) {
+                    FilterValue::create([
+                        'product_id' => $product->id,
+                        'filter_id' => $filterId,
+                        'param_id' => $paramId,
+                    ]);
+                }
+            }
+            foreach ($request->parameters as $filterId => $paramIds) {
+                FilterValue::where('product_id', $product->id)
+                    ->where('filter_id', $filterId)
+                    ->delete();
+
+                foreach ($paramIds as $paramId) {
+                    FilterValue::create([
+                        'product_id' => $product->id,
+                        'filter_id' => $filterId,
+                        'param_id' => $paramId,
+                    ]);
+                }
+            }
+            
+            // Store price ranges
+            $prices = $request->prices;
+            $minRanges = $request->min_ranges;
+            $maxRanges = $request->max_ranges;
+            
+            foreach ($prices as $index => $price) {
+                $minRange = $minRanges[$index] ?? null;
+                $maxRange = $maxRanges[$index] ?? null;
+            
+                if ($price !== null && $minRange !== null && $maxRange !== null) {
+                    
+                    PriceRange::create([
+                        'product_id' => $id,
+                        'price' => $price,
+                        'min_range' => $minRange,
+                        'max_range' => $maxRange,
+                    ]);
+                }
+            }
+
+            
+
+            // Prepare data for product update
+            $data = $validatedData;
+            $data['is_featured'] = $request->input('is_featured', 0);
+            $data['size'] = implode(',', $request->input('size', []));
+
+            // Update the product
+            $product->fill($data)->save();
+
+            // Update template information
+            $template = Template::where('product_id', $product->id)->first();
+            if ($template) {
+                $template->update([
+                    'template_height' => $request->input('template_height'),
+                    'template_width' => $request->input('template_width'),
+                    'front' => $request->input('template'),
                 ]);
             }
-        }
-        $data = $request->all();
-        $data['is_featured'] = $request->input('is_featured', 0);
-        $size = $request->input('size');
-        if ($size) {
-            $data['size'] = implode(',', $size);
-        } else {
-            $data['size'] = '';
-        }
-        // return $data;
-        $status = $product->fill($data)->save();
-        if ($status) {
-            $template = Template::where([
-                'product_id' => $product->id,
-            ])->first();
 
-            $template->template_height = $request->input('template_height');
-            $template->template_width = $request->input('template_width');
-            $template->front = $request->input('template');
-            $template->save();
+            // Update price ranges
+            foreach ($data['prices'] as $index => $price) {
+                $minRange = $data['min_ranges'][$index] ?? null;
+                $maxRange = $data['max_ranges'][$index] ?? null;
 
-            request()->session()->flash('success', 'Product Successfully updated');
-        } else {
-            request()->session()->flash('error', 'Please try again!!');
+                if ($price !== null && $minRange !== null && $maxRange !== null) {
+                    PriceRange::updateOrCreate(
+                        ['product_id' => $product->id, 'min_range' => $minRange],
+                        ['price' => $price, 'max_range' => $maxRange]
+                    );
+                }
+            }
+
+            // Commit the transaction
+            DB::commit();
+            $request->session()->flash('success', 'Product successfully updated');
+        } catch (\Exception $e) {
+            // Rollback the transaction on error
+            DB::rollBack();
+            dd( $e);
+            $request->session()->flash('error', 'An error occurred while updating the product. Please try again.');
         }
+
         return redirect()->route('product.index');
     }
-
 
     public function destroy($product_id)
     {

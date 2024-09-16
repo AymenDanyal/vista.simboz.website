@@ -60,15 +60,17 @@ Route::post('/product/search', [FrontendController::class, 'productSearch'])->na
 Route::get('/product-cat/{slug}', [FrontendController::class, 'productCat'])->name('product-cat');
 Route::get('/product-sub-cat/{slug}/{sub_slug}', [FrontendController::class, 'productSubCat'])->name('product-sub-cat');
 Route::get('/product-brand/{slug}', [FrontendController::class, 'productBrand'])->name('product-brand');
+
+
 // Cart section
-
-Route::get('/cart', [CartController::class, 'index'])->name('cart');
-Route::post('/add-to-cart}', [CartController::class, 'addToCart'])->name('add-to-cart')->middleware('auth');
-Route::post('/add-to-cart', [CartController::class, 'singleAddToCart'])->name('single-add-to-cart')->middleware('auth');
-Route::delete('cart-delete/{id}', [CartController::class, 'cartDelete'])->name('cart-delete');
-Route::post('cart-update', [CartController::class, 'cartUpdate'])->name('cart.update');
-Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout')->middleware('user');
-
+Route::group(['middleware' => ['user']], function () {
+    Route::get('/cart', [CartController::class, 'index'])->name('cart');
+    Route::post('/add-to-cart}', [CartController::class, 'addToCart'])->name('add-to-cart');
+    // Route::post('/add-to-cart', [CartController::class, 'singleAddToCart'])->name('single-add-to-cart');
+    Route::delete('cart-delete/{id}', [CartController::class, 'cartDelete'])->name('cart-delete');
+    Route::post('cart-update', [CartController::class, 'cartUpdate'])->name('cart.update');
+    Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
+});
 //Editor
 Route::group(['prefix' => '/editor-vue', 'middleware' => ['user']], function () {
     Route::get('/{productId}', [EditorController::class, 'index'])->name('editor-vue');
@@ -90,6 +92,8 @@ Route::match(['get', 'post'], '/filter', [FrontendController::class, 'productFil
 // Order Track
 Route::get('/product/track', [OrderController::class, 'orderTrack'])->name('order.track');
 Route::post('product/track/order', [OrderController::class, 'productTrackOrder'])->name('product.track.order');
+
+
 // Blog
 Route::get('/blog', [FrontendController::class, 'blog'])->name('blog');
 Route::get('/blog-detail/{slug}', [FrontendController::class, 'blogDetail'])->name('blog.detail');
@@ -107,11 +111,12 @@ Route::resource('/review', 'ProductReviewController');
 Route::post('product/{slug}/review', [ProductReviewController::class, 'store'])->name('review.store');
 
 //My Projects
-Route::get('projectsIndex}', [FrontendController::class, 'projectsIndex'])->name('projectsIndex');
-Route::get('/copyTemp/{productId}', [FrontendController::class, 'copyTemp'])->name('copyTemp');
-Route::delete('/deleteTemp/{productId}', [FrontendController::class, 'deleteTemp'])->name('deleteTemp');
-Route::post('/project/search', [FrontendController::class, 'projectSearch'])->name('project.search');
-
+Route::group(['middleware' => ['user']], function () {
+    Route::get('projectsIndex}', [FrontendController::class, 'projectsIndex'])->name('projectsIndex');
+    Route::get('/copyTemp/{productId}', [FrontendController::class, 'copyTemp'])->name('copyTemp');
+    Route::delete('/deleteTemp/{productId}', [FrontendController::class, 'deleteTemp'])->name('deleteTemp');
+    Route::post('/project/search', [FrontendController::class, 'projectSearch'])->name('project.search');
+});
 
 // Post Comment
 Route::post('post/{slug}/comment', [PostCommentController::class, 'store'])->name('post-comment.store');

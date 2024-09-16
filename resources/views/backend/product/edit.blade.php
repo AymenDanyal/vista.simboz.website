@@ -6,7 +6,15 @@
     <h5 class="card-header">Edit Product</h5>
     <div class="card-body">
         <form method="post" id="productForm" action="{{ route('product.update', $productDetails['product']['id']) }}">
-
+            @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
             @csrf
             @method('PATCH')
             <div class="form-group">
@@ -40,20 +48,17 @@
                 <label for="is_featured">Is Featured</label><br>
                 <input type="checkbox" name='is_featured' id='is_featured' value='{{$productDetails['product']['is_featured']}}' {{(($productDetails['product']['is_featured']) ? 'checked' : '' )}}> Yes
             </div>
-           
+
             <div class="form-group">
                 <label for="cat_id">Category <span class="text-danger">*</span></label>
                 <select name="cat_id" id="cat_id" class="form-control">
                     <option value="">--Select any category--</option>
-                   
+
                     @foreach($categories as $category)
-                        <option value="{{ $category['id'] }}" 
-                            @if($productDetails['category'][0]['id'] == $category['id'])
-                                selected
-                            @endif
-                        >
-                            {{ $category['title'] }}
-                        </option>
+                    <option value="{{ $category['id'] }}" @if($productDetails['category'][0]['id']==$category['id'])
+                        selected @endif>
+                        {{ $category['title'] }}
+                    </option>
                     @endforeach
 
                 </select>
@@ -64,43 +69,46 @@
 
             <div class="categoriesContainer">
 
-            <div class="form-group">
-             
-                <label for="filterCategory" class="col-form-label">Product Filters</label>
-                <select id="filterCategory" name="filter_cat" class="form-control mt-2">
-                    <option value="null">-- Select Filters --</option>
-                   
+                <div class="form-group">
+
+                    <label for="filterCategory" class="col-form-label">Product Filters (not loading new filters added)</label>
+                    <select id="filterCategory" name="filter_cat" class="form-control mt-2">
+                        <option value="null">-- Select Filters --</option>
+
                         @foreach ($productDetails['filter_applied'] as $filter)
-                            <option class="d-none" data-filter_id ="{{ $filter['filter_id'] }}" id="option{{ $filter['filter_id'] }}" value="{{ $filter['filter_name'] }}" label="{{$filter['filter_name']}}"></option>
+                        <option class="d-none" data-filter_id="{{ $filter['filter_id'] }}"
+                            id="option{{ $filter['filter_id'] }}" value="{{ $filter['filter_name'] }}"
+                            label="{{$filter['filter_name']}}"></option>
                         @endforeach
-                </select>
-            </div>
-            <div class="filterContainer row p-2">
-                @foreach ($productDetails['filter_applied'] as $filter)
+                    </select>
+                </div>
+                <div class="filterContainer row p-2">
+                    @foreach ($productDetails['filter_applied'] as $filter)
                     <div class="mainDiv col-12">
                         <div class="filterValue">{{ $filter['filter_name'] }}</div>
                         <div class="closeDiv" id="{{ $filter['filter_id'] }}">
                             <i class="fa-solid fa-x closeIconDiv"></i>
                         </div>
                         @foreach ($filter['parameters'] as $parameter)
-                                <div class="paramContainer row">
-                                    <li class="form-control col-4 mt-2 paramDiv" data-filter-id="{{  $filter['filter_id'] }}">
-                                        <input type="hidden" value="{{ $parameter['param_value'] }}" name="parameters[]"
-                                            data-param-id="{{ $parameter['param_id'] }}" id="option{{ $parameter['param_id'] }}">
-                                        <p class="paramValue">{{ $parameter['param_value'] }}</p>
-                                        <div class="closeParam" data-id="{{ $parameter['param_id'] }}">
-                                            <i class="fa-solid fa-x closeIcon"></i>
-                                        </div>
-                                    </li>
+                        <div class="paramContainer row">
+                            <li class="form-control col-4 mt-2 paramDiv" data-filter-id="{{  $filter['filter_id'] }}">
+                                <input type="hidden" value="{{ $parameter['param_value'] }}" name="parameters[]"
+                                    data-param-id="{{ $parameter['param_id'] }}"
+                                    id="option{{ $parameter['param_id'] }}">
+                                <p class="paramValue">{{ $parameter['param_value'] }}</p>
+                                <div class="closeParam" data-id="{{ $parameter['param_id'] }}">
+                                    <i class="fa-solid fa-x closeIcon"></i>
                                 </div>
+                            </li>
+                        </div>
                         @endforeach
                     </div>
-                       
+
                     @endforeach
                     @error('parameters')
                     <span class="text-danger">{{$message}}</span>
                     @enderror
-            </div>
+                </div>
             </div>
             @php
             $sub_cat_info=DB::table('categories')->select('title')->where('id',$productDetails['product']['child_cat_id'])->get();
@@ -116,14 +124,32 @@
                 </select>
             </div>
 
-            <div class="form-group">
-                <label for="price" class="col-form-label">Price(NRS) <span class="text-danger">*</span></label>
-                <input id="price" type="number" name="price" placeholder="Enter price"
-                    value="{{$productDetails['product']['price']}}" class="form-control">
-                @error('price')
-                <span class="text-danger">{{$message}}</span>
-                @enderror
+            
+            
+            <div id="price-ranges">
+                @foreach ($priceRange as $key => $value)
+                    <div id='pr-{{$key}}' data-pr="{{$key}}" class="form-group d-flex testing">
+                        <div class="pr-2">
+                            <label for="price" class="col-form-label">Price (RS) <span class="text-danger">*</span></label>
+                            <input id="price_0" type="number" name="prices[{{$key}}]" placeholder="Enter price" class="form-control" value="{{ $value->price }}">    
+                        </div>
+                        <div class="pr-2">
+                            <label for="min-range" class="col-form-label">Min range <span class="text-danger">*</span></label>
+                        <input id="min-range_0" type="number" name="min_ranges[{{$key}}]" placeholder="Enter min range" class="form-control" value="{{ $value->min_range }}">
+                        </div>
+                        <div>
+                            <label for="max-range" class="col-form-label">Max range <span class="text-danger">*</span></label>
+                            <input id="max-range_0" type="number" name="max_ranges[{{$key}}]" placeholder="Enter max range" class="form-control" value="{{ $value->max_range }}">    
+                        </div>
+                        @error('prices')
+                        <span class="text-danger">{{$message}}</span>
+                        @enderror
+                    </div>
+                @endforeach
             </div>
+            
+          
+            <button type="button" id="add-price-range" class="btn btn-secondary">Add Price Range</button>
 
             <div class="form-group">
                 <label for="discount" class="col-form-label">Discount(%)</label>
@@ -186,11 +212,12 @@
                 <label for="inputPhoto" class="col-form-label">Photo <span class="text-danger">*</span></label>
                 <div class="input-group">
                     <span class="input-group-btn">
-                        <a  data-input="thumbnail1" data-preview="holder1" class="btn btn-primary text-white lfm">
+                        <a data-input="thumbnail1" data-preview="holder1" class="btn btn-primary text-white lfm">
                             <i class="fas fa-image"></i> Choose
                         </a>
                     </span>
-                    <input id="thumbnail1" class="form-control" type="text" name="photo" value="{{$productDetails['product']['photo']}}">
+                    <input id="thumbnail1" class="form-control" type="text" name="photo"
+                        value="{{$productDetails['product']['photo']}}">
                 </div>
                 <div id="holder1" style="margin-top:15px;max-height:100px;"></div>
                 @error('photo')
@@ -201,27 +228,30 @@
                 <label for="inputPhoto" class="col-form-label">Template <span class="text-danger">*</span></label>
                 <div class="input-group">
                     <span class="input-group-btn">
-                        <a  data-input="thumbnail2" data-preview="holder2" class="btn btn-primary text-white lfm">
+                        <a data-input="thumbnail2" data-preview="holder2" class="btn btn-primary text-white lfm">
                             <i class="fas fa-image"></i> Choose
                         </a>
                     </span>
-                    <input id="thumbnail2" class="form-control" type="text" name="front" value="{{$productDetails['template'][0]['front_psd_url']}}">
+                    <input id="thumbnail2" class="form-control" type="text" name="front"
+                        value="{{$productDetails['template'][0]['front_psd_url']}}">
                 </div>
                 <div id="holder2" style="margin-top:15px;max-height:100px;"></div>
                 @error('front')
                 <span class="text-danger">{{$message}}</span>
                 @enderror
             </div>
-            
-            
+
+
             <div class="form-group">
                 <label for="template_height">Template Height <span class="text-danger">*</span></label>
-                <input id="template_height" type="number" name="template_height" min="0" placeholder="Height in Inches" value="{{ old('template_height', isset($productDetails['template'][0]['template_height']) ? $productDetails['template'][0]['template_height'] : '') }}" class="form-control">
+                <input id="template_height" type="number" name="template_height" min="0" placeholder="Height in Inches"
+                    value="{{ old('template_height', isset($productDetails['template'][0]['template_height']) ? $productDetails['template'][0]['template_height'] : '') }}"
+                    class="form-control">
                 @error('template_height')
                 <span class="text-danger">{{ $message }}</span>
                 @enderror
             </div>
-            
+
             <div class="form-group">
                 <label for="template_width">Template Width <span class="text-danger">*</span></label>
                 <input id="template_width" type="number" name="template_width" min="0" placeholder="Width in Inches"
@@ -231,7 +261,7 @@
                 <span class="text-danger">{{ $message }}</span>
                 @enderror
             </div>
-            
+
 
             <div class="form-group">
                 <label for="status" class="col-form-label">Status <span class="text-danger">*</span></label>
@@ -247,7 +277,7 @@
             </div>
             <div class="form-group mb-3">
                 <div class="btn btn-success submit" type="submit">Update</button>
-            </div>
+                </div>
         </form>
     </div>
 </div>
@@ -307,8 +337,7 @@
 @endpush
 @push('scripts')
 <script src="/vendor/laravel-filemanager/js/stand-alone-button.js"></script>
-< <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js">
-    </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
 
     <script>
         $('.lfm').filemanager('image');
@@ -518,5 +547,28 @@
             $('#productForm').submit();
         });
         
+        var i = 1;
+        $('#add-price-range').click(function() {
+            $('#price-ranges').append(`
+                <div class="form-group d-flex">
+                    <div>
+                        <label for="price_${i}" class="col-form-label">Price (RS) <span class="text-danger">*</span></label>
+                        <input id="price_${i}" type="number" name="prices[${i}]" placeholder="Enter price" class="form-control">    
+                    </div>
+                    <div>
+                        <label for="min-range_${i}" class="col-form-label">Min range <span class="text-danger">*</span></label>
+                        <input id="min-range_${i}" type="number" name="min_ranges[${i}]" placeholder="Enter min range" class="form-control">
+                    </div>
+                    <div>
+                        <label for="max-range_${i}" class="col-form-label">Max range <span class="text-danger">*</span></label>
+                        <input id="max-range_${i}" type="number" name="max_ranges[${i}]" placeholder="Enter max range" class="form-control">    
+                    </div>
+                </div>
+            `);
+            i++;
+        });
+        $(document).on('click', '.remove-price-range', function() {
+            $(this).closest('.form-group').remove();
+        });
     </script>
     @endpush

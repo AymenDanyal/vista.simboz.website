@@ -15,6 +15,10 @@ class Cart extends Model
     public function order(){
         return $this->belongsTo(Order::class,'order_id');
     }
+    public function cart_filters()
+    {
+        return $this->hasMany(CartFilters::class, 'cart_id', 'id');
+    }
     public function cartTotal(){
         return $this->sum('amount');
     }

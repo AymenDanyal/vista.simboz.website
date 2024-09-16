@@ -3,23 +3,7 @@
 @section('title','E-Shop || Login Page')
 
 @section('main-content')
-    <!-- Breadcrumbs -->
-    <div class="breadcrumbs">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <div class="bread-inner">
-                        <ul class="bread-list">
-                            <li><a href="{{route('home')}}">Home<i class="ti-arrow-right"></i></a></li>
-                            <li class="active"><a href="javascript:void(0);">Login</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- End Breadcrumbs -->
-            
+
     <!-- Shop Login -->
     <section class="shop login section">
         <div class="container">
